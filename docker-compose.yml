@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  flask:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./hls:/app/hls
+      - ./media:/app/media
+      - ./apps:/app/apps
+    ports:
+      - "8080:8080"
+    environment:
+      - FLASK_ENV=production
+      - FFMPEG_HOST=ffmpeg
+      - FFMPEG_PORT=9000
+    depends_on:
+      - ffmpeg
+
+  ffmpeg:
+    build:
+      context: .
+      dockerfile: Dockerfile.ffmpeg
+    entrypoint: ["bash", "-c"]
+    command: >
+      "nc -lk -p 9000 | ffmpeg -y -i - -c:v libx264 -c:a aac -f hls -hls_time 2 -hls_list_size 5 -hls_flags delete_segments /output/stream.m3u8"
+    volumes:
+      - ./hls:/output
+    ports:
+      - "9000:9000"
