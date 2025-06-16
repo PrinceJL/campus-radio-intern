@@ -1,0 +1,20 @@
+from flask import Flask, redirect, url_for
+from broadcaster.routes import broadcaster_bp
+from viewer.routes import viewer_bp
+from blueprints.hls import hls_bp
+
+def create_app():
+    app = Flask(__name__)
+    app.register_blueprint(broadcaster_bp, url_prefix='/broadcaster')
+    app.register_blueprint(viewer_bp, url_prefix='/viewer')
+    app.register_blueprint(hls_bp)
+
+    @app.route('/')
+    def index():
+        return redirect(url_for('viewer.viewer_home'))
+
+    return app
+
+if __name__ == "__main__":
+    app = create_app()
+    app.run(host="0.0.0.0", port=8080, debug=True)
