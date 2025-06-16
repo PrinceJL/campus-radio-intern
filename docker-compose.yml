@@ -18,6 +18,7 @@ services:
       - FFMPEG_PORT=9000
     depends_on:
       - ffmpeg
+      - mongo
 
   ffmpeg:
     build:
@@ -30,3 +31,13 @@ services:
       - ./hls:/output
     ports:
       - "9000:9000"
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+  
+volumes:
+  mongo_data:
