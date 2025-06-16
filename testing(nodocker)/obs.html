@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OBS Campus Radio</title>
+  <link rel="stylesheet" href="obs-style.css" />
+  <script src="obs-script.js"></script>
+</head>
+<body>
+  <div class="obs-container">
+    <!-- Top Bar (Can be removed) -->
+    <div class="top-menu">
+      <button>File</button>
+      <button>Edit</button>
+      <button>View</button>
+      <button>Stream</button>
+      <button>Tools</button>
+      <button>Help</button>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+      <!-- Left Panel (Scenes + Preview) -->
+      <div class="left-panel">
+        
+        <!-- Preview Area -->
+        <div class="preview-area">
+          <h3>Preview</h3>
+          <div class="preview-box">
+            <!-- Placeholder for stream/recording output -->
+            <p>Stream Output</p>
+          </div>
+        </div>
+        
+        <!-- Scenes Panel -->
+        <div class="scenes-panel">
+          <h3>Scenes</h3>
+          <ul id="scenes-list">
+            <li class="scene-item active">Main Scene</li>
+          </ul>
+          <button class="add-button" onclick="addScene()">+ Add Scene</button>
+        </div>
+
+      </div>
+
+      <!-- Right Panel (Sources) -->
+      <div class="right-panel">
+        <h3>Sources</h3>
+        <ul id="sources-list">
+          <li class="source-item">
+            <input type="checkbox" checked /> Webcam
+          </li>
+        </ul>
+        <button class="add-button" onclick="addSource()">+ Add Source</button>
+      </div>
+
+      <!-- Bottom Controls -->
+      <div class="bottom-controls">
+        <button class="control-button">Start Streaming</button>
+        <button class="control-button">Start Recording</button>
+        <button class="control-button">Virtual Camera</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
