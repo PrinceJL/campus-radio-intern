@@ -2,13 +2,11 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-COPY server/requirements.txt ./
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY server/ ./
+COPY app/ app/
 
 EXPOSE 8080
 
-ENV FLASK_APP=app.py
-
-CMD ["python", "app.py"]
+CMD ["python", "app/main.py"]
