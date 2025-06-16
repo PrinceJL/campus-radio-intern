@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from db import db
+from bson import ObjectId
 
 scenes_bp = Blueprint('scenes', __name__)
 
@@ -22,6 +23,14 @@ def get_scenes():
         scene['_id'] = str(scene['_id'])
     return jsonify(scenes)
 
+@scenes_bp.route('/scenes/<scene_id>', methods=['DELETE'])
+def delete_scene(scene_id):
+    result = db.scenes.delete_one({"_id": ObjectId(scene_id)})
+    if result.deleted_count:
+        return jsonify({"message": "Scene deleted."}), 200
+    else:
+        return jsonify({"error": "Scene not found."}), 404
+    
 @scenes_bp.route('/scenes/clean', methods=['POST'])
 def clean_scenes():
     db.scenes.delete_many({})
