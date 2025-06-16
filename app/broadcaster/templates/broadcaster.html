@@ -53,6 +53,21 @@
           </ul>
         </div>
       </div>
+
+      <!-- Upload Media Panel -->
+      <div class="panel upload-panel">
+        <div class="panel-header">
+          <span>Upload Media</span>
+        </div>
+        <div class="panel-content">
+          <form id="uploadForm" enctype="multipart/form-data">
+            <input type="file" id="mediaFile" name="file" accept=".mp3,.mp4" required>
+            <button type="submit">Upload</button>
+          </form>
+          <div id="uploadMessage"></div>
+          <ul id="uploadedFilesList"></ul>
+        </div>
+      </div>
     
     <!-- Sources Panel -->
     <div class="panel sources-panel">
@@ -125,6 +140,23 @@
           <button class="control-btn">Template</button>
         </div>
       </div>
+    </div>
+  </div>
+  <!-- Pop Ups-->
+  <!-- Add Scene Modal -->
+  <div id="addSceneModal">
+    <div class="modal-content">
+      <h3>Add Scene</h3>
+      <form id="addSceneForm">
+        <label for="sceneName">Scene Name:</label>
+        <input type="text" id="sceneName" name="sceneName" required>
+        <label for="sceneDesc">Description:</label>
+        <input type="text" id="sceneDesc" name="sceneDesc">
+        <div class="modal-actions">
+          <button type="button" id="cancelAddScene">Cancel</button>
+          <button type="submit">Add</button>
+        </div>
+      </form>
     </div>
   </div>
 </body>
