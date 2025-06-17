@@ -20,14 +20,14 @@
           <button class="tab-btn" data-tab="scenes">Scenes</button>
         </div>
 
+        <!-- Camera Previews -->
         <div>
-          <!-- Camera Previews -->
           <div class="preview-section active" id="cameraPreviews">
             <div class="camera-previews">
               <video class="preview-box" id="cam1" autoplay muted playsinline></video>
-              <video class="preview-box" autoplay muted playsinline></video>
-              <video class="preview-box" autoplay muted playsinline></video>
-              <video class="preview-box" autoplay muted playsinline></video>
+              <video class="preview-box" id="cam2" autoplay muted playsinline></video>
+              <video class="preview-box" id="cam3" autoplay muted playsinline></video>
+              <video class="preview-box" id="cam4" autoplay muted playsinline></video>
             </div>
           </div>
 
@@ -69,7 +69,7 @@
           <!-- Left column - Preview and controls -->
           <div class="left-column">
             <div id="mainPreview" class="main-preview">
-              STREAM PREVIEW AREA
+              <video class="preview-box" id="mainStream" autoplay muted playsinline></video>
             </div>
 
             <div class="controls">

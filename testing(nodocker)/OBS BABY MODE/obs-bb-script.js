@@ -59,48 +59,120 @@ li.textContent = file.name;
 mediaPlaylist.appendChild(li);
 }
 
-//add camera
-const cam = document.getElementById("cam1");
+// cameras
+const cam = [
+  document.getElementById("cam1"),
+  document.getElementById("cam2"),
+  document.getElementById("cam3"),
+  document.getElementById("cam4")
+];
+
+let cameraDevices = [];
+const camInUse = new Map(); // deviceId -> video element
+let activeVideoEl = null;   // Currently selected video element
+
 const camSelect = document.getElementById("webcamSelect");
 
 async function getCamera() {
-    const   devices = await navigator.mediaDevices.enumerateDevices();
-    const cameras = feeds.filter(feed => device.kind === 'feedInput')
+  const devices = await navigator.mediaDevices.enumerateDevices();
+  cameraDevices = devices.filter(device => device.kind === 'videoinput');
 
+  if (camSelect) {
     camSelect.innerHTML = '';
-
-    cameras.forEach((camera, index) => {
+    cameraDevices.forEach((camera, index) => {
       const option = document.createElement('option');
       option.value = camera.deviceId;
-      option.text = camera.label ||  `Camera ${index + 1}`;
+      option.text = camera.label || `Camera ${index + 1}`;
       camSelect.appendChild(option);
     });
   }
+}
 
-    async function startCamera(deviceId) {
-      if (!deviceId) return;
-    try{
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { deviceId: {exact: deviceId} }
-      });
+async function startCamera(videoEl, deviceId) {
+  if (!deviceId || !videoEl) return;
 
-    video.srcObject = stream;
+  if (camInUse.has(deviceId) && camInUse.get(deviceId) !== videoEl) {
+    alert("This camera is already in use.");
+    return;
+  }
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { deviceId: { exact: deviceId } },
+      audio: false
+    });
+
+    if (videoEl.srcObject) {
+      videoEl.srcObject.getTracks().forEach(track => track.stop());
+
+      // Remove old assignment
+      for (const [usedId, el] of camInUse.entries()) {
+        if (el === videoEl) {
+          camInUse.delete(usedId);
+          break;
+        }
+      }
+    }
+
+    videoEl.srcObject = stream;
+    camInUse.set(deviceId, videoEl);
   } catch (err) {
-    console.error("camera error", err);
-    alert("camera denied")
+    console.error("Camera error:", err);
+    alert("Camera access denied or failed.");
   }
 }
 
-camSelect.addEventListener('change' , () =>{
-  startCamera(camSelect.value);
-});
+function setupClickHandlers() {
+  cam.forEach(videoEl => {
+    videoEl.addEventListener('click', () => {
+      // Remove blue border from all
+      cam.forEach(c => c.style.border = "none");
+
+      // Highlight selected video
+      videoEl.style.border = "1px solid blue";
+
+      // Set selected video element
+      activeVideoEl = videoEl;
+
+      
+    });
+  });
+}
+
+// When a camera is selected in the dropdown
+if (camSelect) {
+  camSelect.addEventListener('change', () => {
+    if (!activeVideoEl) {
+      alert("Please click a video box first.");
+      return;
+    }
+
+    startCamera(activeVideoEl, camSelect.value);
+  });
+}
+
+// Initialize
+(async () => {
+  await getCamera();
+  setupClickHandlers();
+
+  if (cameraDevices.length > 0) {
+    await startCamera(cam[0], cameraDevices[0].deviceId);
+    cam[0].style.border = "1px solid blue";
+    activeVideoEl = cam[0];
+  }
+})();
 
 (async () => {
   await getCamera();
-  if (camSelect.options.length > 0){
-    startCamera(camSelect.value);
+  setupClickHandlers();
+
+  if (cameraDevices.length > 0) {
+    await startCamera(cam[0], cameraDevices[0].deviceId);
   }
 })();
+
+
 
 // Theme Toggle Functionality
 document.addEventListener('DOMContentLoaded', function() {
