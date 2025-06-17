@@ -35,49 +35,66 @@ async function loadUploadedFiles() {
     const files = await res.json();
     const uploadedFilesList = document.getElementById('uploadedFilesList');
     uploadedFilesList.innerHTML = '';
+
     files.forEach(file => {
         const ext = file.filename.split('.').pop().toLowerCase();
-        const li = document.createElement('li');
 
-        // MP4 thumbnail preview
+        // Create container div for grid layout
+        const fileDiv = document.createElement('div');
+        fileDiv.className = 'upload-thumb-container';
+
+        // Thumbnail (video or audio icon)
+        let thumb;
         if (ext === 'mp4') {
-            const video = document.createElement('video');
-            video.src = file.path;
-            video.preload = 'metadata';
-            video.muted = true;
-            video.style.width = '120px';
-            video.style.height = '68px';
-            video.style.objectFit = 'cover';
-            video.style.marginRight = '8px';
-            video.controls = false;
-            video.currentTime = 1; // Try to seek to 1s for a better thumbnail
-            li.appendChild(video);
-        }
-        // MP3 icon preview
-        else if (ext === 'mp3') {
-            const img = document.createElement('img');
-            img.src = '/static/icons/audio-icon.png'; // Use your own audio icon path
-            img.alt = 'Audio';
-            img.style.width = '40px';
-            img.style.height = '40px';
-            img.style.marginRight = '8px';
-            li.appendChild(img);
+            thumb = document.createElement('video');
+            thumb.src = file.path;
+            thumb.preload = 'metadata';
+            thumb.muted = true;
+            thumb.style.width = '100%';
+            thumb.style.height = '100px';
+            thumb.style.objectFit = 'cover';
+            thumb.controls = false;
+            thumb.currentTime = 1;
+
+            // Make thumbnail clickable
+            const link = document.createElement('a');
+            link.href = file.path;
+            link.target = '_blank';
+            link.appendChild(thumb);
+            fileDiv.appendChild(link);
+        } else if (ext === 'mp3') {
+            thumb = document.createElement('img');
+            thumb.src = '/favicon.ico'; // Use favicon as audio icon
+            thumb.alt = 'Audio';
+            thumb.style.width = '100%';
+            thumb.style.height = '100px';
+            thumb.style.objectFit = 'contain';
+
+            // Make icon clickable
+            const link = document.createElement('a');
+            link.href = file.path;
+            link.target = '_blank';
+            link.appendChild(thumb);
+            fileDiv.appendChild(link);
         }
 
-        // File name and delete button
-        const nameSpan = document.createElement('span');
-        nameSpan.textContent = file.filename;
-        nameSpan.style.marginRight = '8px';
-        li.appendChild(nameSpan);
+        // Label below thumbnail
+        const label = document.createElement('div');
+        label.className = 'upload-thumb-label';
+        label.textContent = file.filename;
+        fileDiv.appendChild(label);
 
+        // Delete button to the right
         const delBtn = document.createElement('button');
         delBtn.textContent = 'Delete';
+        delBtn.className = 'upload-thumb-delete';
         delBtn.onclick = () => deleteUploadedFile(ext, file.filename);
-        li.appendChild(delBtn);
+        fileDiv.appendChild(delBtn);
 
-        uploadedFilesList.appendChild(li);
+        uploadedFilesList.appendChild(fileDiv);
     });
 }
+
 // Show modal for adding a scene
 function showAddSceneModal() {
     document.getElementById('addSceneModal').classList.add('active');

@@ -1,3 +1,4 @@
+//adding of videos (direct to stream not to playlist *augment it later*)
 navigator.mediaDevices.enumerateDevices().then(devices => {
 const webcamSelect = document.getElementById('webcamSelect');
 const micSelect = document.getElementById('micSelect');
@@ -58,28 +59,47 @@ li.textContent = file.name;
 mediaPlaylist.appendChild(li);
 }
 
-// Theme Toggle Functionality
-document.addEventListener('DOMContentLoaded', function() {
-  const themeToggle = document.getElementById('themeToggle');
-  
-  // Check for saved theme preference
-  const savedTheme = localStorage.getItem('theme');
-  if (savedTheme === 'light') {
-      document.body.classList.add('light-mode');
-      themeToggle.textContent = 'Switch to Dark Mode';
+//add camera
+const cam = document.getElementById("cam1");
+const camSelect = document.getElementById("webcamSelect");
+
+async function getCamera() {
+    const   devices = await navigator.mediaDevices.enumerateDevices();
+    const cameras = feeds.filter(feed => device.kind === 'feedInput')
+
+    camSelect.innerHTML = '';
+
+    cameras.forEach((camera, index) => {
+      const option = document.createElement('option');
+      option.value = camera.deviceId;
+      option.text = camera.label ||  `Camera ${index + 1}`;
+      camSelect.appendChild(option);
+    });
   }
 
-  // Theme toggle click handler
-  themeToggle.addEventListener('click', function() {
-      document.body.classList.toggle('light-mode');
-      
-      // Save theme preference
-      if (document.body.classList.contains('light-mode')) {
-          localStorage.setItem('theme', 'light');
-          themeToggle.textContent = 'Switch to Dark Mode';
-      } else {
-          localStorage.setItem('theme', 'dark');
-          themeToggle.textContent = 'Switch to Light Mode';
-      }
-  });
+    async function startCamera(deviceId) {
+      if (!deviceId) return;
+    try{
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { deviceId: {exact: deviceId} }
+      });
+
+    video.srcObject = stream;
+  } catch (err) {
+    console.error("camera error", err);
+    alert("camera denied")
+  }
+}
+
+camSelect.addEventListener('change' , () =>{
+  startCamera(camSelect.value);
 });
+
+(async () => {
+  await getCamera();
+  if (camSelect.options.length > 0){
+    startCamera(camSelect.value);
+  }
+})();
+
+

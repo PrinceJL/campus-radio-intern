@@ -1,42 +1,24 @@
-version: "3.9"
-
 services:
   flask:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - ./app/hls:/hls
-      - ./app/media:/media
-      - ./app/uploads:/uploads
+    build: .
+    container_name: flask
     ports:
       - "8080:8080"
-    environment:
-      - FLASK_ENV=production
-      - FFMPEG_HOST=ffmpeg
-      - FFMPEG_PORT=9000
-    depends_on:
-      - ffmpeg
-      - mongo
-
-  ffmpeg:
-    build:
-      context: .
-      dockerfile: Dockerfile.ffmpeg
-    entrypoint: ["bash", "-c"]
-    command: >
-      "nc -lk -p 9000 | ffmpeg -y -i - -c:v libx264 -c:a aac -f hls -hls_time 2 -hls_list_size 5 -hls_flags delete_segments /output/stream.m3u8"
     volumes:
-      - ./hls:/output
-    ports:
-      - "9000:9000"
+      - ./app/uploads:/app/app/uploads  
+      - ./app:/app/app                 
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/campus_radio
+    depends_on:
+      - mongo
 
   mongo:
     image: mongo:latest
+    container_name: mongo
     ports:
       - "27017:27017"
     volumes:
-      - mongo_data:/data/db
-  
+      - mongo_data:/data/db            
+
 volumes:
   mongo_data:
