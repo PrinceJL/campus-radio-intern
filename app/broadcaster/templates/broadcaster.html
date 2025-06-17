@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>OBS Campus Radio</title>
   <link rel="stylesheet" href="{{ url_for('broadcaster.static', filename='styles/broadcaster.css') }}">
-  <script src="{{ url_for('broadcaster.static', filename='js/broadcaster.js') }}"></script>
 </head>
 <body>
   <div class="app-container">
@@ -53,7 +52,7 @@
           <label for="micSelect"> Microphone </label>
           <select id="micSelect"></select>
 
-          <button class="test-btn", id="testDevices"> Test Devices </button>
+          <button class="test-btn" id="testDevices"> Test Devices </button>
         </div>
       </aside>
 
@@ -105,11 +104,14 @@
           <h3>Upload Media</h3>
           <div id="dropZone">Drag and drop video/music files here</div>
           <input type="file" id="mediaInput" accept="video/*,audio/*" multiple hidden>
-          <button class="browse-btn", onclick="document.getElementById('mediaInput').click()">Browse Files</button>
+          <button class="browse-btn" onclick="document.getElementById('mediaInput').click()">Browse Files</button>
           <ul id="mediaPlaylist"></ul>
         </div>
       </main>
     </div>
   </div>
+  <div id="broadcast-status" style="text-align:center; margin:1em; color:#2d72d9;"></div>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="{{ url_for('broadcaster.static', filename='js/broadcaster.js') }}"></script>
 </body>
 </html>
