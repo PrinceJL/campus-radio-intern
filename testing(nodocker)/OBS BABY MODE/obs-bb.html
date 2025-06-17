@@ -3,23 +3,46 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OBS Baby Mode</title>
+  <title>Campus Radio</title>
   <link rel="stylesheet" href="obs-bb-style.css">
 </head>
 <body>
   <div class="app-container">
     <header class="top-bar">
-      <span>OBS Baby Mode</span>
-      <button class="theme-btn", id="themeToggle">Switch Theme</button>
+      <span>Campus Radio</span>
+      <button class="theme-btn" id="themeToggle">Switch Theme</button>
     </header>
 
     <div class="main-layout">
       <aside class="left-panel">
-        <div class="camera-previews">
-        <video class="preview-box" autoplay muted playsinline></video>
-        <video class="preview-box" autoplay muted playsinline></video>
-        <video class="preview-box" autoplay muted playsinline></video>
-        <video class="preview-box" autoplay muted playsinline></video>
+
+        <div class="preview-tabs">
+          <button class="tab-btn active" data-tab="cameras">Cameras</button>
+          <button class="tab-btn" data-tab="scenes">Scenes</button>
+        </div>
+
+        <div>
+          <!-- Camera Previews -->
+          <div class="preview-section active" id="cameraPreviews">
+            <div class="camera-previews">
+              <video class="preview-box" autoplay muted playsinline></video>
+              <video class="preview-box" autoplay muted playsinline></video>
+              <video class="preview-box" autoplay muted playsinline></video>
+              <video class="preview-box" autoplay muted playsinline></video>
+            </div>
+          </div>
+
+          <!-- Scene Previews (hidden by default) -->
+          <div class="scene-section" id="scenePreviews">
+            <div class="scene-preview">
+              <h3>Scene 1</h3>
+                <div class="preview-box"></div>
+            </div>
+            <div class="scene-preview">
+              <h3>Scene 2</h3>
+                <div class="preview-box"></div>
+            </div>
+          </div>
         </div>
 
         <div class="device-setup">
@@ -42,20 +65,41 @@
           <button class="mode-btn" data-mode="emergency">EMERGENCY ONLY</button>
         </div>
 
-        <div id="mainPreview" class="main-preview">
-          STREAM PREVIEW AREA
-        </div>
+        <!-- Split layout -->
+        <div class="split-layout">
+          <!-- Left column - Preview and controls -->
+          <div class="left-column">
+            <div id="mainPreview" class="main-preview">
+              STREAM PREVIEW AREA
+            </div>
 
-        <div class="controls">
-          <button id="startStream">START STREAM</button>
-          <button id="stopStream">STOP STREAM</button>
-          <button id="addScene">ADD SCENE</button>
-        </div>
+            <div class="controls">
+              <button id="startStream">START STREAM</button>
+              <button id="stopStream">STOP STREAM</button>
+              <button id="addScene">ADD SCENE</button>
+            </div>
 
-        <div class="audio-mixer">
-          <h3>AUDIO MIX</h3>
-          <div id="audioLevels">Microphone Level </div>
-        </div>
+            <div class="audio-mixer">
+              <h3>AUDIO MIX</h3>
+              <div id="audioLevels">Microphone Level </div>
+            </div>
+          </div>
+
+        <!-- Right column - Playlist -->
+          <div class="right-column">
+            <div class="playlist-container">
+              <h3>Playlist</h3>
+        
+            <div class="playlist-tabs">
+              <button class="tab-btn active" data-tab="video">Video</button>
+              <button class="tab-btn" data-tab="audio">Audio</button>
+            </div>
+        
+            <div class="playlist-content">
+              <ul id="videoPlaylist" class="playlist-list active"></ul>
+              <ul id="audioPlaylist" class="playlist-list"></ul>
+            </div>
+            </div>
 
         <div class="media-upload">
           <h3>Upload Media</h3>
