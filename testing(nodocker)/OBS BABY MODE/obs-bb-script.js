@@ -95,12 +95,12 @@ camSelect.addEventListener('change' , () =>{
   startCamera(camSelect.value);
 });
 
-(async () => {
-  await getCamera();
-  if (camSelect.options.length > 0){
-    startCamera(camSelect.value);
-  }
-})();
+// (async () => {
+//   await getCamera();
+//   if (camSelect.options.length > 0){
+//     startCamera(camSelect.value);
+//   }
+// })();
 
 // Theme Toggle Functionality
 document.addEventListener('DOMContentLoaded', function() {

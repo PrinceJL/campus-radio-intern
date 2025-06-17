@@ -8,155 +8,107 @@
   <script src="{{ url_for('broadcaster.static', filename='js/broadcaster.js') }}"></script>
 </head>
 <body>
-  <div class="obs-container">
-    <!-- Top Menu -->
-    <div class="top-menu">
-      <div class="menu-bar">
-        <button>File</button>
-        <button>Edit</button>
-        <button>View</button>
-        <button>Tools</button>
-        <button>Help</button>
-      </div>
-    </div>
+  <div class="app-container">
+    <header class="top-bar">
+      <span>Campus Radio</span>
+      <button class="theme-btn" id="themeToggle">Switch Theme</button>
+    </header>
 
-    <!-- Preview Area -->
-    <div class="preview-area">
-      <div class="preview-box"></div>
-      <div class="preview-controls">
-        <span>Template</span>
-        <select>
-          <option>Scale to Window</option>
-          <option>Original Size</option>
-        </select>
-        <span>No source selected</span>
-      </div>
-    </div>
+    <div class="main-layout">
+      <aside class="left-panel">
+        <div class="preview-tabs">
+          <button class="tab-btn active" data-tab="cameras">Cameras</button>
+          <button class="tab-btn" data-tab="scenes">Scenes</button>
+        </div>
 
-    <!-- Bottom Panels -->
-    <div class="bottom-panels">
-      <!-- Scenes Panel -->
-      <div class="panel scenes-panel active">
-        <div class="panel-header">
-          <span>Scenes</span>
-          <div class="panel-actions">
-            <button title="Add Scene"><i class="fas fa-plus"></i></button>
-            <button title="Delete Scene"><i class="fas fa-trash"></i></button>
-            <button title="Duplicate Scene"><i class="fas fa-copy"></i></button>
-            <button title="Move Up"><i class="fas fa-angle-up"></i></button>
-            <button title="Move Down"><i class="fas fa-angle-down"></i></button>
+        <div>
+          <!-- Camera Previews -->
+          <div class="preview-section active" id="cameraPreviews">
+            <div class="camera-previews">
+              <video class="preview-box" id="cam1" autoplay muted playsinline></video>
+              <video class="preview-box" autoplay muted playsinline></video>
+              <video class="preview-box" autoplay muted playsinline></video>
+              <video class="preview-box" autoplay muted playsinline></video>
+            </div>
           </div>
-        </div>
-        <div class="panel-content">
-          <ul id="scenes-list">
-            <li class="scene-item active">Scene 3</li>
-          </ul>
-        </div>
-      </div>
 
-      <!-- Upload Media Panel -->
-      <div class="panel upload-panel">
-        <div class="panel-header">
-          <span>Upload Media</span>
-        </div>
-        <div class="panel-content">
-          <form id="uploadForm" enctype="multipart/form-data">
-            <input type="file" id="mediaFile" name="file" accept=".mp3,.mp4" required>
-            <button type="submit">Upload</button>
-          </form>
-          <div id="uploadMessage"></div>
-          <ul id="uploadedFilesList"></ul>
-        </div>
-      </div>
-    
-    <!-- Sources Panel -->
-    <div class="panel sources-panel">
-        <div class="panel-header">
-          <span>Sources</span>
-          <div class="panel-actions">
-            <button title="Add Source"><i class="fas fa-plus" aria-hidden="true"></i></button>
-            <button title="Delete Source"><i class="fas fa-trash"></i></button>
-            <button title="Properties"><i class="fas fa-cog"></i></button>
-            <button title="Move Up"><i class="fas fa-angle-up"></i></button>
-            <button title="Move Down"><i class="fas fa-angle-down"></i></button>
+          <!-- Scene Previews (hidden by default) -->
+          <div class="scene-section" id="scenePreviews">
+            <div class="scene-preview">
+              <h3>Scene 1</h3>
+                <div class="preview-box"></div>
+            </div>
+            <div class="scene-preview">
+              <h3>Scene 2</h3>
+                <div class="preview-box"></div>
+            </div>
           </div>
         </div>
-        <div class="panel-content">
-          <div class="no-sources-message">
-            <i class="fas fa-question-circle fa-2x"></i>
-            <p>You don't have any sources.<br>Click the + button below, or right-click here to add one.</p>
-          </div>
-        </div>
-      </div>
 
-      <!-- Template Panel -->
-      <div class="panel audio-mixer-panel">
-        <div class="panel-header">
-          <span>Template</span>
-          <div class="panel-actions">
-          </div>
-        </div>
-        <div class="panel-content">
-        </div>
-      </div>
+        <div class="device-setup">
+          <h3>Device Setup</h3>
+          <label for="webcamSelect"> Webcam </label>
+          <select id="webcamSelect"></select>
 
-      <!-- Scene Transitions Panel -->
-      <div class="panel transitions-panel">
-        <div class="panel-header">
-          <span>Scene Transitions</span>
-          <div class="panel-actions">
-            <button><i class="fas fa-plus"></i></button>
-            <button><i class="fas fa-ellipsis-h"></i></button>
-          </div>
-        </div>
-        <div class="panel-content">
-          <div class="transition-settings">
-            <label>Transition:</label>
-            <select>
-              <option>Fade</option>
-              <option>Cut</option>
-              <option>Wipe</option>
-            </select>
-            <label>Duration:</label>
-            <input type="text" value="300 ms" />
-          </div>
-        </div>
-      </div>
+          <label for="micSelect"> Microphone </label>
+          <select id="micSelect"></select>
 
-      <!-- Controls Panel -->
-      <div class="panel controls-panel">
-        <div class="panel-header">
-          <span>Controls</span>
-          <div class="panel-actions">
-            <button><i class="fas fa-cog"></i></button>
+          <button class="test-btn", id="testDevices"> Test Devices </button>
+        </div>
+      </aside>
+
+      <main class="preview-section">
+        <div class="mode-selector">
+          <h2>MODES</h2>
+          <button class="mode-btn" data-mode="video">VIDEO STREAMING</button>
+          <button class="mode-btn" data-mode="radio">RADIO (AUDIO ONLY)</button>
+          <button class="mode-btn" data-mode="emergency">EMERGENCY ONLY</button>
+        </div>
+
+        <!-- Split layout -->
+        <div class="split-layout">
+          <!-- Left column - Preview and controls -->
+          <div class="left-column">
+            <div id="mainPreview" class="main-preview">
+              STREAM PREVIEW AREA
+            </div>
+
+            <div class="controls">
+              <button id="startStream">START STREAM</button>
+              <button id="stopStream">STOP STREAM</button>
+              <button id="addScene">ADD SCENE</button>
+            </div>
+
+            <div class="audio-mixer">
+              <h3>AUDIO MIX</h3>
+              <div id="audioLevels">Microphone Level </div>
+            </div>
           </div>
+
+        <!-- Right column - Playlist -->
+          <div class="right-column">
+            <div class="playlist-container">
+              <h3>Playlist</h3>
+        
+            <div class="playlist-tabs">
+              <button class="tab-btn active" data-tab="video">Video</button>
+              <button class="tab-btn" data-tab="audio">Audio</button>
+            </div>
+        
+            <div class="playlist-content">
+              <ul id="videoPlaylist" class="playlist-list active"></ul>
+              <ul id="audioPlaylist" class="playlist-list"></ul>
+            </div>
+            </div>
+
+        <div class="media-upload">
+          <h3>Upload Media</h3>
+          <div id="dropZone">Drag and drop video/music files here</div>
+          <input type="file" id="mediaInput" accept="video/*,audio/*" multiple hidden>
+          <button class="browse-btn", onclick="document.getElementById('mediaInput').click()">Browse Files</button>
+          <ul id="mediaPlaylist"></ul>
         </div>
-        <div class="panel-content">
-          <button class="control-btn">Start Streaming</button>
-          <button class="control-btn">Start Recording</button>
-          <button class="control-btn">Settings</button>
-          <button class="control-btn">Exit</button>
-          <button class="control-btn">Template</button>
-          <button class="control-btn">Template</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- Pop Ups-->
-  <!-- Add Scene Modal -->
-  <div id="addSceneModal">
-    <div class="modal-content">
-      <h3>Add Scene</h3>
-      <form id="addSceneForm">
-        <label for="sceneName">Scene Name:</label>
-        <input type="text" id="sceneName" name="sceneName" required>
-        <label for="sceneDesc">Description:</label>
-        <input type="text" id="sceneDesc" name="sceneDesc">
-        <div class="modal-actions">
-          <button type="button" id="cancelAddScene">Cancel</button>
-          <button type="submit">Add</button>
-        </div>
-      </form>
+      </main>
     </div>
   </div>
 </body>
