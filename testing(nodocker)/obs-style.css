@@ -72,6 +72,15 @@ body {
   cursor: pointer;
 }
 
+/* Side Panels */
+.side-panel {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 2px;
+  padding: 5px;
+  background: #222;
+}
+
 /* Bottom Panels */
 .bottom-panels {
   display: grid;
