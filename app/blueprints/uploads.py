@@ -64,3 +64,9 @@ def list_files():
     for f in files:
         f['_id'] = str(f['_id'])
     return jsonify(files)
+
+@uploads_bp.route('/uploads/clean', methods=['POST'])
+def clean_uploads():
+    db.files.delete_many({})
+    db.scenes.delete_many({})
+    return jsonify({"message": "All uploads and scenes deleted from MongoDB."}), 200

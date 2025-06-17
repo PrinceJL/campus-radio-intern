@@ -4,7 +4,7 @@ from viewer.routes import viewer_bp
 from blueprints.hls import hls_bp
 from blueprints.scenes import scenes_bp 
 from blueprints.uploads import uploads_bp
-
+from flask_socketio import SocketIO
 
 def create_app():
     app = Flask(__name__)
@@ -22,4 +22,5 @@ def create_app():
 
 if __name__ == "__main__":
     app = create_app()
-    app.run(host="0.0.0.0", port=8080, debug=True)
+    socketio = SocketIO(app, async_mode="threading", cors_allowed_origins="*")
+    socketio.run(app, host="0.0.0.0", port=8080, allow_unsafe_werkzeug=True)
