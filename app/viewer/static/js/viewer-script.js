@@ -1,106 +1,111 @@
-    const video = document.getElementById('radio-stream');
-    const brb = document.getElementById('brb-standby');
-    const socket = io();  // Connect to your Flask-SocketIO server
-    let peerConnection = null;
+const video = document.getElementById('radio-stream');
+const brb = document.getElementById('brb-standby');
+const socket = io();  // Connect to your Flask-SocketIO server
+let peerConnection = null;
 
-    function showBRB(show) {
-        brb.style.display = show ? 'block' : 'none';
-        video.style.display = show ? 'none' : 'block';
+// Toggle BRB image and video
+function showBRB(show) {
+    if (show) {
+        brb.style.display = 'block';
+        video.style.display = 'none';
+    } else {
+        brb.style.display = 'none';
+        video.style.display = 'block';
     }
+}
 
-    showBRB(true);
+// Initial state: show standby screen
+showBRB(true);
 
-    // When connected to the signaling server
-    socket.on('connect', () => {
-        console.log('[Viewer] Connected to signaling server');
-        socket.emit('watcher');  // Notify broadcaster you're ready to watch
-    });
-
-    // When the broadcaster sends an offer
-    socket.on('offer', async (id, description) => {
-        console.log('[Viewer] Received offer from broadcaster:', id);
-
-        peerConnection = new RTCPeerConnection({
-            iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
-        });
-
-        peerConnection.ontrack = event => {
-            console.log('[Viewer] Received track from broadcaster');
-            video.srcObject = event.streams[0];
-            showBRB(false);
-
-            // Unmute after stream starts (optional; can also bind to a user gesture)
-            video.muted = false;
-            video.play().catch(e => {
-                    console.warn('[Viewer] Autoplay blocked:', e);
-            });
-        };
-
-
-        peerConnection.onicecandidate = event => {
-            if (event.candidate) {
-                console.log('[Viewer] Sending ICE candidate to broadcaster');
-                socket.emit('candidate', id, event.candidate);
-            }
-        };
-
-        peerConnection.onconnectionstatechange = () => {
-            console.log('[Viewer] Connection state:', peerConnection.connectionState);
-            if (['disconnected', 'failed', 'closed'].includes(peerConnection.connectionState)) {
-                showBRB(true);
-            }
-        };
-
-        try {
-            await peerConnection.setRemoteDescription(new RTCSessionDescription(description));
-            const answer = await peerConnection.createAnswer();
-            await peerConnection.setLocalDescription(answer);
-            socket.emit('answer', id, peerConnection.localDescription);
-            console.log('[Viewer] Sent answer back to broadcaster');
-        } catch (err) {
-            console.error('[Viewer] Error handling offer:', err);
-            showBRB(true);
-        }
-    });
-
-    // Handle incoming ICE candidates from broadcaster
-    socket.on('candidate', (id, candidate) => {
-        if (peerConnection) {
-            peerConnection.addIceCandidate(new RTCIceCandidate(candidate))
-                .then(() => console.log('[Viewer] ICE candidate added'))
-                .catch(err => console.error('[Viewer] Error adding ICE candidate:', err));
-        }
-    });
-
-    // Broadcaster is back (e.g. restarted)
-    socket.on('broadcaster', () => {
-        console.log('[Viewer] Broadcaster rejoined, re-emitting watcher');
+// Socket connection opened
+socket.on('connect', () => {
+    console.log('[Viewer] Connected to signaling server');
+    setTimeout(() => {
+        console.log('[Viewer] Emitting "watcher" after reconnect');
         socket.emit('watcher');
+    }, 500);
+});
+
+// Received WebRTC offer from broadcaster
+socket.on('offer', async (id, description) => {
+    console.log('[Viewer] Received offer from broadcaster:', id);
+    
+    // Create peer connection
+    peerConnection = new RTCPeerConnection({
+        iceServers: [
+            { urls: 'stun:stun.l.google.com:19302' }
+        ]
     });
 
-    // When explicitly told to disconnect (e.g. broadcaster closes)
-    socket.on('disconnectPeer', id => {
-        console.warn('[Viewer] Peer disconnected:', id);
-        if (peerConnection) {
-            peerConnection.close();
-            peerConnection = null;
-        }
-        showBRB(true);
-    });
+    peerConnection.ontrack = event => {
+        console.log('[Viewer] Received track from broadcaster');
+        video.srcObject = event.streams[0];
+        showBRB(false);
+    };
 
-    // Handle page unload
-    window.onbeforeunload = () => {
-        console.log('[Viewer] Closing viewer');
-        socket.close();
-        if (peerConnection) {
-            peerConnection.close();
+    peerConnection.onicecandidate = event => {
+        if (event.candidate) {
+            console.log('[Viewer] Sending ICE candidate to broadcaster:', event.candidate);
+            socket.emit('candidate', id, event.candidate);
         }
     };
 
-    // Fallback BRB if stream ends
-    video.onpause = video.onended = () => {
-        if (!video.srcObject || video.paused || video.ended) {
-            console.log('[Viewer] Video paused or ended');
+    peerConnection.onconnectionstatechange = () => {
+        console.log('[Viewer] Connection state changed:', peerConnection.connectionState);
+        if (peerConnection.connectionState === 'disconnected' || peerConnection.connectionState === 'failed') {
             showBRB(true);
+            console.warn('[Viewer] Connection lost, showing BRB.');
         }
     };
+
+    try {
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(description));
+        const answer = await peerConnection.createAnswer();
+        await peerConnection.setLocalDescription(answer);
+        console.log('[Viewer] Sending answer to broadcaster');
+        socket.emit('answer', id, peerConnection.localDescription);
+    } catch (err) {
+        console.error('[Viewer] Error during offer handling:', err);
+    }
+});
+
+// Handle ICE candidates from broadcaster
+socket.on('candidate', (id, candidate) => {
+    console.log('[Viewer] Received ICE candidate from broadcaster:', candidate);
+    if (peerConnection) {
+        peerConnection.addIceCandidate(new RTCIceCandidate(candidate))
+            .then(() => console.log('[Viewer] ICE candidate added successfully'))
+            .catch(err => console.error('[Viewer] Error adding ICE candidate:', err));
+    }
+});
+
+// If broadcaster restarts, re-emit watcher
+socket.on('broadcaster', () => {
+    console.log('[Viewer] Broadcaster rejoined, re-emitting watcher');
+    socket.emit('watcher');
+});
+
+// Handle broadcaster disconnect
+socket.on('disconnectPeer', id => {
+    console.warn('[Viewer] Peer disconnected:', id);
+    showBRB(true);
+    if (peerConnection) {
+        peerConnection.close();
+        peerConnection = null;
+    }
+});
+
+// Cleanup on page unload
+window.onbeforeunload = () => {
+    console.log('[Viewer] Unloading page, closing socket and peerConnection');
+    socket.close();
+    if (peerConnection) peerConnection.close();
+};
+
+// Fallback BRB logic on stream end
+video.onpause = video.onended = function () {
+    if (!video.srcObject || video.paused || video.ended) {
+        console.log('[Viewer] Video paused or ended, showing BRB');
+        showBRB(true);
+    }
+};
