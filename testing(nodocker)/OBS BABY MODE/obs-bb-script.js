@@ -94,6 +94,66 @@ function addToFileLibrary(file) {
   fileLibrary.appendChild(li);
 }
 
+
+//Music Queue 
+const tracks = Array.from(mediaPlaylist.querySelectorAll('li')).map(li => ({
+    name: li.textContent,
+    src: li.dataset.src
+}));
+
+//Music Player
+let audioListIndex = 0;
+const audioPlayer = Document.getElementById('audioPlayer')
+
+function loadTrack(audioListIndex) {
+    audioPlayer.src = tracks[audioListIndex].src;
+}
+
+//Player Buttons
+const prevButton = Document.getElementById('prevButton');
+const playPausButton = Document.getElementById('prevButton');
+const nextButton = Document.getElementById('prevButton');
+
+playPausButton.addEventListener(
+  "click",
+  () => {
+    // Check if context is in suspended state (autoplay policy)
+    if (audioContext.state === "suspended") {
+      audioContext.resume();
+    }
+
+    // Play or pause track depending on state
+    if (playPausButton.dataset.playing === "false") {
+      loadTrack();
+      audioPlayer.play();
+      playButton.dataset.playing = "true";
+      playButton.innerHTML = 'Pause';
+    } else if (playPausButton.dataset.playing === "true") {
+      audioPlayer.pause();
+      playButton.dataset.playing = "false";
+      playButton.innerHTML = 'Play';
+    }
+  },
+  false,
+);
+
+prevButton.addEventListener ('click', () => {
+
+})
+
+nextButton.addEventListener ('click', () => {
+
+})
+
+//Web Audio API
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+//gain node
+const audioGain = audioContext.createGain();
+//Pass audio to audioContext
+const track = audioContext.createMediaElementSource(tracks);
+//connect nodes
+track.connect(audioGainA).connect(audioContext.destination);
+
 // Playlist Tabs
 document.querySelectorAll('.playlist-tabs .tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -276,6 +336,27 @@ if (camSelect) {
   }
 })();
 
+//Video/Audio Tab
+const tabButtons = document.querySelectorAll('.tab-btn');
+const playlistItems = document.querySelectorAll(' li');
+
+tabButtons.forEach(button => {
+    button.addEventListener('click', () => {
+
+      tabButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+
+        const selectedTab = button.getAttribute('data-tab');
+
+        playlistItems.forEach(item => {
+            if (item.getAttribute('data-type') === selectedTab) {
+                item.style.display = 'list-item'; // Show
+            } else {
+                item.style.display = 'none'; // Hide
+            }
+        });
+    });
+});
 
 
 // Theme Toggle Functionality
