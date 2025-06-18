@@ -27,37 +27,138 @@ navigator.mediaDevices.getUserMedia({ video: true, audio: false })
     console.error("Error accessing webcam:", err);
   });
 
-
+// Media Uploading
 const dropZone = document.getElementById('dropZone');
 const mediaInput = document.getElementById('mediaInput');
-const mediaPlaylist = document.getElementById('mediaPlaylist');
+const selectedFilesList = document.getElementById('selectedFilesList');
+const uploadBtn = document.getElementById('uploadBtn');
+const fileLibrary = document.getElementById('fileLibrary');
+
+
+let pendingFiles = [];
 
 dropZone.addEventListener('dragover', (e) => {
-e.preventDefault();
-dropZone.classList.add('drag-over');
+  e.preventDefault();
+  dropZone.classList.add('drag-over');
 });
 
 dropZone.addEventListener('dragleave', () => {
-dropZone.classList.remove('drag-over');
+  dropZone.classList.remove('drag-over');
 });
 
 dropZone.addEventListener('drop', (e) => {
-e.preventDefault();
-dropZone.classList.remove('drag-over');
-const files = Array.from(e.dataTransfer.files);
-files.forEach(file => addToPlaylist(file));
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  const files = Array.from(e.dataTransfer.files);
+  handleFileSelection(files);
 });
 
 mediaInput.addEventListener('change', (e) => {
-const files = Array.from(e.target.files);
-files.forEach(file => addToPlaylist(file));
+  const files = Array.from(e.target.files);
+  handleFileSelection(files);
 });
 
-function addToPlaylist(file) {
-const li = document.createElement('li');
-li.textContent = file.name;
-mediaPlaylist.appendChild(li);
+function handleFileSelection(files) {
+  pendingFiles = files;
+  selectedFilesList.innerHTML = '';
+  files.forEach(file => {
+    const li = document.createElement('li');
+    li.textContent = file.name;
+    selectedFilesList.appendChild(li);
+  });
+  uploadBtn.style.display = 'inline-block';
 }
+
+uploadBtn.addEventListener('click', () => {
+  pendingFiles.forEach(file => addToFileLibrary(file));
+  selectedFilesList.innerHTML = '';
+  uploadBtn.style.display = 'none';
+  pendingFiles = [];
+});
+
+function addToFileLibrary(file) {
+  const li = document.createElement('li');
+  li.textContent = file.name;
+  li.draggable = true;
+  li.classList.add('playlist-item');
+  li.dataset.type = file.type.startsWith('video') ? 'video' : 'audio';
+  li.addEventListener('dragstart', (e) => {
+    e.dataTransfer.setData("text/plain", JSON.stringify({
+      name: file.name,
+      type: li.dataset.type
+    }));
+  });
+  fileLibrary.appendChild(li);
+}
+
+// Playlist Tabs
+document.querySelectorAll('.playlist-tabs .tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.playlist-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    document.querySelectorAll('.playlist-list').forEach(list => list.classList.remove('active'));
+    const selectedTab = btn.getAttribute('data-tab');
+    if (selectedTab === 'video') document.getElementById('videoPlaylist').classList.add('active');
+    else if (selectedTab === 'audio') document.getElementById('audioPlaylist').classList.add('active');
+    else if (selectedTab === 'files') fileLibrary.classList.add('active');
+  });
+});
+
+// Drag-drop from fileLibrary to playlist
+['videoPlaylist', 'audioPlaylist'].forEach(id => {
+  const ul = document.getElementById(id);
+  ul.addEventListener('dragover', e => e.preventDefault());
+  ul.addEventListener('drop', e => {
+    e.preventDefault();
+    const data = JSON.parse(e.dataTransfer.getData("text/plain"));
+    const li = document.createElement('li');
+    li.textContent = data.name;
+    li.classList.add('playlist-item');
+    ul.appendChild(li);
+  });
+});
+
+// Add Playlist Folder
+document.getElementById('addPlaylistBtn').addEventListener('click', () => {
+const name = prompt("Enter playlist folder name:");
+if (!name) return;
+
+// Detect active playlist tab
+const activeTab = document.querySelector('.playlist-tabs .tab-btn.active');
+if (!activeTab) return;
+
+const tab = activeTab.getAttribute('data-tab');
+const targetList = document.getElementById(tab + 'Playlist');
+
+// Create collapsible playlist folder
+const folder = document.createElement('li');
+folder.classList.add('playlist-folder');
+
+const header = document.createElement('div');
+header.classList.add('folder-header');
+header.textContent = name;
+header.addEventListener('click', () => {
+  nestedList.classList.toggle('collapsed');
+});
+
+const nestedList = document.createElement('ul');
+nestedList.classList.add('nested-playlist');
+nestedList.addEventListener('dragover', e => e.preventDefault());
+nestedList.addEventListener('drop', e => {
+  e.preventDefault();
+  const data = JSON.parse(e.dataTransfer.getData("text/plain"));
+  const li = document.createElement('li');
+  li.textContent = data.name;
+  li.classList.add('playlist-item');
+  nestedList.appendChild(li);
+});
+
+folder.appendChild(header);
+folder.appendChild(nestedList);
+targetList.appendChild(folder);
+});
+
 
 // cameras
 const cam = [
