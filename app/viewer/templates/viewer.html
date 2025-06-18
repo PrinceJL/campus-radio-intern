@@ -7,20 +7,10 @@
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
 <body>
-    <h1>Campus Radio - Live Stream</h1>
     <div id="video-container">
         <video id="radio-stream" autoplay playsinline controls></video>
         <img id="brb-standby" src="{{ url_for('viewer.static', filename='asset/brb.jpg') }}" alt="BRB Standby" style="display:none;">
     </div>
-    <button id="fullscreen-btn" class="viewer-icon-btn" title="Full Screen">
-        <img src="{{ url_for('viewer.static', filename='asset/fullscreen.svg') }}" alt="Full Screen" />
-    </button>
-    <button id="captions-btn" class="viewer-icon-btn" title="Captions">
-        <img src="{{ url_for('viewer.static', filename='asset/subtitles.svg') }}" alt="Captions" />
-    </button>
-    <button id="settings-btn" class="viewer-icon-btn" title="Settings">
-        <img src="{{ url_for('viewer.static', filename='asset/settings.svg') }}" alt="Settings" />
-    </button>
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script src="{{ url_for('viewer.static', filename='js/viewer-script.js') }}"></script>
 </body>

@@ -18,6 +18,7 @@ const statusDiv = document.getElementById('broadcast-status');
 const webcamSelect = document.getElementById('webcamSelect');
 const socket = io();
 let peerConnections = {};
+const pendingCandidates = {};
 
 console.log("🔌 Socket.IO initialized.");
 
@@ -71,10 +72,11 @@ async function populateCameraPreviews() {
 previewBoxes.forEach(box => {
     box.onclick = async function () {
         selectedDeviceId = box.dataset.deviceId;
-        console.log("🎯 Camera selected:", selectedDeviceId);
+        console.log("Camera selected:", selectedDeviceId);
         if (mainStream) {
+            console.log("Tracks in mainStream:", mainStream.getTracks().map(t => t.kind));
             mainStream.getTracks().forEach(track => track.stop());
-            console.log("🛑 Previous stream tracks stopped.");
+            console.log("Previous stream tracks stopped.");
         }
         mainStream = await navigator.mediaDevices.getUserMedia({
             video: { deviceId: { exact: selectedDeviceId } },
@@ -82,7 +84,7 @@ previewBoxes.forEach(box => {
         });
         mainPreview.srcObject = mainStream;
         statusDiv.textContent = "Selected camera for streaming.";
-        console.log("✅ Main stream set and preview updated.");
+        console.log("Main stream set and preview updated.");
     };
 });
 
@@ -93,7 +95,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         previewBoxes[0].click();
     }
     statusDiv.textContent = "Select a camera to preview and stream.";
-    console.log("📦 Page loaded and previews populated.");
+    console.log("Page loaded and previews populated.");
 });
 
 // 6. Start streaming
@@ -101,51 +103,88 @@ startBtn.onclick = function () {
     if (!mainStream) {
         statusDiv.textContent = "No camera selected for streaming!";
         alert('No camera selected for streaming!');
-        console.warn("⚠️ Start failed: No camera selected.");
+        console.warn("Start failed: No camera selected.");
         return;
     }
     socket.emit('broadcaster');
-    console.log("📡 Broadcasting started. Sent: broadcaster");
+    console.log("Broadcasting started. Sent: broadcaster");
     statusDiv.textContent = "Broadcasting...";
 };
 
 // 7. WebRTC signaling
 socket.on('watcher', async id => {
-    console.log(`👁️ Watcher connected: ${id}`);
+    console.log(`Watcher connected: ${id}`);
+    if (!mainStream) {
+        console.warn("No stream ready when watcher connected.");
+        return;
+    }
+
     const peerConnection = new RTCPeerConnection({
         iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
     });
 
     peerConnections[id] = peerConnection;
+
     mainStream.getTracks().forEach(track => {
         peerConnection.addTrack(track, mainStream);
-        console.log("🎤 Track added to peer connection:", track.kind);
+        console.log("Track added to peer connection:", track.kind);
     });
-
-    const offer = await peerConnection.createOffer();
-    await peerConnection.setLocalDescription(offer);
-    socket.emit('offer', id, peerConnection.localDescription);
-    console.log(`📤 Sent offer to ${id}`);
 
     peerConnection.onicecandidate = event => {
         if (event.candidate) {
             socket.emit('candidate', id, event.candidate);
-            console.log(`❄️ Sent ICE candidate to ${id}`);
+            console.log(`Sent ICE candidate to ${id}`);
         }
     };
+
+    peerConnection.oniceconnectionstatechange = () => {
+        console.log(`ICE state (${id}):`, peerConnection.iceConnectionState);
+    };
+
+    (async () => {
+    try {
+        const offer = await peerConnection.createOffer();
+        await peerConnection.setLocalDescription(offer);
+        socket.emit('offer', id, peerConnection.localDescription);
+        console.log(`Sent offer to ${id}`);
+    } catch (err) {
+        console.error("Negotiation error:", err);
+    }
+})();
 });
 
 socket.on('answer', (id, description) => {
-    if (peerConnections[id]) {
-        peerConnections[id].setRemoteDescription(description);
-        console.log(`📥 Received answer from ${id}`);
+    const rtc = peerConnections[id];
+    if (rtc) {
+        rtc.setRemoteDescription(description).then(() => {
+            if (pendingCandidates[id]) {
+                pendingCandidates[id].forEach(c =>
+                    rtc.addIceCandidate(new RTCIceCandidate(c))
+                );
+                delete pendingCandidates[id];
+            }
+        });
+        console.log(`Received answer from ${id}`);
+    }
+});
+socket.on('connect', () => {
+    console.log('[Broadcaster] Connected to signaling server again');
+    if (mainStream && mainStream.getTracks().length > 0) {
+        socket.emit('broadcaster');
+        console.log("Re-announced broadcaster after reconnect.");
+    } else {
+        console.log("Skipped broadcaster emit — stream not ready.");
     }
 });
 
 socket.on('candidate', (id, candidate) => {
-    if (peerConnections[id]) {
-        peerConnections[id].addIceCandidate(new RTCIceCandidate(candidate));
-        console.log(`📥 Added ICE candidate from ${id}`);
+    const rtc = peerConnections[id];
+    if (rtc && rtc.remoteDescription) {
+        rtc.addIceCandidate(new RTCIceCandidate(candidate));
+        console.log(`Added ICE candidate from ${id}`);
+    } else {
+        if (!pendingCandidates[id]) pendingCandidates[id] = [];
+        pendingCandidates[id].push(candidate);
     }
 });
 
@@ -153,7 +192,7 @@ socket.on('disconnectPeer', id => {
     if (peerConnections[id]) {
         peerConnections[id].close();
         delete peerConnections[id];
-        console.log(`❌ Peer ${id} disconnected and connection closed.`);
+        console.log(`Peer ${id} disconnected and connection closed.`);
     }
 });
 
@@ -163,11 +202,11 @@ stopBtn.onclick = function () {
     peerConnections = {};
     statusDiv.textContent = "Stream stopped.";
     socket.emit('stop-broadcast');
-    console.log("🛑 Streaming stopped. Sent: stop-broadcast");
+    console.log("Streaming stopped. Sent: stop-broadcast");
 };
 
 window.onunload = window.onbeforeunload = () => {
     socket.close();
     Object.values(peerConnections).forEach(pc => pc.close());
-    console.log("🧹 Cleaned up peer connections on unload.");
+    console.log("Cleaned up peer connections on unload.");
 };

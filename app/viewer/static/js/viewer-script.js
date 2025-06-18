@@ -19,9 +19,11 @@ showBRB(true);
 
 // Socket connection opened
 socket.on('connect', () => {
-    console.log('[Viewer] Connected to signaling server:', socket.id);
-    console.log('[Viewer] Emitting "watcher" to request stream');
-    socket.emit('watcher');
+    console.log('[Viewer] Connected to signaling server');
+    setTimeout(() => {
+        console.log('[Viewer] Emitting "watcher" after reconnect');
+        socket.emit('watcher');
+    }, 500);
 });
 
 // Received WebRTC offer from broadcaster
