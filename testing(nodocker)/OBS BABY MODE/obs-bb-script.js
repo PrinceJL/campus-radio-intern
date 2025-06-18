@@ -1,4 +1,4 @@
-//adding of videos (direct to stream not to playlist *augment it later*)
+//adding of videos (direct to stream not to playlist *augment it later*)More actions
 navigator.mediaDevices.enumerateDevices().then(devices => {
 const webcamSelect = document.getElementById('webcamSelect');
 const micSelect = document.getElementById('micSelect');
@@ -27,13 +27,13 @@ navigator.mediaDevices.getUserMedia({ video: true, audio: false })
     console.error("Error accessing webcam:", err);
   });
 
+
 // Media Uploading
 const dropZone = document.getElementById('dropZone');
 const mediaInput = document.getElementById('mediaInput');
 const selectedFilesList = document.getElementById('selectedFilesList');
 const uploadBtn = document.getElementById('uploadBtn');
 const fileLibrary = document.getElementById('fileLibrary');
-
 
 let pendingFiles = [];
 
@@ -65,8 +65,6 @@ function handleFileSelection(files) {
     const li = document.createElement('li');
     li.textContent = file.name;
     selectedFilesList.appendChild(li);
-    const fileURL = URL.createObjectURL(file);
-    li.dataset.src = fileURL;
   });
   uploadBtn.style.display = 'inline-block';
 }
@@ -87,72 +85,11 @@ function addToFileLibrary(file) {
   li.addEventListener('dragstart', (e) => {
     e.dataTransfer.setData("text/plain", JSON.stringify({
       name: file.name,
-      type: li.dataset.type,
-      source: li.dataset.src
+      type: li.dataset.type
     }));
   });
   fileLibrary.appendChild(li);
 }
-
-
-//Music Queue 
-const tracks = Array.from(mediaPlaylist.querySelectorAll('li')).map(li => ({
-    name: li.textContent,
-    src: li.dataset.src
-}));
-
-//Music Player
-let audioListIndex = 0;
-const audioPlayer = Document.getElementById('audioPlayer')
-
-function loadTrack(audioListIndex) {
-    audioPlayer.src = tracks[audioListIndex].src;
-}
-
-//Player Buttons
-const prevButton = Document.getElementById('prevButton');
-const playPausButton = Document.getElementById('prevButton');
-const nextButton = Document.getElementById('prevButton');
-
-playPausButton.addEventListener(
-  "click",
-  () => {
-    // Check if context is in suspended state (autoplay policy)
-    if (audioContext.state === "suspended") {
-      audioContext.resume();
-    }
-
-    // Play or pause track depending on state
-    if (playPausButton.dataset.playing === "false") {
-      loadTrack();
-      audioPlayer.play();
-      playButton.dataset.playing = "true";
-      playButton.innerHTML = 'Pause';
-    } else if (playPausButton.dataset.playing === "true") {
-      audioPlayer.pause();
-      playButton.dataset.playing = "false";
-      playButton.innerHTML = 'Play';
-    }
-  },
-  false,
-);
-
-prevButton.addEventListener ('click', () => {
-
-})
-
-nextButton.addEventListener ('click', () => {
-
-})
-
-//Web Audio API
-const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-//gain node
-const audioGain = audioContext.createGain();
-//Pass audio to audioContext
-const track = audioContext.createMediaElementSource(tracks);
-//connect nodes
-track.connect(audioGainA).connect(audioContext.destination);
 
 // Playlist Tabs
 document.querySelectorAll('.playlist-tabs .tab-btn').forEach(btn => {
@@ -298,7 +235,7 @@ function setupClickHandlers() {
       // Set selected video element
       activeVideoEl = videoEl;
 
-      
+
     });
   });
 }
@@ -336,33 +273,12 @@ if (camSelect) {
   }
 })();
 
-//Video/Audio Tab
-const tabButtons = document.querySelectorAll('.tab-btn');
-const playlistItems = document.querySelectorAll(' li');
-
-tabButtons.forEach(button => {
-    button.addEventListener('click', () => {
-
-      tabButtons.forEach(btn => btn.classList.remove('active'));
-        button.classList.add('active');
-
-        const selectedTab = button.getAttribute('data-tab');
-
-        playlistItems.forEach(item => {
-            if (item.getAttribute('data-type') === selectedTab) {
-                item.style.display = 'list-item'; // Show
-            } else {
-                item.style.display = 'none'; // Hide
-            }
-        });
-    });
-});
 
 
 // Theme Toggle Functionality
 document.addEventListener('DOMContentLoaded', function() {
   const themeToggle = document.getElementById('themeToggle');
-  
+
   // Check for saved theme preference
   const savedTheme = localStorage.getItem('theme');
   if (savedTheme === 'light') {
@@ -373,7 +289,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Theme toggle click handler
   themeToggle.addEventListener('click', function() {
       document.body.classList.toggle('light-mode');
-      
+
       // Save theme preference
       if (document.body.classList.contains('light-mode')) {
           localStorage.setItem('theme', 'light');
@@ -384,5 +300,3 @@ document.addEventListener('DOMContentLoaded', function() {
       }
   });
 });
-
-
