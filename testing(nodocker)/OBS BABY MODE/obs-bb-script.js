@@ -34,6 +34,9 @@ const mediaInput = document.getElementById('mediaInput');
 const selectedFilesList = document.getElementById('selectedFilesList');
 const uploadBtn = document.getElementById('uploadBtn');
 const fileLibrary = document.getElementById('fileLibrary');
+const videoPlaylist = document.getElementById('videoPlaylist');
+const audioPlaylist = document.getElementById('audioPlaylist');
+
 
 let pendingFiles = [];
 
@@ -64,6 +67,7 @@ function handleFileSelection(files) {
   files.forEach(file => {
     const li = document.createElement('li');
     li.textContent = file.name;
+    
     selectedFilesList.appendChild(li);
   });
   uploadBtn.style.display = 'inline-block';
@@ -78,6 +82,9 @@ uploadBtn.addEventListener('click', () => {
 
 function addToFileLibrary(file) {
   const li = document.createElement('li');
+  const displayList = Array.from(fileLibrary.children).map (file => file.textContent);
+  const fileURL = URL.createObjectURL(file);
+  li.dataset.src = fileURL;
   li.textContent = file.name;
   li.draggable = true;
   li.classList.add('playlist-item');
@@ -85,10 +92,17 @@ function addToFileLibrary(file) {
   li.addEventListener('dragstart', (e) => {
     e.dataTransfer.setData("text/plain", JSON.stringify({
       name: file.name,
-      type: li.dataset.type
+      type: li.dataset.type,
+      source: li.dataset.src
     }));
   });
-  fileLibrary.appendChild(li);
+  if (li.dataset.type === 'video'){
+    videoPlaylist.appendChild(li);
+  } else audioPlaylist.appendChild(li);
+  
+  //checking
+  console.log(displayList)
+  console.log(li.dataset.src)
 }
 
 // Playlist Tabs
