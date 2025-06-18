@@ -8,10 +8,11 @@
 </head>
 <body>
     <div id="video-container">
-        <video id="radio-stream" autoplay playsinline controls></video>
+        <video id="radio-stream" autoplay playsinline controls muted></video>   
         <img id="brb-standby" src="{{ url_for('viewer.static', filename='asset/brb.jpg') }}" alt="BRB Standby" style="display:none;">
     </div>
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script src="{{ url_for('viewer.static', filename='js/viewer-script.js') }}"></script>
+
 </body>
 </html>
