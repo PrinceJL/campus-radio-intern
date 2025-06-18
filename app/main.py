@@ -25,4 +25,4 @@ if __name__ == "__main__":
     app = create_app()
     socketio = SocketIO(app, async_mode="threading", cors_allowed_origins="*")    
     register_webrtc_events(socketio)
-    socketio.run(app, host="0.0.0.0", port=8080, allow_unsafe_werkzeug=True)
+    socketio.run(app, host="0.0.0.0", port=8080, allow_unsafe_werkzeug=True)    
