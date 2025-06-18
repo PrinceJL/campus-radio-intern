@@ -65,6 +65,8 @@ function handleFileSelection(files) {
     const li = document.createElement('li');
     li.textContent = file.name;
     selectedFilesList.appendChild(li);
+    const fileURL = URL.createObjectURL(file);
+    li.dataset.src = fileURL;
   });
   uploadBtn.style.display = 'inline-block';
 }
@@ -85,7 +87,8 @@ function addToFileLibrary(file) {
   li.addEventListener('dragstart', (e) => {
     e.dataTransfer.setData("text/plain", JSON.stringify({
       name: file.name,
-      type: li.dataset.type
+      type: li.dataset.type,
+      source: li.dataset.src
     }));
   });
   fileLibrary.appendChild(li);
