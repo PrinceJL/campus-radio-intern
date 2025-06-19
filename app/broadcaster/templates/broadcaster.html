@@ -35,11 +35,11 @@
           <div class="scene-section" id="scenePreviews">
             <div class="scene-preview">
               <h3>Scene 1</h3>
-                <div class="preview-box"></div>
+              <div class="preview-box"></div>
             </div>
             <div class="scene-preview">
               <h3>Scene 2</h3>
-                <div class="preview-box"></div>
+              <div class="preview-box"></div>
             </div>
           </div>
         </div>
@@ -68,9 +68,7 @@
         <div class="split-layout">
           <!-- Left column - Preview and controls -->
           <div class="left-column">
-            <div id="mainPreview" class="main-preview">
-              STREAM PREVIEW AREA
-            </div>
+            <video id="mainPreview" class="main-preview" autoplay playsinline></video>
 
             <div class="controls">
               <button id="startStream">START STREAM</button>
@@ -80,38 +78,39 @@
 
             <div class="audio-mixer">
               <h3>AUDIO MIX</h3>
-              <div id="audioLevels">Microphone Level </div>
+              <div id="audioLevels">Microphone Level</div>
             </div>
           </div>
 
-        <!-- Right column - Playlist -->
+          <!-- Right column - Playlist -->
           <div class="right-column">
             <div class="playlist-container">
               <h3>Playlist</h3>
-        
-            <div class="playlist-tabs">
-              <button class="tab-btn active" data-tab="video">Video</button>
-              <button class="tab-btn" data-tab="audio">Audio</button>
-            </div>
-        
-            <div class="playlist-content">
-              <ul id="videoPlaylist" class="playlist-list active"></ul>
-              <ul id="audioPlaylist" class="playlist-list"></ul>
-            </div>
+              <div class="playlist-tabs">
+                <button class="tab-btn active" data-tab="video">Video</button>
+                <button class="tab-btn" data-tab="audio">Audio</button>
+              </div>
+              <div class="playlist-content">
+                <ul id="videoPlaylist" class="playlist-list active"></ul>
+                <ul id="audioPlaylist" class="playlist-list"></ul>
+              </div>
             </div>
 
-        <div class="media-upload">
-          <h3>Upload Media</h3>
-          <div id="dropZone">Drag and drop video/music files here</div>
-          <input type="file" id="mediaInput" accept="video/*,audio/*" multiple hidden>
-          <button class="browse-btn" onclick="document.getElementById('mediaInput').click()">Browse Files</button>
-          <ul id="mediaPlaylist"></ul>
+            <div class="media-upload">
+              <h3>Upload Media</h3>
+              <div id="dropZone">Drag and drop video/music files here</div>
+              <input type="file" id="mediaInput" accept="video/*,audio/*" multiple hidden>
+              <button class="browse-btn" onclick="document.getElementById('mediaInput').click()">Browse Files</button>
+              <ul id="mediaPlaylist"></ul>
+            </div>
+          </div>
         </div>
       </main>
     </div>
   </div>
   <div id="broadcast-status" style="text-align:center; margin:1em; color:#2d72d9;"></div>
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="{{ url_for('broadcaster.static', filename='js/devices.js') }}"></script>
   <script src="{{ url_for('broadcaster.static', filename='js/broadcaster.js') }}"></script>
 </body>
 </html>
