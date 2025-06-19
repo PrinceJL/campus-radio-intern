@@ -1,19 +1,31 @@
-// Add Scene
-function addScene() {
-  const scenesList = document.getElementById("scenes-list");
-  const sceneCount = scenesList.children.length;
-  const newScene = document.createElement("li");
-  newScene.className = "scene-item";
-  newScene.textContent = `Scene ${sceneCount + 1}`;
-  scenesList.appendChild(newScene);
-}
+// Basic JavaScript for interactivity
+document.querySelector('.start-btn').addEventListener('click', () => {
+    alert('Stream started!');
+    document.querySelector('.start-btn').disabled = true;
+    document.querySelector('.pause-btn').disabled = false;
+    document.querySelector('.stop-btn').disabled = false;
+});
 
-// Add Source
-function addSource() {
-  const sourcesList = document.getElementById("sources-list");
-  const sourceCount = sourcesList.children.length;
-  const newSource = document.createElement("li");
-  newSource.className = "source-item";
-  newSource.innerHTML = `<input type="checkbox" checked /> Source ${sourceCount + 1}`;
-  sourcesList.appendChild(newSource);
-}
+document.querySelector('.stop-btn').addEventListener('click', () => {
+    alert('Stream stopped!');
+    document.querySelector('.start-btn').disabled = false;
+    document.querySelector('.pause-btn').disabled = true;
+    document.querySelector('.stop-btn').disabled = true;
+});
+
+document.querySelector('.pause-btn').addEventListener('click', () => {
+    alert('Stream paused!');
+    document.querySelector('.pause-btn').textContent = 'Resume Stream';
+});
+
+// Progress bar animation
+const progress = document.querySelector('.progress');
+let width = 0;
+const interval = setInterval(() => {
+    if (width >= 100) {
+        clearInterval(interval);
+    } else {
+        width++;
+        progress.style.width = `${width}%`;
+    }
+}, 200);
