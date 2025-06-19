@@ -25,9 +25,9 @@
           <div class="preview-section active" id="cameraPreviews">
             <div class="camera-previews">
               <video class="preview-box" id="cam1" autoplay muted playsinline></video>
-              <video class="preview-box" autoplay muted playsinline></video>
-              <video class="preview-box" autoplay muted playsinline></video>
-              <video class="preview-box" autoplay muted playsinline></video>
+              <video class="preview-box" id="cam2" autoplay muted playsinline></video>
+              <video class="preview-box" id="cam3" autoplay muted playsinline></video>
+              <video class="preview-box" id="cam4" autoplay muted playsinline></video>
             </div>
           </div>
 
@@ -68,7 +68,10 @@
         <div class="split-layout">
           <!-- Left column - Preview and controls -->
           <div class="left-column">
-            <video id="mainPreview" class="main-preview" autoplay playsinline></video>
+            <div id="mainPreview" class="main-preview">
+              <video class="preview-box" id="mainStream" autoplay muted playsinline></video>
+              STREAM PREVIEW AREA
+            </div>
 
             <div class="controls">
               <button id="startStream">START STREAM</button>
@@ -82,35 +85,47 @@
             </div>
           </div>
 
-          <!-- Right column - Playlist -->
-          <div class="right-column">
-            <div class="playlist-container">
+        <!-- Right column - Playlist -->
+        <div class="right-column">
+          <!-- Files Panel -->
+          <div class="playlist-container files-panel">
+            <h3>Files</h3>
+            <div class="playlist-tabs">
+              <button class="tab-btn active" data-tab="video">Video</button>
+              <button class="tab-btn" data-tab="audio">Audio</button>
+            </div>
+            <ul id = 'fileLibrary'> </ul>
+            <ul id="videoPlaylist" class="playlist-list "></ul>
+            <ul id="audioPlaylist" class="playlist-list"></ul>
+          </div>
+
+          <!-- Playlist Panel -->
+          <div class="playlist-container playlist-panel">
+            <div class="playlist-header">
               <h3>Playlist</h3>
-              <div class="playlist-tabs">
-                <button class="tab-btn active" data-tab="video">Video</button>
-                <button class="tab-btn" data-tab="audio">Audio</button>
-              </div>
-              <div class="playlist-content">
-                <ul id="videoPlaylist" class="playlist-list active"></ul>
-                <ul id="audioPlaylist" class="playlist-list"></ul>
-              </div>
+              <button class="browse-btn" id="addPlaylistBtn">+ Add Playlist</button>
             </div>
 
-            <div class="media-upload">
-              <h3>Upload Media</h3>
-              <div id="dropZone">Drag and drop video/music files here</div>
-              <input type="file" id="mediaInput" accept="video/*,audio/*" multiple hidden>
-              <button class="browse-btn" onclick="document.getElementById('mediaInput').click()">Browse Files</button>
-              <ul id="mediaPlaylist"></ul>
+            <div class="playlist-content">
+              
             </div>
           </div>
-        </div>
+
+            <!-- Media Upload Area -->
+            <div class="media-upload">
+              <h3>Upload Media</h3>
+                <div id="dropZone">Drag and drop video/music files here</div>
+                  <input type="file" id="mediaInput" accept="video/*,audio/*" multiple hidden>
+                  <button class="browse-btn" onclick="document.getElementById('mediaInput').click()">Browse Files</button>
+                  <ul id="selectedFilesList"></ul>
+                <button class="browse-btn" id="uploadBtn" style="display: none;">Upload</button>
+            </div>
+          </div>
       </main>
     </div>
   </div>
-  <div id="broadcast-status" style="text-align:center; margin:1em; color:#2d72d9;"></div>
-  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
-  <script src="{{ url_for('broadcaster.static', filename='js/devices.js') }}"></script>
-  <script src="{{ url_for('broadcaster.static', filename='js/broadcaster.js') }}"></script>
+<div id="broadcast-status" style="text-align:center; margin:1em; color:#2d72d9;"></div>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="{{ url_for('broadcaster.static', filename='js/broadcaster.js') }}"></script>
 </body>
 </html>

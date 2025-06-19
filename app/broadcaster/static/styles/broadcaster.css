@@ -54,6 +54,7 @@ body {
 
 .preview-section{
     margin-left: 20px;
+    margin-left: 50px;
 }
 
 .camera-previews {
@@ -99,6 +100,7 @@ body {
     border-radius: 8px;
     margin-top: 1rem;
 }
+
 .device-setup label,
 .device-setup select,
 .device-setup button {
@@ -156,8 +158,8 @@ select:focus {
 .main-preview {
     border: 2px solid #444;
     border-radius: 12px;
-    height: 400px;
-    width: 70%;
+    height: 450px;
+    width: 85%;
     margin: 1rem 0;
     display: flex;
     align-items: center;
@@ -170,18 +172,23 @@ select:focus {
 /* Splitting Layout */
 .split-layout {
   display: flex;
-  gap: 1rem;
+  gap: 0.1rem;
 }
 
 .left-column {
-  flex: 0 0 60%;
+  flex: 0 0 50%;
 }
 
 .right-column {
-  flex: 0 0 35%;
+  flex: 0 0 45%;
 }
 
 /* Playlist Panel */
+.files-panel,
+.playlist-panel {
+  flex: 1;
+}
+
 .playlist-container {
   background: #1a1a1a;
   border-radius: 8px;
@@ -214,10 +221,13 @@ select:focus {
   margin-top: 1rem;
 }
 
+/* Scroll support for long file/playlist lists */
 .playlist-list {
   list-style: none;
   padding: 0;
   display: none;
+  max-height: 200px;
+  overflow-y: auto;
 }
 
 .playlist-list.active {
@@ -232,6 +242,7 @@ select:focus {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  cursor: grab;
 }
 
 .playlist-item button {
@@ -242,8 +253,57 @@ select:focus {
   margin-left: 5px;
 }
 
+.playlist-item:active {
+  cursor: grabbing;
+}
+
 .playlist-item button:hover {
   color: #03a9f4;
+}
+
+/* Folder structure inside playlists */
+.playlist-folder {
+  border: 1px solid #666;
+  border-radius: 5px;
+  margin-bottom: 8px;
+  background: #222;
+}
+
+.folder-header {
+  padding: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: #333;
+  border-bottom: 1px solid #444;
+}
+
+.nested-playlist {
+  list-style: none;
+  padding-left: 1rem;
+  margin: 0;
+}
+
+.nested-playlist.collapsed {
+  display: none;
+}
+
+/* Light mode support */
+body.light-mode .playlist-folder {
+  background: #f9f9f9;
+  border-color: #ccc;
+}
+
+body.light-mode .folder-header {
+  background: #eee;
+  border-bottom-color: #ccc;
+}
+
+/* Style for upload section list */
+#selectedFilesList {
+  list-style: none;
+  padding: 0;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 /* Start, Stop Stream and Add Scene */
