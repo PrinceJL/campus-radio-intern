@@ -1,4 +1,4 @@
-//adding of videos (direct to stream not to playlist *augment it later*)More actions
+//adding of videos (direct to stream not to playlist *augment it later*)
 navigator.mediaDevices.enumerateDevices().then(devices => {
 const webcamSelect = document.getElementById('webcamSelect');
 const micSelect = document.getElementById('micSelect');
