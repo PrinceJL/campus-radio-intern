@@ -307,7 +307,7 @@ const playPauseButton = document.getElementById('playPauseButton');
 const prevButton = document.getElementById('prevButton');
 const nextButton = document.getElementById('nextButton');
 
-document.getElementById('playPauseButton').addEventListener('click', () =>{
+playPauseButton.addEventListener('click', () =>{
       musicLoader();
     if (audioCtx.state === "suspended") {
       audioCtx.resume();
@@ -316,34 +316,28 @@ document.getElementById('playPauseButton').addEventListener('click', () =>{
     if (playPauseButton.dataset.playing === "false") {
       playPauseButton.dataset.playing = "true";
       playPauseButton.innerHTML = 'Pause';
-      audioPlayer.load();
       audioPlayer.play();
     } else if (playPauseButton.dataset.playing === "true") {
       playPauseButton.dataset.playing = "false";
       playPauseButton.innerHTML = 'Play';
-      audioPlayer.load();
       audioPlayer.pause();
     }
   },
   false,
   )
-
+prevButton
 function debugging(){
-  console.log("Music queue:", musicQueue[0]);
+  console.log("Music queue:", musicQueue[1]);
 }
 
-let musicQueueIndex = 0;
+let musicQueueIndex = 1;
 
 function musicLoader(){
   const currentSong = musicQueue[musicQueueIndex];
   const nextSong = musicQueue[musicQueueIndex + 1];
 
-  
   audioPlayer.src = currentSong.src;
-  audioPlayer.play;
-
-
-  console.log ('currentsource', audioPlayer.src);
+  console.log ('currentsource:', audioPlayer.src);
   console.log('currentSong:', currentSong);
   console.log('musicQueueIndex:', musicQueueIndex);
 }
