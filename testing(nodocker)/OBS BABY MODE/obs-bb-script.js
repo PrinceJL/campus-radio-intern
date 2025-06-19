@@ -82,7 +82,6 @@ uploadBtn.addEventListener('click', () => {
 
 function addToFileLibrary(file) {
   const li = document.createElement('li');
-  const displayList = Array.from(fileLibrary.children).map (file => file.textContent);
   const fileURL = URL.createObjectURL(file);
   li.dataset.src = fileURL;
   li.textContent = file.name;
@@ -101,8 +100,8 @@ function addToFileLibrary(file) {
   } else audioPlaylist.appendChild(li);
   
   //checking
-  console.log(displayList)
-  console.log(li.dataset.src)
+  // const listContents = Array.from(audioPlaylist.querySelectorAll('li')).map(item => item.textContent);
+  // console.log('List Contents:', listContents);
 }
 
 // Playlist Tabs
@@ -286,6 +285,40 @@ if (camSelect) {
     await startCamera(cam[0], cameraDevices[0].deviceId);
   }
 })();
+
+//Audio player
+const audioPlayer = document.getElementById('audioPlayer');
+const audioCtx = new (window.AudioContext ||window.webkitURL);
+const player = audioCtx.createMediaElementSource(audioPlayer);
+player.connect(audioCtx.destination);
+
+//Music queue
+const musicQueue = Array.from(audioPlaylist.querySelectorAll('li')).map(item => ({
+  name: item.textContent,
+  src: item.dataset.src
+}));
+
+document.getElementById('playPauseButton').addEventListener('click', () =>{
+    musicLoader();
+})
+
+
+const musicQueueIndex = 0;
+
+function musicLoader(){
+  const currentSong = musicQueue[musicQueueIndex];
+  audioPlayer.src = currentSong.src;
+  audioPlayer.play();
+  console.log('musicQueue:', musicQueue);
+  console.log('musicQueueIndex:', musicQueueIndex);
+}
+
+function crossFade(){
+}
+
+
+
+
 
 
 
