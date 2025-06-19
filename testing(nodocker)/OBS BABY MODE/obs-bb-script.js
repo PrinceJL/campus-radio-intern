@@ -99,9 +99,11 @@ function addToFileLibrary(file) {
     videoPlaylist.appendChild(li);
   } else audioPlaylist.appendChild(li);
   
-  //checking
-  // const listContents = Array.from(audioPlaylist.querySelectorAll('li')).map(item => item.textContent);
-  // console.log('List Contents:', listContents);
+  addToMusicQ();
+  //DEBUGGING
+  console.log(li.dataset.src);
+  const listContents = Array.from(audioPlaylist.querySelectorAll('li')).map(item => item.dataset.src);
+  console.log('List Contents:', listContents);
 }
 
 // Playlist Tabs
@@ -293,33 +295,61 @@ const player = audioCtx.createMediaElementSource(audioPlayer);
 player.connect(audioCtx.destination);
 
 //Music queue
-const musicQueue = Array.from(audioPlaylist.querySelectorAll('li')).map(item => ({
+let musicQueue = [];
+function addToMusicQ(){
+  musicQueue = Array.from(audioPlaylist.querySelectorAll('li')).map(item => ({
   name: item.textContent,
   src: item.dataset.src
 }));
+}
+//Buttons
+const playPauseButton = document.getElementById('playPauseButton');
+const prevButton = document.getElementById('prevButton');
+const nextButton = document.getElementById('nextButton');
 
 document.getElementById('playPauseButton').addEventListener('click', () =>{
-    musicLoader();
-})
+      musicLoader();
+    if (audioCtx.state === "suspended") {
+      audioCtx.resume();
+    }
+    // Play or pause track depending on state
+    if (playPauseButton.dataset.playing === "false") {
+      playPauseButton.dataset.playing = "true";
+      playPauseButton.innerHTML = 'Pause';
+      audioPlayer.load();
+      audioPlayer.play();
+    } else if (playPauseButton.dataset.playing === "true") {
+      playPauseButton.dataset.playing = "false";
+      playPauseButton.innerHTML = 'Play';
+      audioPlayer.load();
+      audioPlayer.pause();
+    }
+  },
+  false,
+  )
 
+function debugging(){
+  console.log("Music queue:", musicQueue[0]);
+}
 
-const musicQueueIndex = 0;
+let musicQueueIndex = 0;
 
 function musicLoader(){
   const currentSong = musicQueue[musicQueueIndex];
+  const nextSong = musicQueue[musicQueueIndex + 1];
+
+  
   audioPlayer.src = currentSong.src;
-  audioPlayer.play();
-  console.log('musicQueue:', musicQueue);
+  audioPlayer.play;
+
+
+  console.log ('currentsource', audioPlayer.src);
+  console.log('currentSong:', currentSong);
   console.log('musicQueueIndex:', musicQueueIndex);
 }
 
 function crossFade(){
 }
-
-
-
-
-
 
 
 // Theme Toggle Functionality
