@@ -1,4 +1,4 @@
-<!DOCTYPE html>More actions
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -92,10 +92,20 @@
             <div class="playlist-tabs">
               <button class="tab-btn active" data-tab="video">Video</button>
               <button class="tab-btn" data-tab="audio">Audio</button>
+              <button class="browse-btn" onclick="document.getElementById('mediaInput').click()">Browse Files</button>
             </div>
             <ul id = 'fileLibrary'> </ul>
             <ul id="videoPlaylist" class="playlist-list "></ul>
             <ul id="audioPlaylist" class="playlist-list"></ul>
+
+            <!-- Media Upload Area -->
+            <div class="media-upload">
+                <div id="dropZone"></div>
+                  <input type="file" id="mediaInput" accept="video/*,audio/*" multiple hidden>
+                  <ul id="selectedFilesList"></ul>
+                <button class="browse-btn" id="uploadBtn" style="display: none;">Upload</button>
+            </div>
+
           </div>
 
           <!-- Playlist Panel -->
@@ -109,17 +119,7 @@
               
             </div>
           </div>
-
-            <!-- Media Upload Area -->
-            <div class="media-upload">
-              <h3>Upload Media</h3>
-                <div id="dropZone">Drag and drop video/music files here</div>
-                  <input type="file" id="mediaInput" accept="video/*,audio/*" multiple hidden>
-                  <button class="browse-btn" onclick="document.getElementById('mediaInput').click()">Browse Files</button>
-                  <ul id="selectedFilesList"></ul>
-                <button class="browse-btn" id="uploadBtn" style="display: none;">Upload</button>
-            </div>
-          </div>
+        </div>
       </main>
     </div>
   </div>

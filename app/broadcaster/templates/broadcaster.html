@@ -20,8 +20,8 @@
           <button class="tab-btn" data-tab="scenes">Scenes</button>
         </div>
 
+        <!-- Camera Previews -->
         <div>
-          <!-- Camera Previews -->
           <div class="preview-section active" id="cameraPreviews">
             <div class="camera-previews">
               <video class="preview-box" id="cam1" autoplay muted playsinline></video>
@@ -35,11 +35,11 @@
           <div class="scene-section" id="scenePreviews">
             <div class="scene-preview">
               <h3>Scene 1</h3>
-              <div class="preview-box"></div>
+                <div class="preview-box"></div>
             </div>
             <div class="scene-preview">
               <h3>Scene 2</h3>
-              <div class="preview-box"></div>
+                <div class="preview-box"></div>
             </div>
           </div>
         </div>
@@ -52,7 +52,7 @@
           <label for="micSelect"> Microphone </label>
           <select id="micSelect"></select>
 
-          <button class="test-btn" id="testDevices"> Test Devices </button>
+          <button class="test-btn", id="testDevices"> Test Devices </button>
         </div>
       </aside>
 
@@ -70,7 +70,6 @@
           <div class="left-column">
             <div id="mainPreview" class="main-preview">
               <video class="preview-box" id="mainStream" autoplay muted playsinline></video>
-              STREAM PREVIEW AREA
             </div>
 
             <div class="controls">
@@ -81,7 +80,7 @@
 
             <div class="audio-mixer">
               <h3>AUDIO MIX</h3>
-              <div id="audioLevels">Microphone Level</div>
+              <div id="audioLevels">Microphone Level </div>
             </div>
           </div>
 
@@ -93,10 +92,20 @@
             <div class="playlist-tabs">
               <button class="tab-btn active" data-tab="video">Video</button>
               <button class="tab-btn" data-tab="audio">Audio</button>
+              <button class="browse-btn" onclick="document.getElementById('mediaInput').click()">Browse Files</button>
             </div>
             <ul id = 'fileLibrary'> </ul>
             <ul id="videoPlaylist" class="playlist-list "></ul>
             <ul id="audioPlaylist" class="playlist-list"></ul>
+
+            <!-- Media Upload Area -->
+            <div class="media-upload">
+                <div id="dropZone"></div>
+                  <input type="file" id="mediaInput" accept="video/*,audio/*" multiple hidden>
+                  <ul id="selectedFilesList"></ul>
+                <button class="browse-btn" id="uploadBtn" style="display: none;">Upload</button>
+            </div>
+
           </div>
 
           <!-- Playlist Panel -->
@@ -110,17 +119,7 @@
               
             </div>
           </div>
-
-            <!-- Media Upload Area -->
-            <div class="media-upload">
-              <h3>Upload Media</h3>
-                <div id="dropZone">Drag and drop video/music files here</div>
-                  <input type="file" id="mediaInput" accept="video/*,audio/*" multiple hidden>
-                  <button class="browse-btn" onclick="document.getElementById('mediaInput').click()">Browse Files</button>
-                  <ul id="selectedFilesList"></ul>
-                <button class="browse-btn" id="uploadBtn" style="display: none;">Upload</button>
-            </div>
-          </div>
+        </div>
       </main>
     </div>
   </div>

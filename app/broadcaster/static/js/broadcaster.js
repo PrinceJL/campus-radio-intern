@@ -230,3 +230,29 @@ window.onunload = window.onbeforeunload = () => {
     Object.values(peerConnections).forEach(pc => pc.close());
     console.log("Cleaned up peer connections on unload.");
 };
+
+// Theme Toggle Functionality
+document.addEventListener('DOMContentLoaded', function() {
+  const themeToggle = document.getElementById('themeToggle');
+
+  // Check for saved theme preference
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'light') {
+      document.body.classList.add('light-mode');
+      themeToggle.textContent = 'Switch to Dark Mode';
+  }
+
+  // Theme toggle click handler
+  themeToggle.addEventListener('click', function() {
+      document.body.classList.toggle('light-mode');
+
+      // Save theme preference
+      if (document.body.classList.contains('light-mode')) {
+          localStorage.setItem('theme', 'light');
+          themeToggle.textContent = 'Switch to Dark Mode';
+      } else {
+          localStorage.setItem('theme', 'dark');
+          themeToggle.textContent = 'Switch to Light Mode';
+      }
+  });
+});

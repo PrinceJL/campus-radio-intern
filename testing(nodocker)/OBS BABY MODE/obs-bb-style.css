@@ -12,7 +12,7 @@ body {
 
 /* Navigation bar? */
 .top-bar {
-    background-color: #03a9f4;
+    background-color: #ffa31a;
     color: white;
     padding: 1rem;
     display: flex;
@@ -26,7 +26,7 @@ body {
     margin-right: 0.5rem;
     margin-bottom: 0.5rem;
     padding: 0.5rem 1rem;
-    background-color: #05618b;
+    background-color: #ffa31a;
     color: white;
     border: none;
     border-radius: 5px;
@@ -122,19 +122,19 @@ select {
 }
 
 select:hover {
-  border-color: #00bfff;
+  border-color: #ffa31a;
   background-color: #2c2c2c;
 }
 
 select:focus {
-  border-color: #00bfff;
+  border-color: #ffa31a;
 }
 
 .test-btn {
     margin-right: 0.5rem;
     margin-bottom: 0.5rem;
     padding: 0.5rem 1rem;
-    background-color: #03a9f4;
+    background-color: #ffa31a;
     color: white;
     border: none;
     border-radius: 5px;
@@ -147,7 +147,7 @@ select:focus {
     margin-right: 0.5rem;
     margin-bottom: 0.5rem;
     padding: 0.5rem 1rem;
-    background-color: #03a9f4;
+    background-color: #ffa31a;
     color: white;
     border: none;
     border-radius: 5px;
@@ -214,8 +214,8 @@ select:focus {
 
 
 .tab-btn.active {
-  color: #03a9f4;
-  border-bottom: 2px solid #03a9f4;
+  color: #ffa31a;
+  border-bottom: 2px solid #ffa31a;
 }
 
 .playlist-content {
@@ -259,7 +259,7 @@ select:focus {
 }
 
 .playlist-item button:hover {
-  color: #03a9f4;
+  color: #ffa31a;
 }
 
 /* Folder structure inside playlists */
@@ -313,7 +313,7 @@ body.light-mode .folder-header {
     margin-right: 0.5rem;
     margin-bottom: 1rem;
     padding: 0.5rem 1rem;
-    background-color: #03a9f4;
+    background-color: #ffa31a;
     color: white;
     border: none;
     border-radius: 5px;
@@ -330,7 +330,6 @@ body.light-mode .folder-header {
     margin-top: 2rem;
 }
 #dropZone {
-    border: 2px dashed #666;
     padding: 1rem;
     margin-bottom: 1rem;
     text-align: center;
@@ -343,13 +342,15 @@ body.light-mode .folder-header {
 
 .browse-btn {
     margin-right: 0.5rem;
+    margin-left: auto;
     margin-bottom: 0.5rem;
     padding: 0.5rem 1rem;
-    background-color: #03a9f4;
+    background-color: #ffa31a;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    display: block;
 }
 
 /* Footer template */
@@ -427,7 +428,7 @@ body.light-mode .playlist-item button:hover {
     color: #007acc;
 }
 
-body.light-mode .media-upload #dropZone {
+body.light-mode .media-upload {
     border-color: #ccc;
 }
 
