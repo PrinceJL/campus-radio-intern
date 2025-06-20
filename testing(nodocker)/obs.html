@@ -1,131 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>OBS Interface Clone</title>
-  <link rel="stylesheet" href="obs-style.css" />
-  <script src="obs-script.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Radio</title>
+    <link rel="stylesheet" href="obs-style.css" />
 </head>
 <body>
-  <div class="obs-container">
-    <!-- Top Menu -->
-    <div class="top-menu">
-      <div class="menu-bar">
-        <button>File</button>
-        <button>Edit</button>
-        <button>View</button>
-        <button>Tools</button>
-        <button>Help</button>
+  <div class="main-header">Campus Radio</div>
+  <div class="app-grid">
+    <!-- Left Sidebar -->
+    <aside class="left-sidebar">
+      <div class="sidebar-header">Devices</div>
+      <div class="section-label">Cameras</div>
+      <div class="camera-list">
+        <div class="camera-card">CAMERA 1</div>
+        <div class="camera-card">CAMERA 2</div>
+        <div class="camera-card">CAMERA 3</div>
+        <div class="camera-card">CAMERA 4</div>
       </div>
-    </div>
+      <div class="mic-label">Microphone</div>
+      <div class="mic-list">
+        <div class="mic-card"><span class="mic-icon">🎤</span> MICROPHONE 1</div>
+      </div>
+    </aside>
 
-    <!-- Preview Area -->
-    <div class="preview-area">
-      <div class="preview-box"></div>
-      <div class="preview-controls">
-        <span>Template</span>
-        <select>
-          <option>Scale to Window</option>
-          <option>Original Size</option>
-        </select>
-        <span>No source selected</span>
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="sidebar-header">Stream Preview</div>
+      <div class="stream-preview-area"></div>
+      <div class="controls">
+        <button class="ctrl-btn">Start Stream</button>
+        <button class="ctrl-btn">Stop Stream</button>
+        <button class="ctrl-btn">Pause Stream</button>
+        <button class="ctrl-btn">⏮️</button>
+        <button class="ctrl-btn">⏸️</button>
+        <button class="ctrl-btn">⏭️</button>
       </div>
-    </div>
-
-  <div class="side-panel">
-    <!-- Scenes Panel -->
-    <div class="panel scenes-panel active">
-      <div class="panel-header">
-        <span>Scenes</span>
-        <div class="panel-actions">
-          <button title="Add Scene"><i class="fas fa-plus"></i></button>
-          <button title="Delete Scene"><i class="fas fa-trash"></i></button>
-          <button title="Duplicate Scene"><i class="fas fa-copy"></i></button>
-          <button title="Move Up"><i class="fas fa-angle-up"></i></button>
-          <button title="Move Down"><i class="fas fa-angle-down"></i></button>
-        </div>
-      </div>
-      <div class="panel-content">
-        <ul id="scenes-list">
-          <li class="scene-item active">Scene 3</li>
-        </ul>
-      </div>
-    </div>
-
-      <!-- Sources Panel -->
-      <div class="panel sources-panel">
-        <div class="panel-header">
-          <span>Sources</span>
-          <div class="panel-actions">
-            <button title="Add Source"><i class="fas fa-plus" aria-hidden="true"></i></button>
-            <button title="Delete Source"><i class="fas fa-trash"></i></button>
-            <button title="Properties"><i class="fas fa-cog"></i></button>
-            <button title="Move Up"><i class="fas fa-angle-up"></i></button>
-            <button title="Move Down"><i class="fas fa-angle-down"></i></button>
+      <div class="stream-manager">
+        <div class="stream-manager-header">Stream Manager</div>
+        <div class="stream-manager-title">Stream Title</div>
+        <div class="stream-manager-content">
+          <div class="stream-manager-desc">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a libero
+            interdum, imperdiet ipsum non, sagittis ex. Praesent neque urna,
+            condimentum quis aliquet id, scelerisque posuere ex. Donec venenatis ut
+            justo euismod pharetra. Ut fringilla tortor quis quam malesuada, vitae
+            finibus nibh sollicitudin. Aliquam habitant vitae neque quis pellentesque.
+            Ut ex eros, condimentum eget porttitor ac, convallis non odio. Integer id
+            nisi sit amet justo finibus euismod. Fusce imperdiet egestas viverra.
+          </div>
+          <div class="stream-manager-session">
+            <div class="session-time">0:00:00</div>
+            <div class="viewers">0<br>Viewers</div>
           </div>
         </div>
-        <div class="panel-content">
-          <div class="no-sources-message">
-            <i class="fas fa-question-circle fa-2x"></i>
-            <p>You don't have any sources.<br>Click the + button below, or right-click here to add one.</p>
+        <div class="currently-playing">
+          <div><strong>Currently Playing</strong></div>
+          <div class="playing-bar">
+            <div class="track-title">
+              <img src="https://via.placeholder.com/32x32?text=IMG" alt="placeholder" />
+              Music / Video Title
+            </div>
+            <input type="range" min="0" max="100" />
           </div>
         </div>
       </div>
-  </div>
+    </main>
 
-    <!-- Bottom Panels -->
-    <div class="bottom-panels">
-
-      <!-- Template Panel -->
-      <div class="panel audio-mixer-panel">
-        <div class="panel-header">
-          <span>Template</span>
-          <div class="panel-actions">
+    <!-- Right Section (Queue/Files) -->
+    <div class="right-section">
+      <!-- Queue/Playlist Panel -->
+      <div class="queue-panel">
+        <div class="queue-tabs">
+          <div class="queue-tab active">Queue</div>
+          <div class="queue-tab">Recently played</div>
+        </div>
+        <div class="now-playing-block">
+          <strong>Now Playing</strong>
+          <div class="media-block">
+            <img src="https://via.placeholder.com/40x40?text=IMG" alt="placeholder" />
+            Music / Video Title
           </div>
         </div>
-        <div class="panel-content">
+        <div class="next-up">
+          <strong>Next from: (Playlist)</strong>
+          <div class="media-block">
+            <img src="https://via.placeholder.com/40x40?text=IMG" alt="placeholder" />
+            Music / Video Title
+          </div>
+          <div class="media-block">
+            <img src="https://via.placeholder.com/40x40?text=IMG" alt="placeholder" />
+            Music / Video Title
+          </div>
+          <div class="media-block">
+            <img src="https://via.placeholder.com/40x40?text=IMG" alt="placeholder" />
+            Music / Video Title
+          </div>
+        </div>
+        <div class="your-playlist">
+          <label>Your Playlist</label>
+          <div class="playlist-group">
+            <button>Playlist 1</button>
+            <button>Playlist 2</button>
+            <button>Playlist 3</button>
+            <button>Playlist 4</button>
+          </div>
         </div>
       </div>
-
-      <!-- Scene Transitions Panel -->
-      <div class="panel transitions-panel">
-        <div class="panel-header">
-          <span>Scene Transitions</span>
-          <div class="panel-actions">
-            <button><i class="fas fa-plus"></i></button>
-            <button><i class="fas fa-ellipsis-h"></i></button>
-          </div>
-        </div>
-        <div class="panel-content">
-          <div class="transition-settings">
-            <label>Transition:</label>
-            <select>
-              <option>Fade</option>
-              <option>Cut</option>
-              <option>Wipe</option>
-            </select>
-            <label>Duration:</label>
-            <input type="text" value="300 ms" />
-          </div>
-        </div>
-      </div>
-
-      <!-- Controls Panel -->
-      <div class="panel controls-panel">
-        <div class="panel-header">
-          <span>Controls</span>
-          <div class="panel-actions">
-            <button><i class="fas fa-cog"></i></button>
-          </div>
-        </div>
-        <div class="panel-content">
-          <button class="control-btn">Start Streaming</button>
-          <button class="control-btn">Start Recording</button>
-          <button class="control-btn">Settings</button>
-          <button class="control-btn">Exit</button>
-          <button class="control-btn">Template</button>
-          <button class="control-btn">Template</button>
+      <!-- Files Panel -->
+      <div class="files-panel">
+        <div class="files-tab">Files</div>
+        <div class="media-files">
+          <div class="file-card"><span>Videos</span> <span>+</span></div>
+          <div class="file-card"><span>Audio</span> <span>+</span></div>
+          <div class="file-card"><span>Image</span> <span>+</span></div>
         </div>
       </div>
     </div>
