@@ -24,77 +24,232 @@ body {
 
 .app-grid {
   display: grid;
-  grid-template-columns: 220px 1fr 600px;
+  grid-template-columns: 300px 900px 700px;
   grid-template-rows: 1fr;
   height: calc(100vh - 56px); /* 56px = .main-header height + padding */
   width: 100vw;
   background: #18191c;
 }
 
-.left-sidebar {
+/* --- Stream Preview Header --- */
+.stream-preview-header {
+  width: 909px;
+  height: 57px;
+  background: #18191c;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding-left: 24px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-bottom: 1px solid #232427;
+  box-sizing: border-box;
+}
+
+/* --- Space below header --- */
+.stream-preview-spacer {
+  width: 909px;
+  height: 168.18px;
+  background: transparent;
+}
+
+/* --- Stream Preview Area --- */
+.stream-preview-area {
+  width: 909px;
+  height: 499.63px;
+  background: #d3d3d3;
+  border-radius: 8px;
+  margin: 0 auto;
+  border: 2px solid #232427;
+  box-sizing: border-box;
+}
+
+/* --- Controls and Stream Manager Background --- */
+.stream-controls-bg {
+  width: 909px;
+  height: 407.18px;
   background: #232427;
+  border-radius: 0 0 10px 10px;
+  margin: 0 auto;
+  margin-top: 18px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  padding-top: 18px;
+}
+
+/* --- Stream Controls --- */
+.stream-controls-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18px;
+  width: 100%;
+  justify-content: flex-start;
+  padding-left: 24px;
+  gap: 0;
+}
+
+.ctrl-btn {
+  width: 240px;
+  height: 38px;
+  border-radius: 5px;
+  background: #18191c;
+  color: #fff;
+  border: none;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-right: 7px;
+  padding: 11px 7px;
+  transition: background 0.2s;
+}
+
+.ctrl-btn:not(:last-child) {
+  margin-right: 7px;
+}
+
+.ctrl-btn:hover {
+  background: #444;
+}
+
+/* --- Previous, Pause, Next Buttons --- */
+.media-nav-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 5px;
+  background: #18191c;
+  color: #fff;
+  border: none;
+  font-size: 1.2rem;
+  margin-right: 5px;
+  padding: 11px 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.media-nav-btn:last-child {
+  margin-right: 0;
+}
+
+.media-nav-btn:hover {
+  background: #444;
+}
+
+/* Devices Panel Background */
+.left-sidebar {
+  background: #232427;
+  width: 300px;
+  min-width: 300px;
+  max-width: 3px;
+  height: 1132px;
   padding: 0;
   border-right: 1px solid #222;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Devices/Cameras/Microphone Tabs */
+.box-header-devices,
+.section-label {
+  width: 320px;
+  height: 57px;
+  background: #18191c;
+  border-bottom: 1px solid #222;
+  padding: 20px 18px 10px 18px;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 1px;
 }
 
 .sidebar-header {
   font-size: 16px;
   font-weight: 600;
   color: #fff;
-  background: #18191c;
-  padding: 16px 18px 10px 18px;
-  border-bottom: 1px solid #222;
   letter-spacing: 1px;
 }
 
-.section-label {
-  font-size: 15px;
-  font-weight: 500;
-  padding: 18px 18px 6px 18px;
-  letter-spacing: 1px;
-  color: #ccc;
+.camera-list {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 10px;
+  margin-bottom: 0;
+  display: grid;
+  gap: 5px;
+  align-content: center;
 }
 
-.camera-list, .mic-list {
-  padding: 0 18px;
-  margin-bottom: 18px;
-}
-
-.camera-card, .mic-card {
+/* Camera Card */
+.camera-card {
+  width: 260px;
+  height: 150px;
   background: #fff;
   color: #232427;
   border: 2px solid #232427;
-  border-radius: 7px;
-  padding: 32px 0;
-  margin-bottom: 18px;
+  margin: 0;
   text-align: center;
   font-weight: 500;
   font-size: 1.1rem;
   cursor: pointer;
-  transition: box-shadow 0.2s;
+  transition: box-shadow 0.2s, border-color 0.2s;
   box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-}
-
-.mic-label {
-  font-size: 13px;
-  font-weight: 500;
-  padding: 0 18px 6px 18px;
-  color: #ccc;
-}
-
-.mic-card {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+}
+
+/* Camera Card Active State */
+.camera-card.active,
+.camera-card.selected {
+  border: 2px solid #4ade80;
+}
+
+/* Microphone Tab */
+.section-label {
+  width: 300px;
+  height: 57px;
+  background: #18191c;
+  border-bottom: 1px solid #222;
+  padding: 17px 18px 10px 18px;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+}
+
+/* Microphone List */
+.mic-list {
+  padding: 0 10px;
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Microphone Card */
+.mic-card {
+  width: 291px;
+  height: 54.94px;
   background: #232427;
   color: #fff;
   border: none;
-  padding: 18px 0;
-  margin-bottom: 0;
+  border-radius: 4px;
+  margin: 12px auto 0 auto;
   font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 0 18px;
+  box-sizing: border-box;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
 }
 
 .mic-card .mic-icon {
@@ -109,11 +264,13 @@ body {
 }
 
 .stream-preview-area {
+  width: 909px;
+  height: 499.63px;
   background: #d3d3d3;
   border-radius: 8px;
-  min-height: 240px;
-  margin: 24px 24px 0 24px;
+  margin: 0 auto;
   border: 2px solid #232427;
+  box-sizing: border-box;
 }
 
 .controls {
@@ -123,15 +280,22 @@ body {
 }
 
 .ctrl-btn {
-  background: #232427;
+  width: 240px;
+  height: 38px;
+  border-radius: 5px;
+  background: #18191c;
   color: #fff;
   border: none;
-  border-radius: 6px;
-  padding: 12px 28px;
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
+  margin-right: 7px;
+  padding: 11px 7px;
   transition: background 0.2s;
+}
+
+.ctrl-btn:not(:last-child) {
+  margin-right: 7px;
 }
 
 .ctrl-btn:hover {
@@ -423,4 +587,175 @@ body {
   justify-content: space-between;
   gap: 10px;
   font-size: 1rem;
+}
+
+/* --- Stream Preview Header --- */
+.stream-preview-header {
+  width: 909px;
+  height: 57px;
+  background: #18191c;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding-left: 24px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-bottom: 1px solid #232427;
+  box-sizing: border-box;
+}
+
+/* --- Space below header --- */
+.stream-preview-spacer {
+  width: 909px;
+  height: 168.18px;
+  background: transparent;
+}
+
+/* --- Stream Preview Area --- */
+.stream-preview-area {
+  width: 909px;
+  height: 499.63px;
+  background: #d3d3d3;
+  border-radius: 8px;
+  margin: 0 auto;
+  border: 2px solid #232427;
+  box-sizing: border-box;
+}
+
+/* --- Controls and Stream Manager Background --- */
+.stream-controls-bg {
+  width: 909px;
+  height: 407.18px;
+  background: #232427;
+  border-radius: 0 0 10px 10px;
+  margin: 0 auto;
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  padding-top: 18px;
+}
+
+/* --- Stream Controls --- */
+.stream-controls-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18px;
+  width: 100%;
+  justify-content: flex-start;
+  padding-left: 24px;
+  gap: 0;
+}
+
+.ctrl-btn {
+  width: 240px;
+  height: 38px;
+  border-radius: 5px;
+  background: #18191c;
+  color: #fff;
+  border: none;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-right: 7px;
+  padding: 11px 7px;
+  transition: background 0.2s;
+}
+
+.ctrl-btn:not(:last-child) {
+  margin-right: 7px;
+}
+
+.ctrl-btn:hover {
+  background: #444;
+}
+
+/* --- Previous, Pause, Next Buttons --- */
+.media-nav-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 5px;
+  background: #18191c;
+  color: #fff;
+  border: none;
+  font-size: 1.2rem;
+  margin-right: 5px;
+  padding: 11px 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.media-nav-btn:last-child {
+  margin-right: 0;
+}
+
+.media-nav-btn:hover {
+  background: #444;
+}
+
+/* --- Stream Manager Card --- */
+.stream-manager-card {
+  width: 337px;
+  height: 894px;
+  background: #18191c;
+  border-radius: 10px;
+  margin-top: 18px;
+  margin-left: 0;
+  margin-right: 0;
+  padding: 0 5px 10px 5px;
+  box-sizing: border-box;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* --- Music Player Card --- */
+.music-player-card {
+  width: 862px;
+  height: 81px;
+  background: #232427;
+  border-radius: 10px;
+  margin: 24px auto 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 24px;
+  box-sizing: border-box;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 500;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+/* --- Currently Playing Text --- */
+.music-player-card .currently-playing-label {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.music-player-card .track-title {
+  font-size: 1.05rem;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.music-player-card .progress-bar {
+  width: 100%;
+  height: 4px;
+  background: #444;
+  border-radius: 2px;
+  margin-top: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.music-player-card .progress-bar-inner {
+  height: 100%;
+  background: #4ade80;
+  width: 40%; /* Example progress */
+  border-radius: 2px;
 }

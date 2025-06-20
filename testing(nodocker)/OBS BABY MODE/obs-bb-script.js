@@ -99,7 +99,8 @@ function addToFileLibrary(file) {
     videoPlaylist.appendChild(li);
   } else audioPlaylist.appendChild(li);
   
-  addToMusicQ();
+  //will be removed in the updated UI:
+  addToMusicQueue();
   //DEBUGGING
   console.log(li.dataset.src);
   const listContents = Array.from(audioPlaylist.querySelectorAll('li')).map(item => item.dataset.src);
@@ -296,16 +297,27 @@ player.connect(audioCtx.destination);
 
 //Music queue
 let musicQueue = [];
-function addToMusicQ(){
+let videoQueue = [];
+
+//function will be updated in the new UI
+function addToMusicQueue(){
   musicQueue = Array.from(audioPlaylist.querySelectorAll('li')).map(item => ({
   name: item.textContent,
   src: item.dataset.src
 }));
 }
-//Buttons
+function addToVideoQueue(){
+  musicQueue = Array.from(videoPlaylist.querySelectorAll('li')).map(item => ({
+  name: item.textContent,
+  src: item.dataset.src
+}));
+}
+
+//Buttons and functions
 const playPauseButton = document.getElementById('playPauseButton');
 const prevButton = document.getElementById('prevButton');
 const nextButton = document.getElementById('nextButton');
+const crossfdButton = document.getElementById('crossfdbutton')
 
 playPauseButton.addEventListener('click', () =>{
       musicLoader();
@@ -325,6 +337,7 @@ playPauseButton.addEventListener('click', () =>{
   },
   false,
   )
+
 prevButton.addEventListener('click', () => {
     prevInQueue();
     musicLoader();
@@ -337,34 +350,45 @@ nextButton.addEventListener('click', () =>{
   audioPlayer.play();
 })
 
+//still incomplete: still waiting for the new UI
+audioPlaylist.addEventListener('click', (e)=> {
+  if (e.target && e.target === 'LI'){
+    musicQueueIndex = musicQueue.indexOf(e.target);
+  }
+})
+
 function debugging(){
-  console.log("Music queue:", musicQueue[1]);
+  console.log("Music queue:", musicQueue.length);
 }
 
-//Music loader
+//Music Operations
 let musicQueueIndex = 1;
 function nextInQueue(){
-  if (musicQueueIndex < musicQueue){
+  if (musicQueueIndex < (musicQueue.length-1)){
     musicQueueIndex++;
-    } else console.warn ('nigga bitch')
+    } else console.warn ('No next song')
 }
 function prevInQueue(){
   if (musicQueueIndex > 0){
     musicQueueIndex--;
-  } else console.warn ('nigga bitch')
+  } else console.warn ('No previous song')
 }
 
 function musicLoader(){
   const currentSong = musicQueue[musicQueueIndex];
+  if (musicQueue){
   const nextSong = musicQueue[musicQueueIndex + 1];
   audioPlayer.src = currentSong.src;
-
+  }
   console.log ('currentsource:', audioPlayer.src);
   console.log('currentSong:', currentSong);
   console.log('musicQueueIndex:', musicQueueIndex);
 }
 
 function crossFade(){
+  while (crossfdButton.){
+
+  }
 }
 
 
