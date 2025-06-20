@@ -1,5 +1,5 @@
 import os
-from flask import Blueprint, request, jsonify, send_from_directory
+from flask import Blueprint, request, jsonify, send_from_directory, make_response
 from db import db
 
 uploads_bp = Blueprint('uploads', __name__)

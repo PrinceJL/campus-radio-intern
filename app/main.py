@@ -5,7 +5,9 @@ from blueprints.hls import hls_bp
 from blueprints.scenes import scenes_bp 
 from blueprints.uploads import uploads_bp
 from blueprints.webrtc import register_webrtc_events
+from blueprints.playlist import playlist_bp
 from flask_socketio import SocketIO
+
 
 def create_app():
     app = Flask(__name__)
@@ -14,6 +16,8 @@ def create_app():
     app.register_blueprint(hls_bp)
     app.register_blueprint(scenes_bp)
     app.register_blueprint(uploads_bp)
+    app.register_blueprint(playlist_bp)
+
 
     @app.route('/')
     def index():
