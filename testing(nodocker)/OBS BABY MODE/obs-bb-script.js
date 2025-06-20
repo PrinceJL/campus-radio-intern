@@ -325,18 +325,40 @@ playPauseButton.addEventListener('click', () =>{
   },
   false,
   )
-prevButton
+prevButton.addEventListener('click', () => {
+    prevInQueue();
+    musicLoader();
+    audioPlayer.play();
+})
+
+nextButton.addEventListener('click', () =>{
+  nextInQueue();
+  musicLoader();
+  audioPlayer.play();
+})
+
 function debugging(){
   console.log("Music queue:", musicQueue[1]);
 }
 
+//Music loader
 let musicQueueIndex = 1;
+function nextInQueue(){
+  if (musicQueueIndex < musicQueue){
+    musicQueueIndex++;
+    } else console.warn ('nigga bitch')
+}
+function prevInQueue(){
+  if (musicQueueIndex > 0){
+    musicQueueIndex--;
+  } else console.warn ('nigga bitch')
+}
 
 function musicLoader(){
   const currentSong = musicQueue[musicQueueIndex];
   const nextSong = musicQueue[musicQueueIndex + 1];
-
   audioPlayer.src = currentSong.src;
+
   console.log ('currentsource:', audioPlayer.src);
   console.log('currentSong:', currentSong);
   console.log('musicQueueIndex:', musicQueueIndex);
