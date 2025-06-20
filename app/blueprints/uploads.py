@@ -42,10 +42,14 @@ def upload_file():
     db.files.insert_one({"filename": unique_filename, "path": f"/uploads/{ext}/{unique_filename}"})
     return jsonify({"message": "File uploaded", "url": f"/uploads/{ext}/{unique_filename}"}), 201
 
+
 @uploads_bp.route('/uploads/<ext>/<filename>', methods=['GET'])
 def serve_file(ext, filename):
     subdir = os.path.join(UPLOAD_FOLDER, ext)
-    return send_from_directory(subdir, filename)
+    response = make_response(send_from_directory(subdir, filename))
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
+
 
 @uploads_bp.route('/uploads/<ext>/<filename>', methods=['DELETE'])
 def delete_file(ext, filename):

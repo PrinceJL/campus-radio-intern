@@ -1,441 +1,511 @@
+* {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
 body {
-    margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #1e1e1e;
-    color: #ffffff;
-}
-.app-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
-
-/* Navigation bar? */
-.top-bar {
-    background-color: #ffa31a;
-    color: white;
-    padding: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 1.5rem;
-    font-weight: bold;
-}
-
-.theme-btn {
-    margin-right: 0.5rem;
-    margin-bottom: 0.5rem;
-    padding: 0.5rem 1rem;
-    background-color: #ffa31a;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-/* Whole Page Layout */
-.main-layout {
-    display: grid;
-    grid-template-columns: 260px 1fr;
-    flex-grow: 1;
-}
-
-/* Left side (Camera, Device Setup) */
-.left-panel {
-    background-color: #2c2c2c;
-    padding: 1rem;
-}
-
-.preview-tabs {
-  display: flex;
-  border-bottom: 2px solid #444;
-  margin-bottom: 1rem;
-}
-
-.preview-section{
-    margin-left: 20px;
-    margin-left: 50px;
-}
-
-.camera-previews {
-    background: #333;
-    padding: 1rem;
-    border: 2px dashed #555;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-    text-align: center;
-    font-weight: bold;
-}
-
-/* Camera Preview*/
-.preview-box {
-  background-color: black;
-  border: 2px solid #444;
-  border-radius: 8px;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-}
-
-/* Scene Preview */
-.scene-section {
-  display: none;
-}
-
-.scene-section.active {
-  display: block;
-}
-
-.scene-preview {
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  border-radius: 6px;
-  background: #2c2c2c;
-}
-
-/* Device Setup */
-.device-setup {
-    background: #1a1a1a;
-    padding: 1rem;
-    border-radius: 8px;
-    margin-top: 1rem;
-}
-
-.device-setup label,
-.device-setup select,
-.device-setup button {
-    display: block;
-    width: 100%;
-    margin-bottom: 0.5rem;
-}
-
-select {
-  background-color: #1e1e1e;
-  color: #ffffff;
-  border: 1px solid #444;
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
-  outline: none;
-  transition: border 0.3s, background-color 0.3s;
-}
-
-select:hover {
-  border-color: #ffa31a;
-  background-color: #2c2c2c;
-}
-
-select:focus {
-  border-color: #ffa31a;
-}
-
-.test-btn {
-    margin-right: 0.5rem;
-    margin-bottom: 0.5rem;
-    padding: 0.5rem 1rem;
-    background-color: #ffa31a;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-/* Main Preview (Mode Selection and Stream Preview) */
-/* Mode Selector Layout */
-.mode-selector button {
-    margin-right: 0.5rem;
-    margin-bottom: 0.5rem;
-    padding: 0.5rem 1rem;
-    background-color: #ffa31a;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-/* Stream Preview */
-.main-preview {
-    border: 2px solid #444;
-    border-radius: 12px;
-    height: 450px;
-    width: 85%;
-    margin: 1rem 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #111;
-    font-size: 1.2rem;
-    position: relative;
-}
-
-/* Splitting Layout */
-.split-layout {
-  display: flex;
-  gap: 0.1rem;
-}
-
-.left-column {
-  flex: 0 0 50%;
-}
-
-.right-column {
-  flex: 0 0 45%;
-}
-
-/* Playlist Panel */
-/* Files Panel and Playlist Panel equal width */
-.files-panel,
-.playlist-panel {
-  flex: 1;
-}
-
-.playlist-container {
-  background: #1a1a1a;
-  border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-}
-
-.playlist-tabs {
-  display: flex;
-  border-bottom: 2px solid #444;
-}
-
-.tab-btn {
-  padding: 0.5rem 1rem;
-  background: none;
-  border: none;
+  margin: 0;
+  background: #18191c;
   color: #fff;
-  cursor: pointer;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.main-header {
+  width: 100vw;
+  background: #18191c;
+  color: #fff;
+  font-size: 2rem;
   font-weight: bold;
-  margin-right: 0.5rem;
+  padding: 18px 0 10px 32px;
+  letter-spacing: 1px;
+  border-bottom: 1px solid #232427;
+  box-sizing: border-box;
 }
 
-
-.tab-btn.active {
-  color: #ffa31a;
-  border-bottom: 2px solid #ffa31a;
+.app-grid {
+  display: grid;
+  grid-template-columns: 220px 1fr 600px;
+  grid-template-rows: 1fr;
+  height: calc(100vh - 56px); /* 56px = .main-header height + padding */
+  width: 100vw;
+  background: #18191c;
 }
 
-.playlist-content {
-  margin-top: 1rem;
-}
-
-/* Scroll support for long file/playlist lists */
-.playlist-list {
-  list-style: none;
+.left-sidebar {
+  background: #232427;
+  display: flex;
+  flex-direction: column;
   padding: 0;
-  display: none;
-  max-height: 200px;
+  border-right: 1px solid #222;
+}
+
+.sidebar-header {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  background: #18191c;
+  padding: 16px 18px 10px 18px;
+  border-bottom: 1px solid #222;
+  letter-spacing: 1px;
+}
+
+.section-label {
+  font-size: 15px;
+  font-weight: 500;
+  padding: 18px 18px 6px 18px;
+  letter-spacing: 1px;
+  color: #ccc;
+}
+
+.camera-list,
+.mic-list {
+  padding: 0 18px;
+  margin-bottom: 18px;
+}
+
+.camera-card,
+.mic-card {
+  background: #fff;
+  color: #232427;
+  border: 2px solid #232427;
+  border-radius: 7px;
+  padding: 32px 0;
+  margin-bottom: 18px;
+  text-align: center;
+  font-weight: 500;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.mic-label {
+  font-size: 13px;
+  font-weight: 500;
+  padding: 0 18px 6px 18px;
+  color: #ccc;
+}
+
+.mic-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #232427;
+  color: #fff;
+  border: none;
+  padding: 18px 0;
+  margin-bottom: 0;
+  font-size: 1.1rem;
+}
+
+.mic-card .mic-icon {
+  font-size: 1.2em;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  padding: 0 0 0 0;
+  gap: 0;
+}
+
+.stream-preview-area {
+  background: #d3d3d3;
+  border-radius: 8px;
+  min-height: 240px;
+  margin: 24px 24px 0 24px;
+  border: 2px solid #232427;
+}
+
+.controls {
+  display: flex;
+  gap: 16px;
+  margin: 18px 24px 0 24px;
+}
+
+.ctrl-btn {
+  background: #232427;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 28px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.ctrl-btn:hover {
+  background: #444;
+}
+
+.stream-manager {
+  background: #232427;
+  color: #fff;
+  border-radius: 8px;
+  padding: 24px;
+  margin: 18px 24px 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.stream-manager-header {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.stream-manager-title {
+  font-size: 1.05rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.stream-manager-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.stream-manager-desc {
+  color: #ccc;
+  font-size: 0.98rem;
+  max-width: 70%;
+}
+
+.stream-manager-session {
+  text-align: right;
+}
+
+.session-time {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.viewers {
+  font-size: 1.1rem;
+  color: #aaa;
+}
+
+.currently-playing {
+  margin-top: 12px;
+}
+
+.playing-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.playing-bar .track-title {
+  font-weight: 500;
+  color: #fff;
+}
+
+.playing-bar input[type="range"] {
+  flex: 1;
+  accent-color: #4ade80;
+  height: 4px;
+}
+
+.right-section {
+  display: flex;
+  height: 100%;
+  background: #232427;
+  border-left: 1px solid #222;
+}
+
+.queue-panel {
+  width: 320px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #222;
+  height: 100%;
   overflow-y: auto;
 }
 
-.playlist-list.active {
+.files-panel {
+  width: 280px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  height: 100%;
+}
+
+.tabs {
+  display: flex;
+  gap: 24px;
+  margin: 18px 0 0 24px;
+  font-size: 1.1rem;
+}
+
+.tabs .tab {
+  color: #aaa;
+  cursor: pointer;
+  padding-bottom: 4px;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-bottom 0.2s;
+}
+
+.tabs .tab.active {
+  color: #fff;
+  border-bottom: 2px solid #4ade80;
+}
+
+.queue-tabs {
+  display: flex;
+  gap: 18px;
+  margin: 18px 0 0 24px;
+  font-size: 1.1rem;
+}
+
+.queue-tab {
+  color: #aaa;
+  cursor: pointer;
+  padding-bottom: 4px;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-bottom 0.2s;
+}
+
+.queue-tab.active {
+  color: #fff;
+  border-bottom: 2px solid #4ade80;
+}
+
+.center-tabs {
+  display: flex;
+  gap: 18px;
+  margin: 12px 24px 0 24px;
+  font-size: 1.1rem;
+}
+
+.center-tab {
+  color: #aaa;
+  cursor: pointer;
+  padding: 8px 24px 8px 24px;
+  border-radius: 8px 8px 0 0;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-bottom 0.2s, background 0.2s;
+  font-weight: 500;
+}
+
+.center-tab.active {
+  color: #fff;
+  background: #232427;
+  border-bottom: 2px solid #4ade80;
+}
+
+.now-playing-block,
+.next-up,
+.your-playlist {
+  margin: 18px 24px 0 24px;
+}
+
+.now-playing-block strong {
+  font-size: 1rem;
+  color: #fff;
+}
+
+.media-block {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #222;
+  padding: 4px 8px;
+  margin-bottom: 5px;
+  border-radius: 6px;
+  color: white;
+}
+
+.media-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.media-title {
+  display: inline-block;
+  max-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.media-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.media-duration {
+  font-size: 12px;
+  color: #ccc;
+}
+
+.delete-file-btn {
+  margin-left: 10px;
+  background: none;
+  border: none;
+  color: red;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.media-block img {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  object-fit: cover;
+  background: #bbb;
+}
+
+.next-up {
+  margin: 18px 24px 0 24px;
+}
+
+.next-up strong {
+  font-size: 1rem;
+  color: #fff;
+}
+
+.next-up .media-block {
+  background: #232427;
+  color: #fff;
+  border-radius: 7px;
+  padding: 12px 10px;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+  border: 1px solid #444;
+}
+
+.your-playlist {
+  margin: 18px 24px 0 24px;
+}
+
+.your-playlist label {
+  font-size: 1rem;
+  color: #fff;
+  margin-bottom: 6px;
   display: block;
 }
 
-.playlist-item {
-  border: 1px solid #555;
-  border-radius: 5px;
-  padding: 8px;
-  margin-bottom: 5px;
+.your-playlist select {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 6px;
+  border-radius: 4px;
+  border: 1px solid #444;
+  background: #232427;
+  color: #fff;
+}
+
+.playlist-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.playlist-group button {
+  background: #fff;
+  color: #232427;
+  border: 2px solid #232427;
+  border-radius: 7px;
+  padding: 18px 0;
+  font-size: 1.05rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.files-tab {
+  font-size: 1.1rem;
+  color: #fff;
+  padding: 18px 24px 0 24px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.media-files {
+  margin: 18px 24px 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.file-card {
+  background: #232427;
+  color: #fff;
+  border: 2px dashed #444;
+  border-radius: 7px;
+  padding: 18px 0;
+  text-align: left;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 1rem;
+}
+
+.media-block {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.delete-file-btn {
+  background: none;
+  border: none;
+  color: red;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.upload-btn {
+  margin-top: 4px;
+  padding: 4px 8px;
+  font-size: 0.85rem;
+  background-color: #444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.upload-btn:hover {
+  background-color: #666;
+}
+
+.file-card {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  cursor: grab;
-}
-
-.playlist-item button {
-  background: none;
-  border: none;
-  color: #fff;
-  cursor: pointer;
-  margin-left: 5px;
-}
-
-.playlist-item:active {
-  cursor: grabbing;
-}
-
-.playlist-item button:hover {
-  color: #ffa31a;
-}
-
-/* Folder structure inside playlists */
-.playlist-folder {
-  border: 1px solid #666;
-  border-radius: 5px;
-  margin-bottom: 8px;
-  background: #222;
-}
-
-.folder-header {
-  padding: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  background-color: #333;
-  border-bottom: 1px solid #444;
-}
-
-.nested-playlist {
-  list-style: none;
-  padding-left: 1rem;
-  margin: 0;
-}
-
-.nested-playlist.collapsed {
-  display: none;
-}
-
-/* Light mode support */
-body.light-mode .playlist-folder {
-  background: #f9f9f9;
-  border-color: #ccc;
-}
-
-body.light-mode .folder-header {
-  background: #eee;
-  border-bottom-color: #ccc;
-}
-
-
-/* Style for upload section list */
-#selectedFilesList {
-  list-style: none;
-  padding: 0;
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
-
-/* Start, Stop Stream and Add Scene */
-.controls button {
-    margin-right: 0.5rem;
-    margin-bottom: 1rem;
-    padding: 0.5rem 1rem;
-    background-color: #ffa31a;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-/* Possible Audio Mixer Layout */
-.audio-mixer {
-    margin-top: 1rem;
-}
-
-/* Image? Video and Music Drag and Drop */
-.media-upload {
-    margin-top: 2rem;
-}
-#dropZone {
-    padding: 1rem;
-    margin-bottom: 1rem;
-    text-align: center;
-    border-radius: 8px;
-    transition: background 0.3s;
-}
-#dropZone.drag-over {
-    background: #2e2e2e;
-}
-
-.browse-btn {
-    margin-right: 0.5rem;
-    margin-left: auto;
-    margin-bottom: 0.5rem;
-    padding: 0.5rem 1rem;
-    background-color: #ffa31a;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    display: block;
-}
-
-/* Footer template */
-footer.bottom-bar {
-    text-align: center;
-    background: #111;
-    color: #ccc;
-    padding: 0.75rem;
-    font-size: 0.85rem;
-}
-
-/* Light mode Dark mode */
-body.light-mode {
-    background-color: #f5f5f5;
-    color: #1a1a1a;
-}
-
-body.light-mode .top-bar {
-    background-color: #007acc;
-    color: white;
-}
-
-body.light-mode .left-panel {
-    background-color: #ffffff;
-    color: #1a1a1a;
-}
-
-body.light-mode .device-setup {
-    background: #f0f0f0;
-}
-
-body.light-mode .camera-previews,
-body.light-mode .preview-box {
-    border-color: #ccc;
-    background-color: #f8f8f8;
-}
-
-body.light-mode select {
-    background-color: #fff;
-    color: #000;
-    border-color: #aaa;
-}
-
-body.light-mode select:hover {
-    border-color: #007acc;
-    background-color: #f0f8ff;
-}
-
-body.light-mode .tab-btn.active {
-    color: #007acc;
-    border-bottom-color: #007acc;
-}
-
-body.light-mode .theme-btn {
-    background-color: #007acc;
-}
-
-body.light-mode .test-btn,
-body.light-mode .mode-btn,
-body.light-mode .controls button,
-body.light-mode .browse-btn {
-    background-color: #007acc;
-}
-
-body.light-mode .playlist-container {
-    background: #ffffff;
-    border-color: #ccc;
-}
-
-body.light-mode .playlist-item {
-    border-color: #ddd;
-}
-
-body.light-mode .playlist-item button:hover {
-    color: #007acc;
-}
-
-body.light-mode .media-upload {
-    border-color: #ccc;
-}
-
-body.light-mode .tab-btn {
-  color: black;
-}
-
-body.light-mode .main-preview {
+  background: #2c2c2c;
   color: white;
+  padding: 12px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.file-card:hover {
+  background: #444;
+}
+.file-card .file-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
