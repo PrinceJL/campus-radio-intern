@@ -338,20 +338,20 @@ nextButton.addEventListener('click', () =>{
 })
 
 function debugging(){
-  console.log("Music queue:", musicQueue[1]);
+  console.log("Music queue:", musicQueue.length);
 }
 
 //Music loader
 let musicQueueIndex = 1;
 function nextInQueue(){
-  if (musicQueueIndex < musicQueue){
+  if (musicQueueIndex < (musicQueue.length-1)){
     musicQueueIndex++;
-    } else console.warn ('nigga bitch')
+    } else console.warn ('No next song')
 }
 function prevInQueue(){
   if (musicQueueIndex > 0){
     musicQueueIndex--;
-  } else console.warn ('nigga bitch')
+  } else console.warn ('No previous song')
 }
 
 function musicLoader(){
