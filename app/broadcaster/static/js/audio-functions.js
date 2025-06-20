@@ -30,9 +30,9 @@ setupUploadManager();
 // }
 
 //Audio player
-function generateAudioPlayer(){
+function generateAudioPlayer(url){
     const audio = document.createElement('audio');
-    audio.src = 
+    audio.src = url;
 }
 
 const audioPlayer = document.getElementById('audioPlayer');

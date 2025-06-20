@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CheerSL</title>
     <link rel="stylesheet" href="{{ url_for('broadcaster.static', filename='styles/broadcaster.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 </head>
 <body>
   <div class="main-header">CheerSL</div>
@@ -33,9 +34,6 @@
         <button class="ctrl-btn">Start Stream</button>
         <button class="ctrl-btn">Stop Stream</button>
         <button class="ctrl-btn">Pause Stream</button>
-        <button class="ctrl-btn">⏮️</button>
-        <button class="ctrl-btn">⏸️</button>
-        <button class="ctrl-btn">⏭️</button>
       </div>
       <div class="stream-manager">
         <div class="stream-manager-header">Stream Manager</div>
@@ -78,32 +76,64 @@
         </div>
         <div class="now-playing-block">
           <strong>Now Playing</strong>
+          <div class="now-playing-content"></div> <!-- injected media block -->
+          <div class="now-playing-controls">
+            <button id="btnLoop" class="ctrl-btn mode-btn">🔁</button>
+            <button class="ctrl-btn prev">⏮️</button>
+            <button class="ctrl-btn pause">⏸️</button>
+            <button class="ctrl-btn next">⏭️</button>
+            <button id="btnShuffle" class="ctrl-btn mode-btn">🔀</button>
+          </div>
         </div>
+
         <div class="next-up">
-          <strong>Next from: (Playlist)</strong>
+          <div class="playlist-header">
+            <strong>Next from: (Playlist)</strong>
+            <div class="playlist-actions">
+              <button id="savePlaylistBtn" title="Save Playlist">➕</button>
+              <button id="saveOrderBtn" title="Save Current Order">💾</button>
+            </div>
+          </div>
+          <div class="playlist-items"></div>
+
         </div>
         <div class="your-playlist">
           <label>Your Playlist</label>
-          <div class="playlist-group">
-            <button>Playlist 1</button>
-            <button>Playlist 2</button>
-            <button>Playlist 3</button>
-            <button>Playlist 4</button>
-          </div>
+          <div class="playlist-group"></div>
         </div>
       </div>
       <!-- Files Panel -->
       <div class="files-panel">
         <div class="files-tab">Files</div>
         <div class="media-files">
-          <div class="file-card" data-type="video"><span>Videos</span> <span>+</span></div>
-          <div class="file-card" data-type="audio"><span>Audio</span> <span>+</span></div>
-          <div class="file-card" data-type="image"><span>Image</span> <span>+</span></div>
+          <div class="file-card" data-type="video">
+            <div class="file-card-header">
+              <span>Videos</span>
+              <span class="upload-icon">+</span>
+            </div>
+            <div class ="file-container"></div>
+          </div>
+          <div class="file-card" data-type="audio">
+            <div class="file-card-header">
+              <span>Audio</span> 
+              <span class="upload-icon">+</span>
+            </div>
+            <div class ="file-container"></div>
+          </div>
+          <div class="file-card" data-type="image">
+            <div class="file-card-header">
+              <span>Image</span>
+              <span class="upload-icon">+</span>
+            </div>  
+            <div class ="file-container"></div>
+          </div>
         </div>
       </div>
     </div>
   </div>
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script type="module" src="{{ url_for('broadcaster.static', filename='js/playlist-manager.js') }}"></script>
+  <script type="module" src="{{ url_for('broadcaster.static', filename='js/file-handler.js') }}"></script>
   <script type="module" src="{{ url_for('broadcaster.static', filename='js/broadcaster.js') }}"></script>
 </body>
 </html>
