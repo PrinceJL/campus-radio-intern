@@ -3,18 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Campus Radio</title>
+    <title>CheerSL</title>
     <link rel="stylesheet" href="obs-style.css" />
 </head>
 <body>
-  <div class="main-header">Campus Radio</div>
+  <div class="main-header">
+    <img src="slu_logo.png" alt="SLU Logo" class="header-logo" />
+    CheerSL
+  </div>
   <div class="app-grid">
     <!-- Left Sidebar -->
     <aside class="left-sidebar">
       <div class="box-header-devices">
         <div class="sidebar-header">Devices</div>
       </div>
-      <div class="section-label">Cameras</div>
+      <div class="section-label">
+        Cameras
+        <span class="section-icons">
+          <img src="plus.png" alt="Add" class="icon-btn-plus" />
+          <img src="drop-down.png" alt="Dropdown" class="icon-btn" />
+        </span>
+      </div>
       <div class="camera-list">
         <div class="camera-card">CAMERA 1</div>
         <div class="camera-card">CAMERA 2</div>
@@ -31,9 +40,12 @@
     <!-- Main Content -->
     <main class="main-content">
       <div class="box-header">
-        <div class="sidebar-header">Stream Preview</div>
+        <div class="stream-preview">Stream Preview</div>
       </div>
-      <div class="stream-preview-area"></div>
+      <div class="stream-preview-wrapper">
+        <div class="stream-bar"></div>
+        <div class="stream-preview-area"></div>
+      </div>
       <div class="controls">
         <button class="ctrl-btn">Start Stream</button>
         <button class="ctrl-btn">Stop Stream</button>

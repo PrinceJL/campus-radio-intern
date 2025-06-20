@@ -11,15 +11,22 @@ body {
 }
 
 .main-header {
-  width: 100vw;
-  background: #18191c;
-  color: #fff;
-  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  height: 56px;
+  background: white;
+  color: #073066;
+  font-size: 1.5rem;
   font-weight: bold;
-  padding: 18px 0 10px 32px;
-  letter-spacing: 1px;
-  border-bottom: 1px solid #232427;
-  box-sizing: border-box;
+  padding: 0 24px;
+  gap: 5px;
+}
+
+.header-logo {
+  height: 40px;
+  width: auto;
+  margin-right: 0;
+  display: block;
 }
 
 .app-grid {
@@ -29,6 +36,193 @@ body {
   height: calc(100vh - 56px); /* 56px = .main-header height + padding */
   width: 100vw;
   background: #18191c;
+}
+
+/* Devices Panel Background */
+.left-sidebar {
+  background: white;
+  width: 300px;
+  min-width: 300px;
+  max-width: 3px;
+  height: 1132px;
+  padding: 0;
+  border-right: 1px solid #222;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Devices/Cameras/Microphone Tabs */
+.box-header-devices {
+  width: 300px;
+  height: 57px;
+  background: #073066;
+  padding: 20px 18px 10px 18px;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+.sidebar-header {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+.camera-list {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  padding: 16px 10px;
+  margin-bottom: 0;
+  display: grid;
+  gap: 5px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Camera Card */
+.camera-card {
+  width: 280px;
+  height: 150px;
+  background: #232427;
+  color: white;
+  border: 2px solid #232427;
+  margin: 0;
+  text-align: center;
+  font-weight: 500;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: box-shadow 0.2s, border-color 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+}
+
+/* Camera Card Active State */
+.camera-card.active,
+.camera-card.selected {
+  border: 2px solid #4ade80;
+}
+
+/* Microphone Tab */
+.section-label {
+  width: 300px;
+  height: 57px;
+  background: #073066;
+  border-bottom: 1px solid #222;
+  padding: 17px 18px 10px 18px;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  justify-content: space-between;
+}
+
+.section-icons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon-btn-plus {
+  width: 11px;
+  height: 11px;
+  cursor: pointer;
+  filter: brightness(0) invert(1);
+  opacity: 100;
+  transition: opacity 0.2s;
+}
+
+.icon-btn {
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  filter: brightness(0) invert(1);
+  opacity: 100;
+  transition: opacity 0.2s;
+}
+
+.icon-btn:hover {
+  opacity: 1;
+}
+
+
+/* Microphone List */
+.mic-list {
+  padding: 0 10px;
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Microphone Card */
+.mic-card {
+  width: 280px;
+  height: 54.94px;
+  background: #ffaf00;
+  color: #fff;
+  text-shadow: 0px 0px 5px black;
+  border: none;
+  border-radius: 4px;
+  margin: 12px auto 0 auto;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 0 18px;
+  box-sizing: border-box;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.mic-card .mic-icon {
+  font-size: 1.2em;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  padding: 0 0 0 0;
+  gap: 0;
+}
+
+.controls {
+  display: flex;
+  gap: 16px;
+  margin: 18px 24px 0 24px;
+}
+
+.ctrl-btn {
+  width: 240px;
+  height: 38px;
+  border-radius: 5px;
+  background: #18191c;
+  color: #fff;
+  border: none;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-right: 7px;
+  padding: 11px 7px;
+  transition: background 0.2s;
+}
+
+.ctrl-btn:not(:last-child) {
+  margin-right: 7px;
+}
+
+.ctrl-btn:hover {
+  background: #444;
 }
 
 /* --- Stream Preview Header --- */
@@ -54,15 +248,48 @@ body {
 }
 
 /* --- Stream Preview Area --- */
-.stream-preview-area {
-  width: 909px;
-  height: 499.63px;
-  background: #d3d3d3;
-  border-radius: 8px;
+.stream-preview-wrapper {
+  position: relative;
+  width: 900px;
+  height: 600px;
   margin: 0 auto;
-  border: 2px solid #232427;
-  box-sizing: border-box;
 }
+
+
+.stream-preview-area {
+  width: 900px;
+  height: 400px;
+  background: #d3d3d3;
+  position: relative;
+  z-index: 2;
+  margin-top: 99px;
+  margin-bottom: 100px;
+}
+
+.stream-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #0F0E11;
+  z-index: 1;
+}
+
+.stream-preview {
+  width: 909px;
+  height: 57px;
+  background: #073066;
+  border-bottom: 1px solid #222;
+  padding: 17px 18px 10px 18px;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  justify-content: space-between;
+}
+
 
 /* --- Controls and Stream Manager Background --- */
 .stream-controls-bg {
@@ -134,171 +361,6 @@ body {
 }
 
 .media-nav-btn:hover {
-  background: #444;
-}
-
-/* Devices Panel Background */
-.left-sidebar {
-  background: #232427;
-  width: 300px;
-  min-width: 300px;
-  max-width: 3px;
-  height: 1132px;
-  padding: 0;
-  border-right: 1px solid #222;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Devices/Cameras/Microphone Tabs */
-.box-header-devices,
-.section-label {
-  width: 320px;
-  height: 57px;
-  background: #18191c;
-  border-bottom: 1px solid #222;
-  padding: 20px 18px 10px 18px;
-  display: flex;
-  align-items: center;
-  font-size: 16px;
-  font-weight: 600;
-  color: #fff;
-  letter-spacing: 1px;
-}
-
-.sidebar-header {
-  font-size: 16px;
-  font-weight: 600;
-  color: #fff;
-  letter-spacing: 1px;
-}
-
-.camera-list {
-  display: flex;
-  flex-direction: column;
-  padding: 16px 10px;
-  margin-bottom: 0;
-  display: grid;
-  gap: 5px;
-  align-content: center;
-}
-
-/* Camera Card */
-.camera-card {
-  width: 260px;
-  height: 150px;
-  background: #fff;
-  color: #232427;
-  border: 2px solid #232427;
-  margin: 0;
-  text-align: center;
-  font-weight: 500;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: box-shadow 0.2s, border-color 0.2s;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Camera Card Active State */
-.camera-card.active,
-.camera-card.selected {
-  border: 2px solid #4ade80;
-}
-
-/* Microphone Tab */
-.section-label {
-  width: 300px;
-  height: 57px;
-  background: #18191c;
-  border-bottom: 1px solid #222;
-  padding: 17px 18px 10px 18px;
-  display: flex;
-  align-items: center;
-  font-size: 16px;
-  font-weight: 600;
-  color: #fff;
-}
-
-/* Microphone List */
-.mic-list {
-  padding: 0 10px;
-  margin-bottom: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-/* Microphone Card */
-.mic-card {
-  width: 291px;
-  height: 54.94px;
-  background: #232427;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  margin: 12px auto 0 auto;
-  font-size: 1.1rem;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 10px;
-  padding: 0 18px;
-  box-sizing: border-box;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.mic-card .mic-icon {
-  font-size: 1.2em;
-}
-
-.main-content {
-  display: flex;
-  flex-direction: column;
-  padding: 0 0 0 0;
-  gap: 0;
-}
-
-.stream-preview-area {
-  width: 909px;
-  height: 499.63px;
-  background: #d3d3d3;
-  border-radius: 8px;
-  margin: 0 auto;
-  border: 2px solid #232427;
-  box-sizing: border-box;
-}
-
-.controls {
-  display: flex;
-  gap: 16px;
-  margin: 18px 24px 0 24px;
-}
-
-.ctrl-btn {
-  width: 240px;
-  height: 38px;
-  border-radius: 5px;
-  background: #18191c;
-  color: #fff;
-  border: none;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  margin-right: 7px;
-  padding: 11px 7px;
-  transition: background 0.2s;
-}
-
-.ctrl-btn:not(:last-child) {
-  margin-right: 7px;
-}
-
-.ctrl-btn:hover {
   background: #444;
 }
 
@@ -587,39 +649,6 @@ body {
   justify-content: space-between;
   gap: 10px;
   font-size: 1rem;
-}
-
-/* --- Stream Preview Header --- */
-.stream-preview-header {
-  width: 909px;
-  height: 57px;
-  background: #18191c;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  padding-left: 24px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  border-bottom: 1px solid #232427;
-  box-sizing: border-box;
-}
-
-/* --- Space below header --- */
-.stream-preview-spacer {
-  width: 909px;
-  height: 168.18px;
-  background: transparent;
-}
-
-/* --- Stream Preview Area --- */
-.stream-preview-area {
-  width: 909px;
-  height: 499.63px;
-  background: #d3d3d3;
-  border-radius: 8px;
-  margin: 0 auto;
-  border: 2px solid #232427;
-  box-sizing: border-box;
 }
 
 /* --- Controls and Stream Manager Background --- */
