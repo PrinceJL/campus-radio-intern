@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Campus Radio</title>
-  <link rel="stylesheet" href="obs-bb-style.css">
+  <link rel="stylesheet" href="{{ url_for('broadcaster.static', filename='styles/broadcaster.css') }}">
 </head>
 <body>
   <div class="app-container">
@@ -81,15 +81,6 @@
             <div class="audio-mixer">
               <h3>AUDIO MIX</h3>
               <div id="audioLevels">Microphone Level </div>
-              <div>
-                 <audio id="audioPlayer" controls></audio>
-                 <div id = "audioButtons">
-                  <button id="prevButton">Previous</button>
-                  <button id="playPauseButton" data-playing = "false" role="switch">Play</button>
-                  <button id="nextButton">Next</button>
-                  <button id="crossfdButton" class="tab-btn active">Crossfade</button>
-                 </div>
-              </div>
             </div>
           </div>
 
@@ -101,6 +92,7 @@
             <div class="playlist-tabs">
               <button class="tab-btn active" data-tab="video">Video</button>
               <button class="tab-btn" data-tab="audio">Audio</button>
+              <button class="tab-btn" data-tab="audio">Images</button>
               <button class="browse-btn" onclick="document.getElementById('mediaInput').click()">Browse Files</button>
             </div>
             <ul id = 'fileLibrary'> </ul>
@@ -122,7 +114,6 @@
             <div class="playlist-header">
               <h3>Playlist</h3>
               <button class="browse-btn" id="addPlaylistBtn">+ Add Playlist</button>
-              
             </div>
 
             <div class="playlist-content">
@@ -133,6 +124,8 @@
       </main>
     </div>
   </div>
-<script src="obs-bb-script.js"></script>
+<div id="broadcast-status" style="text-align:center; margin:1em; color:#2d72d9;"></div>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="{{ url_for('broadcaster.static', filename='js/broadcaster.js') }}"></script>
 </body>
 </html>

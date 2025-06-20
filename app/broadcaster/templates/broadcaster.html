@@ -1,131 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Campus Radio</title>
-  <link rel="stylesheet" href="{{ url_for('broadcaster.static', filename='styles/broadcaster.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CheerSL</title>
+    <link rel="stylesheet" href="{{ url_for('broadcaster.static', filename='styles/broadcaster.css') }}">
 </head>
 <body>
-  <div class="app-container">
-    <header class="top-bar">
-      <span>Campus Radio</span>
-      <button class="theme-btn" id="themeToggle">Switch Theme</button>
-    </header>
+  <div class="main-header">CheerSL</div>
+  <div class="app-grid">
+    <!-- Left Sidebar -->
+    <aside class="left-sidebar">
+      <div class="sidebar-header">Devices</div>
+      <div class="section-label">Cameras</div>
+      <div class="camera-list">
+        <div class="camera-card">CAMERA 1</div>
+        <div class="camera-card">CAMERA 2</div>
+        <div class="camera-card">CAMERA 3</div>
+        <div class="camera-card">CAMERA 4</div>
+      </div>
+      <div class="mic-label">Microphone</div>
+      <div class="mic-list">
+        <div class="mic-card"><span class="mic-icon">🎤</span> MICROPHONE 1</div>
+      </div>
+    </aside>
 
-    <div class="main-layout">
-      <aside class="left-panel">
-        <div class="preview-tabs">
-          <button class="tab-btn active" data-tab="cameras">Cameras</button>
-          <button class="tab-btn" data-tab="scenes">Scenes</button>
-        </div>
-
-        <!-- Camera Previews -->
-        <div>
-          <div class="preview-section active" id="cameraPreviews">
-            <div class="camera-previews">
-              <video class="preview-box" id="cam1" autoplay muted playsinline></video>
-              <video class="preview-box" id="cam2" autoplay muted playsinline></video>
-              <video class="preview-box" id="cam3" autoplay muted playsinline></video>
-              <video class="preview-box" id="cam4" autoplay muted playsinline></video>
-            </div>
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="sidebar-header">Stream Preview</div>
+      <div class="stream-preview-area"></div>
+      <div class="controls">
+        <button class="ctrl-btn">Start Stream</button>
+        <button class="ctrl-btn">Stop Stream</button>
+        <button class="ctrl-btn">Pause Stream</button>
+        <button class="ctrl-btn">⏮️</button>
+        <button class="ctrl-btn">⏸️</button>
+        <button class="ctrl-btn">⏭️</button>
+      </div>
+      <div class="stream-manager">
+        <div class="stream-manager-header">Stream Manager</div>
+        <div class="stream-manager-title">Stream Title</div>
+        <div class="stream-manager-content">
+          <div class="stream-manager-desc">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a libero
+            interdum, imperdiet ipsum non, sagittis ex. Praesent neque urna,
+            condimentum quis aliquet id, scelerisque posuere ex. Donec venenatis ut
+            justo euismod pharetra. Ut fringilla tortor quis quam malesuada, vitae
+            finibus nibh sollicitudin. Aliquam habitant vitae neque quis pellentesque.
+            Ut ex eros, condimentum eget porttitor ac, convallis non odio. Integer id
+            nisi sit amet justo finibus euismod. Fusce imperdiet egestas viverra.
           </div>
-
-          <!-- Scene Previews (hidden by default) -->
-          <div class="scene-section" id="scenePreviews">
-            <div class="scene-preview">
-              <h3>Scene 1</h3>
-                <div class="preview-box"></div>
-            </div>
-            <div class="scene-preview">
-              <h3>Scene 2</h3>
-                <div class="preview-box"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="device-setup">
-          <h3>Device Setup</h3>
-          <label for="webcamSelect"> Webcam </label>
-          <select id="webcamSelect"></select>
-
-          <label for="micSelect"> Microphone </label>
-          <select id="micSelect"></select>
-
-          <button class="test-btn", id="testDevices"> Test Devices </button>
-        </div>
-      </aside>
-
-      <main class="preview-section">
-        <div class="mode-selector">
-          <h2>MODES</h2>
-          <button class="mode-btn" data-mode="video">VIDEO STREAMING</button>
-          <button class="mode-btn" data-mode="radio">RADIO (AUDIO ONLY)</button>
-          <button class="mode-btn" data-mode="emergency">EMERGENCY ONLY</button>
-        </div>
-
-        <!-- Split layout -->
-        <div class="split-layout">
-          <!-- Left column - Preview and controls -->
-          <div class="left-column">
-            <div id="mainPreview" class="main-preview">
-              <video class="preview-box" id="mainStream" autoplay muted playsinline></video>
-            </div>
-
-            <div class="controls">
-              <button id="startStream">START STREAM</button>
-              <button id="stopStream">STOP STREAM</button>
-              <button id="addScene">ADD SCENE</button>
-            </div>
-
-            <div class="audio-mixer">
-              <h3>AUDIO MIX</h3>
-              <div id="audioLevels">Microphone Level </div>
-            </div>
-          </div>
-
-        <!-- Right column - Playlist -->
-        <div class="right-column">
-          <!-- Files Panel -->
-          <div class="playlist-container files-panel">
-            <h3>Files</h3>
-            <div class="playlist-tabs">
-              <button class="tab-btn active" data-tab="video">Video</button>
-              <button class="tab-btn" data-tab="audio">Audio</button>
-              <button class="tab-btn" data-tab="audio">Images</button>
-              <button class="browse-btn" onclick="document.getElementById('mediaInput').click()">Browse Files</button>
-            </div>
-            <ul id = 'fileLibrary'> </ul>
-            <ul id="videoPlaylist" class="playlist-list "></ul>
-            <ul id="audioPlaylist" class="playlist-list"></ul>
-
-            <!-- Media Upload Area -->
-            <div class="media-upload">
-                <div id="dropZone"></div>
-                  <input type="file" id="mediaInput" accept="video/*,audio/*" multiple hidden>
-                  <ul id="selectedFilesList"></ul>
-                <button class="browse-btn" id="uploadBtn" style="display: none;">Upload</button>
-            </div>
-
-          </div>
-
-          <!-- Playlist Panel -->
-          <div class="playlist-container playlist-panel">
-            <div class="playlist-header">
-              <h3>Playlist</h3>
-              <button class="browse-btn" id="addPlaylistBtn">+ Add Playlist</button>
-            </div>
-
-            <div class="playlist-content">
-              
-            </div>
+          <div class="stream-manager-session">
+            <div class="session-time">0:00:00</div>
+            <div class="viewers">0<br>Viewers</div>
           </div>
         </div>
-      </main>
+        <div class="currently-playing">
+          <div><strong>Currently Playing</strong></div>
+          <div class="playing-bar">
+            <div class="track-title">
+              <img src="https://via.placeholder.com/32x32?text=IMG" alt="placeholder" />
+              Music / Video Title
+            </div>
+            <input type="range" min="0" max="100" />
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Right Section (Queue/Files) -->
+    <div class="right-section">
+      <!-- Queue/Playlist Panel -->
+      <div class="queue-panel">
+        <div class="queue-tabs">
+          <div class="queue-tab active">Queue</div>
+          <div class="queue-tab">Recently played</div>
+        </div>
+        <div class="now-playing-block">
+          <strong>Now Playing</strong>
+        </div>
+        <div class="next-up">
+          <strong>Next from: (Playlist)</strong>
+        </div>
+        <div class="your-playlist">
+          <label>Your Playlist</label>
+          <div class="playlist-group">
+            <button>Playlist 1</button>
+            <button>Playlist 2</button>
+            <button>Playlist 3</button>
+            <button>Playlist 4</button>
+          </div>
+        </div>
+      </div>
+      <!-- Files Panel -->
+      <div class="files-panel">
+        <div class="files-tab">Files</div>
+        <div class="media-files">
+          <div class="file-card" data-type="video"><span>Videos</span> <span>+</span></div>
+          <div class="file-card" data-type="audio"><span>Audio</span> <span>+</span></div>
+          <div class="file-card" data-type="image"><span>Image</span> <span>+</span></div>
+        </div>
+      </div>
     </div>
   </div>
-<div id="broadcast-status" style="text-align:center; margin:1em; color:#2d72d9;"></div>
-<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
-<script src="{{ url_for('broadcaster.static', filename='js/broadcaster.js') }}"></script>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script type="module" src="{{ url_for('broadcaster.static', filename='js/broadcaster.js') }}"></script>
 </body>
 </html>
