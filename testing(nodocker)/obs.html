@@ -46,14 +46,13 @@
         <div class="stream-bar"></div>
         <div class="stream-preview-area"></div>
       </div>
-      <div class="controls">
-        <button class="ctrl-btn">Start Stream</button>
-        <button class="ctrl-btn">Stop Stream</button>
-        <button class="ctrl-btn">Pause Stream</button>
-        <button class="ctrl-btn">⏮️</button>
-        <button class="ctrl-btn">⏸️</button>
-        <button class="ctrl-btn">⏭️</button>
-      </div>
+      <div class="controls-wrapper">
+        <div class="controls">
+          <button class="ctrl-btn">Start Stream</button>
+          <button class="ctrl-btn">Stop Stream</button>
+          <button class="ctrl-btn">Pause Stream</button>
+        </div>
+      </div>  
       <div class="stream-manager">
         <div class="stream-manager-header">Stream Manager</div>
         <div class="stream-manager-title">Stream Title</div>
@@ -69,9 +68,12 @@
           </div>
           <div class="stream-manager-session">
             <div class="session-time">0:00:00</div>
-            <div class="viewers">0<br>Viewers</div>
+            <div class="session">Session</div>
+            <div class="viewers-count">0</div>
+            <div class="viewers">Viewers</div>
           </div>
         </div>
+        <!-- Place Holder 
         <div class="currently-playing">
           <div><strong>Currently Playing</strong></div>
           <div class="playing-bar">
@@ -81,7 +83,7 @@
             </div>
             <input type="range" min="0" max="100" />
           </div>
-        </div>
+        </div> -->
       </div>
     </main>
 
@@ -89,15 +91,34 @@
     <div class="right-section">
       <!-- Queue/Playlist Panel -->
       <div class="queue-panel">
-        <div class="queue-tabs">
-          <div class="queue-tab active">Queue</div>
-          <div class="queue-tab">Recently played</div>
-        </div>
+        <div class="box-header-queue">
+          <div class="queue-tabs">
+            <div class="queue-tab active">Queue</div>
+            <div class="queue-tab">Recently played</div>
+          </div>
+        </div>  
         <div class="now-playing-block">
           <strong>Now Playing</strong>
           <div class="media-block">
             <img src="https://via.placeholder.com/40x40?text=IMG" alt="placeholder" />
             Music / Video Title
+          </div>
+          <div class="ctrl-btn-wrapper">
+            <button class="ctrl-btn-msc">
+              <img src="shuffle.png" alt="Previous" style="height:20px;width:20px;vertical-align:middle;" />
+            </button>
+            <button class="ctrl-btn-msc">
+              <img src="previous.png" alt="Previous" style="height:15px;width:15px;vertical-align:middle;" />
+            </button>
+            <button class="ctrl-btn-msc">
+              <img src="pause-button.png" alt="Previous" style="height:20px;width:20px;vertical-align:middle;" />
+            </button>
+            <button class="ctrl-btn-msc">
+              <img src="next-button.png" alt="Previous" style="height:18px;width:18px;vertical-align:middle;" />
+            </button>
+            <button class="ctrl-btn-msc">
+              <img src="loop.png" alt="Previous" style="height:20px;width:20px;vertical-align:middle;" />
+            </button>
           </div>
         </div>
         <div class="next-up">
@@ -115,23 +136,71 @@
             Music / Video Title
           </div>
         </div>
+        <!-- Video Playlist -->
+        <div class="section-label-playlist">
+          Video Playlist
+          <span class="section-icons">
+            <img src="plus.png" alt="Add" class="icon-btn-plus" />
+            <img src="drop-down.png" alt="Dropdown" class="icon-btn" />
+          </span>
+        </div>   
         <div class="your-playlist">
-          <label>Your Playlist</label>
           <div class="playlist-group">
             <button>Playlist 1</button>
             <button>Playlist 2</button>
             <button>Playlist 3</button>
-            <button>Playlist 4</button>
+          </div>
+        </div>
+        <!-- Audio Playlist -->
+        <div class="section-label-playlist">
+          Audio Playlist
+          <span class="section-icons">
+            <img src="plus.png" alt="Add" class="icon-btn-plus" />
+            <img src="drop-down.png" alt="Dropdown" class="icon-btn" />
+          </span>
+        </div> 
+        <div class="your-playlist">
+          <div class="playlist-group">
+            <button>Playlist 1</button>
+            <button>Playlist 2</button>
+            <button>Playlist 3</button>
           </div>
         </div>
       </div>
       <!-- Files Panel -->
       <div class="files-panel">
-        <div class="files-tab">Files</div>
+        <div class="box-header-files">
+          <div class="files-tab">Files</div>
+        </div>
+
         <div class="media-files">
-          <div class="file-card"><span>Videos</span> <span>+</span></div>
-          <div class="file-card"><span>Audio</span> <span>+</span></div>
-          <div class="file-card"><span>Image</span> <span>+</span></div>
+
+          <div class="file-card">
+            <img src="placeholder-image.svg" alt="Video Thumbnail" class="file-card-img" />
+            <span class="file-card-title">Video Title</span>
+            <img src="placeholder-image.svg" alt="Video Thumbnail" class="file-card-img" />
+            <span class="file-card-title">Video Title</span>
+            <img src="placeholder-image.svg" alt="Video Thumbnail" class="file-card-img" />
+            <span class="file-card-title">Video Title</span>
+          </div>
+
+          <div class="file-card">
+            <img src="audio-placeholder.svg" alt="Audio Thumbnail" class="file-card-img" />
+            <span class="file-card-title">Music Title</span>
+            <img src="audio-placeholder.svg" alt="Audio Thumbnail" class="file-card-img" />
+            <span class="file-card-title">Music Title</span>
+            <img src="audio-placeholder.svg" alt="Audio Thumbnail" class="file-card-img" />
+            <span class="file-card-title">Music Title</span>
+          </div>
+
+          <div class="file-card">
+            <img src="image-placeholder.svg" alt="Image Thumbnail" class="file-card-img" />
+            <span class="file-card-title">Image Title</span>
+            <img src="image-placeholder.svg" alt="Image Thumbnail" class="file-card-img" />
+            <span class="file-card-title">Image Title</span>
+            <img src="image-placeholder.svg" alt="Image Thumbnail" class="file-card-img" />
+            <span class="file-card-title">Image Title</span>
+          </div>
         </div>
       </div>
     </div>
