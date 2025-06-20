@@ -12,11 +12,9 @@
   font-style: sans-serif;
 }
 
-body {
+html, body {
   margin: 0;
-  background: #18191c;
-  color: #fff;
-  font-family: 'Segoe UI', Arial, sans-serif;
+  padding: 0;
 }
 
 .main-header {
@@ -40,11 +38,9 @@ body {
 
 .app-grid {
   display: grid;
-  grid-template-columns: 300px 900px 700px;
-  grid-template-rows: 1fr;
-  height: calc(100vh - 56px);
-  width: 100vw;
-  background: #18191c;
+  grid-template-columns: 300px 900px 1fr;
+  width: 100%;
+  max-width: 100%;
 }
 
 /* Devices Panel Background */
@@ -53,9 +49,9 @@ body {
   width: 300px;
   min-width: 300px;
   max-width: 3px;
-  height: 1132px;
+  height: 1000px;
   padding: 0;
-  border-right: 1px solid #222;
+  border-right: 1px solid #ccc;
   display: flex;
   flex-direction: column;
 }
@@ -204,13 +200,14 @@ body {
   padding: 0 0 0 0;
   gap: 0;
   background-color: white;
+  border-right: 1px solid #ccc;
+  height: 1000px;
 }
 
 /* --- Stream Preview Header --- */
 .stream-preview-header {
   width: 909px;
   height: 57px;
-  background: #18191c;
   color: #fff;
   display: flex;
   align-items: center;
@@ -340,7 +337,6 @@ body {
   width: 38px;
   height: 38px;
   border-radius: 5px;
-  background: #18191c;
   color: #fff;
   border: none;
   font-size: 1.2rem;
@@ -364,7 +360,7 @@ body {
   color: #fff;
   border-radius: 8px;
   padding: 24px;
-  margin: 18px 24px 0 24px;
+  margin: 10px 24px 0 24px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -447,7 +443,8 @@ body {
 .right-section {
   display: flex;
   height: 100%;
-  background: #232427;
+  width: 664px;
+  background: white;
 }
 
 .box-header-queue {
@@ -473,7 +470,7 @@ body {
 }
 
 .box-header-files {
-  width: 320px;
+  width: 344px;
   height: 56px;
   background: #073066;
   padding: 15px 18px 10px 18px;
@@ -534,7 +531,7 @@ body {
 
 .now-playing-block strong {
   font-size: 1rem;
-  color: #fff;
+  color: black;
 }
 
 .ctrl-btn-msc {
@@ -586,7 +583,7 @@ body {
 
 .next-up strong {
   font-size: 1rem;
-  color: #fff;
+  color: black;
 }
 
 .next-up .media-block {
@@ -666,25 +663,70 @@ body {
 }
 
 .media-files {
-  margin: 18px 20px 0 2px;
+  margin: 18px 20px 0 20px;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  width: 295px;
 }
 
+.card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* --- File Card Styling --- */
 .file-card {
-  background: #ccc;
-  color: #073066;
-  border-radius: 7px;
-  text-align: left;
-  font-weight: 500;
   display: flex;
   align-items: center;
+  gap: 12px;
+  background-color: #232427;
+  padding: 10px;
+  border-radius: 10px;
+  color: white;
+  font-weight: 500;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+
+.file-card-img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  background: #999;
+  border-radius: 6px;
+}
+
+.file-card-title {
+  flex: 1;
+}
+
+.section-right {
+  margin-left: 12px;
+  margin-bottom: 20px;
+  padding: 0 12px;
+  width: 290px;
+  height: 270px;
+  background-color: #073066;
+  border-radius: 10px;
+}
+
+.section-label-right {
+  margin-top: 5px;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
   justify-content: space-between;
-  gap: 10px;
-  font-size: 1rem;
-  width: 280px;
-  height: 333px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.section-label-right .plus {
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  color: white;
 }
 
 /* --- Stream Controls --- */
