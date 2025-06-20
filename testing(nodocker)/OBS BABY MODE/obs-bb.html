@@ -87,7 +87,7 @@
                   <button id="prevButton">Previous</button>
                   <button id="playPauseButton" data-playing = "false" role="switch">Play</button>
                   <button id="nextButton">Next</button>
-                  <button id="crossfdButton" class="tab-btn active">Crossfade</button>
+                  <button id="crossfdButton" data-tab="active">Crossfade</button>
                  </div>
               </div>
             </div>
@@ -103,10 +103,11 @@
               <button class="tab-btn" data-tab="audio">Audio</button>
               <button class="browse-btn" onclick="document.getElementById('mediaInput').click()">Browse Files</button>
             </div>
+            <div>
             <ul id = 'fileLibrary'> </ul>
             <ul id="videoPlaylist" class="playlist-list "></ul>
             <ul id="audioPlaylist" class="playlist-list"></ul>
-
+            </div>
             <!-- Media Upload Area -->
             <div class="media-upload">
                 <div id="dropZone"></div>

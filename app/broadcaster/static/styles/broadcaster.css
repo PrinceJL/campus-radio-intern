@@ -120,8 +120,13 @@ body {
 
 .controls {
   display: flex;
-  gap: 16px;
+  flex-wrap: wrap;           /* Allow buttons to wrap on small screens */
+  gap: 12px;
   margin: 18px 24px 0 24px;
+  justify-content: center;   /* Center buttons if fewer */
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .ctrl-btn {
@@ -129,11 +134,22 @@ body {
   color: #fff;
   border: none;
   border-radius: 6px;
-  padding: 12px 28px;
-  font-size: 1rem;
+  padding: 10px 10px;
+  font-size: 0.95rem;
   font-weight: 500;
   cursor: pointer;
   transition: background 0.2s;
+
+  flex: 1 1 auto;           /* Allow button to shrink or grow */
+  min-width: 5px;         /* Prevent button from collapsing too small */
+  max-width: 200px;         /* Prevent it from being too wide */
+  text-align: center;
+  white-space: nowrap;
+}
+
+.ctrl-btn.active {
+  background: #007bff;
+  color: white;
 }
 
 .ctrl-btn:hover {
@@ -303,6 +319,17 @@ body {
   border-bottom: 2px solid #4ade80;
 }
 
+.now-playing-controls {
+  display: none;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.now-playing-block.playing .now-playing-controls {
+  display: flex;
+}
+
 .now-playing-block,
 .next-up,
 .your-playlist {
@@ -323,32 +350,55 @@ body {
   margin-bottom: 5px;
   border-radius: 6px;
   color: white;
+  max-width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
 }
+
+
+.media-block.playing {
+  background-color: #d0e6ff;
+  border-left: 4px solid #007bff;
+}
+
 
 .media-info {
   display: flex;
   align-items: center;
   gap: 8px;
   overflow: hidden;
+  flex: 1;
+  min-width: 0;
 }
 
 .media-title {
-  display: inline-block;
-  max-width: 150px;
+  display: block;
+  max-width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex-shrink: 1;
 }
+
 
 .media-right {
   display: flex;
   align-items: center;
   gap: 6px;
+  flex-shrink: 0;
 }
 
 .media-duration {
   font-size: 12px;
   color: #ccc;
+}
+
+.delete-btn {
+  background: transparent;
+  border: none;
+  color: red;
+  font-size: 14px;
+  cursor: pointer;
 }
 
 .delete-file-btn {
@@ -388,6 +438,28 @@ body {
   gap: 10px;
   font-weight: 500;
   border: 1px solid #444;
+}
+.playlist-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.playlist-actions button {
+  background: #232427;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  margin-left: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.playlist-actions button:hover {
+  background: #007bff;
 }
 
 .your-playlist {
@@ -446,25 +518,123 @@ body {
 }
 
 .file-card {
-  background: #232427;
-  color: #fff;
-  border: 2px dashed #444;
-  border-radius: 7px;
-  padding: 18px 0;
-  text-align: left;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  font-size: 1rem;
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+    position: relative;
 }
 
-.media-block {
+.file-card span {
+    pointer-events: none;
+}
+
+.file-card .upload-icon {
+    cursor: pointer;
+    pointer-events: auto;        /* allow only icon to be clickable */
+    font-size: 20px;
+    margin-top: 4px;
+}
+
+.uploaded-media {
   display: flex;
   align-items: center;
   gap: 8px;
+  padding: 4px;
+  margin: 4px 0;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
+
+.uploaded-media:hover {
+  background-color: #f0f0f0;
+}
+
+.uploaded-media img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+}
+
+.uploaded-label {
+    font-size: 12px;
+    margin-top: 4px;
+    word-break: break-word;
+    text-align: center;
+}
+
+.playlist-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+.playlist-btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1f1f1f;
+  color: white;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #333;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-bottom: 6px;
+}
+
+.playlist-btn:hover {
+  background: #292929;
+}
+
+.playlist-btn .remove-icon {
+  color: #ff5c5c;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  padding-left: 10px;
+}
+
+
+.media-block {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #2a2d32;
+  padding: 10px 12px;
+  border-radius: 6px;
+  transition: background 0.2s;
+  border: 1px solid #3d3d3d;
+}
+
+.media-block:hover {
+  background: #353a40;
+}
+
+.media-title {
+  font-weight: 500;
+  color: #fff;
+  font-size: 0.95rem;
+}
+
+.media-info img {
+  border-radius: 4px;
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+}
+
 
 .delete-file-btn {
   background: none;
@@ -487,25 +657,39 @@ body {
 .upload-btn:hover {
   background-color: #666;
 }
-
 .file-card {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   background: #2c2c2c;
   color: white;
   padding: 12px;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
   border-radius: 6px;
-  cursor: pointer;
   transition: background 0.2s;
+  gap: 10px;
 }
 
 .file-card:hover {
-  background: #444;
+  background: #3a3a3a;
 }
-.file-card .file-info {
+
+.file-card .file-card-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 10px;
+  pointer-events: none;
+}
+
+.file-card .file-card-header span {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #ddd;
+}
+
+.file-card .upload-icon {
+  font-size: 20px;
+  color: #4ade80;
+  cursor: pointer;
+  pointer-events: auto;
 }
