@@ -1,6 +1,7 @@
 export function setupUploadManager() {
     setupUploadButtons();
     loadExistingUploads();
+    insertUploadedFile();
 }
 
 function setupUploadButtons() {
@@ -129,7 +130,7 @@ function insertUploadedFile(name, url) {
     if (fileType === 'image') {
         preview.src = url;
     } else if (fileType === 'video') {
-        generateVideoThumbnail(url, preview);
+        generateVideoThumbnail(url, preview); 
     } else if (fileType === 'audio') {
         preview.src = 'https://via.placeholder.com/40x40?text=MP3';
     } else {
