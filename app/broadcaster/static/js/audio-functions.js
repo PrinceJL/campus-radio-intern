@@ -30,11 +30,6 @@ setupUploadManager();
 // }
 
 //Audio player
-function generateAudioPlayer(url){
-    const audio = document.createElement('audio');
-    audio.src = url;
-}
-
 const audioPlayer = document.getElementById('audioPlayer');
 const audioCtx = new (window.AudioContext ||window.webkitURL);
 const player = audioCtx.createMediaElementSource(audioPlayer);
@@ -51,21 +46,19 @@ function addToMusicQueue(){
   src: item.dataset.src
 }));
 }
-function addToVideoQueue(){
-  musicQueue = Array.from(videoPlaylist.querySelectorAll('li')).map(item => ({
-  name: item.textContent,
-  src: item.dataset.src
-}));
-}
 
-//Buttons and functions
-const playPauseButton = document.getElementById('playPauseButton');
-const prevButton = document.getElementById('prevButton');
-const nextButton = document.getElementById('nextButton');
-const crossfdButton = document.getElementById('crossfdbutton')
+const audioA = document.getElementById('audioA');
+const audioB = document.getElementById('audioB');
+const playPauseA = document.getElementById('playPauseA');
+const playPauseB = document.getElementById('playPauseB');
+const volumeA = document.getElementById('volumeA');
+const volumeB = document.getElementById('volumeB');
+const crossfader = document.getElementById('crossfader');
+let audioPlayList = document.getElementById('playlist')
 
-playPauseButton.addEventListener('click', () =>{
-      musicLoader();
+// Play/Pause
+playPauseA.addEventListener('click', () => {
+musicLoader();
     if (audioCtx.state === "suspended") {
       audioCtx.resume();
     }
@@ -82,29 +75,43 @@ playPauseButton.addEventListener('click', () =>{
       console.log(musicQueueIndex);
   },
   false,
-  )
+  );
 
-prevButton.addEventListener('click', () => {
-    prevInQueue();
-    musicLoader();
-    audioPlayer.play();
-    console.log();
-})
+playPauseB.addEventListener('click', () => {
+musicLoader();
+    if (audioCtx.state === "suspended") {
+      audioCtx.resume();
+    }
+    // Play or pause track depending on state
+    if (playPauseButton.dataset.playing === "false") {
+      playPauseButton.dataset.playing = "true";
+      playPauseButton.innerHTML = 'Pause';
+      audioPlayer.play();
+    } else if (playPauseButton.dataset.playing === "true") {
+      playPauseButton.dataset.playing = "false";
+      playPauseButton.innerHTML = 'Play';
+      audioPlayer.pause();
+    }
+      console.log(musicQueueIndex);
+  },
+  false,
+  );
 
-nextButton.addEventListener('click', () =>{
-  nextInQueue();
-  musicLoader();
-  audioPlayer.play();
-  console.log();
-})
+// Volume Control
+volumeA.addEventListener('input', () => {
+  audioA.volume = volumeA.value;
+});
 
-//still incomplete: still waiting for the new UI
-audioPlaylist.addEventListener('click', (e)=> {
-  if (e.target && e.target === 'LI'){
-    musicQueueIndex = musicQueue.indexOf(e.target);
-    musicLoader();
-  }
-})
+volumeB.addEventListener('input', () => {
+  audioB.volume = volumeB.value;
+});
+
+// Crossfade Control
+crossfader.addEventListener('input', () => {
+  audioA.volume = 1 - crossfader.value;
+  audioB.volume = crossfader.value;
+});
+
 
 function debugging(){
   console.log("Music queue:", musicQueue.length);

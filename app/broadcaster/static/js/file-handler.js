@@ -13,8 +13,8 @@ function setupUploadButtons() {
         const input = document.createElement('input');
         input.type = 'file';
         input.accept = type === 'video' ? 'video/*' :
-                       type === 'audio' ? 'audio/*' :
-                       type === 'image' ? 'image/*' : '*/*';
+            type === 'audio' ? 'audio/*' :
+                type === 'image' ? 'image/*' : '*/*';
         input.style.display = 'none';
         document.body.appendChild(input);
 
@@ -40,7 +40,7 @@ function setupUploadButtons() {
                 });
                 const data = await res.json();
                 if (res.ok) {
-                    displayInCard(card, file.name, data.url);  
+                    displayInCard(card, file.name, data.url);
                 } else {
                     alert(data.error || 'Upload failed.');
                 }
@@ -53,39 +53,39 @@ function setupUploadButtons() {
 }
 
 function displayInCard(container, name, url) {
-  const ext = name.split('.').pop().toLowerCase();
-  const isVideo = /(mp4|webm|avi|mov)/.test(ext);
-  const isAudio = /(mp3|wav|ogg)/.test(ext);
-  const isImage = /(png|jpg|jpeg|gif|bmp|webp)/.test(ext);
+    const ext = name.split('.').pop().toLowerCase();
+    const isVideo = /(mp4|webm|avi|mov)/.test(ext);
+    const isAudio = /(mp3|wav|ogg)/.test(ext);
+    const isImage = /(png|jpg|jpeg|gif|bmp|webp)/.test(ext);
 
-  const media = document.createElement('div');
-  media.classList.add('uploaded-media');
+    const media = document.createElement('div');
+    media.classList.add('uploaded-media');
 
-  const preview = document.createElement('img');
-  preview.width = 40;
-  preview.height = 40;
+    const preview = document.createElement('img');
+    preview.width = 40;
+    preview.height = 40;
 
-  if (isVideo) {
-    generateVideoThumbnail(url, preview);
-  } else if (isAudio) { //Set the thumbnail for audio
-    preview.src = 'https://via.placeholder.com/40x40?text=MP3';
-  } else if (isImage) { //Set the thumbnail for images
-    preview.src = url;
-  } else {
-    preview.src = 'https://via.placeholder.com/40x40?text=?';
-  }
-  const label = document.createElement('div');
-  label.textContent = name.length > 20 ? name.slice(0, 17) + '...' : name;
-  label.classList.add('uploaded-label');
-
-  media.appendChild(preview);
-  media.appendChild(label);
-
-  media.addEventListener('click', () => {
-    console.log(`Clicked on ${name}`);
     if (isVideo) {
-        queueVideo(name, url);
+        generateVideoThumbnail(url, preview);
+    } else if (isAudio) { //Set the thumbnail for audio
+        preview.src = 'https://via.placeholder.com/40x40?text=MP3';
+    } else if (isImage) { //Set the thumbnail for images
+        preview.src = url;
+    } else {
+        preview.src = 'https://via.placeholder.com/40x40?text=?';
     }
+    const label = document.createElement('div');
+    label.textContent = name.length > 20 ? name.slice(0, 17) + '...' : name;
+    label.classList.add('uploaded-label');
+
+    media.appendChild(preview);
+    media.appendChild(label);
+
+    media.addEventListener('click', () => {
+        console.log(`Clicked on ${name}`);
+        if (isVideo) {
+            queueVideo(name, url);
+        }
     });
     const fileContainer = container.querySelector('.file-container');
     if (fileContainer) {
@@ -102,8 +102,8 @@ async function loadExistingUploads() {
         files.forEach(f => {
             const ext = f.filename.split('.').pop().toLowerCase();
             const type = ext.match(/(mp4|webm|avi|mov)/) ? 'video' :
-                         ext.match(/(mp3|wav|ogg)/) ? 'audio' :
-                         ext.match(/(png|jpg|jpeg|gif|bmp|webp)/) ? 'image' : null;
+                ext.match(/(mp3|wav|ogg)/) ? 'audio' :
+                    ext.match(/(png|jpg|jpeg|gif|bmp|webp)/) ? 'image' : null;
             if (!type) return;
 
             const targetCard = document.querySelector(`.file-card[data-type="${type}"]`);
@@ -240,7 +240,8 @@ async function deleteUploadedFile(ext, filename, blockElement) {
             method: 'DELETE'
         });
         const data = await res.json();
-        if (res.ok) {x``
+        if (res.ok) {
+            x``
             blockElement.remove();
             console.log('Deleted:', filename);
         } else {

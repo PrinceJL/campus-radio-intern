@@ -31,9 +31,9 @@
       <div class="sidebar-header">Stream Preview</div>
       <div class="stream-preview-area"></div>
       <div class="controls">
-        <button class="ctrl-btn">Start Stream</button>
-        <button class="ctrl-btn">Stop Stream</button>
-        <button class="ctrl-btn">Pause Stream</button>
+        <button id="startStream" class="ctrl-btn">Start Stream</button>
+        <button id="stopStream" class="ctrl-btn">Stop Stream</button>
+        <button id="pauseStream" class="ctrl-btn">Pause Stream</button>
       </div>
       <div class="stream-manager">
         <div class="stream-manager-header">Stream Manager</div>
@@ -55,6 +55,28 @@
         </div>
         <div class="currently-playing">
           <div><strong>Currently Playing</strong></div>
+          <!-- <div>
+            <div class="dj-player">
+                <div class="deck" id="deckA">
+                  <audio id="audioA" controls></audio>
+                  <button id="playPauseA">Play/Pause A</button>
+                  <input type="range" id="volumeA" min="0" max="1" step="0.01">
+                </div>
+
+                <div class="deck" id="deckB">
+                  <audio id="audioB" controls></audio>
+                  <button id="playPauseB">Play/Pause B</button>
+                  <input type="range" id="volumeB" min="0" max="1" step="0.01">
+                </div>
+
+                <input type="range" id="crossfader" min="0" max="1" step="0.01" value="0.5">
+
+                <div id="queueList">
+                 Playlist items 
+              </div>
+            </div>
+          </div> -->
+
           <div class="playing-bar">
             <div class="track-title">
               <img src="https://via.placeholder.com/32x32?text=IMG" alt="placeholder" />
@@ -63,7 +85,7 @@
             <input type="range" min="0" max="100" />
           </div>
         </div>
-      </div>
+      </div> 
     </main>
 
     <!-- Right Section (Queue/Files) -->
@@ -76,7 +98,8 @@
         </div>
         <div class="now-playing-block">
           <strong>Now Playing</strong>
-          <div class="now-playing-content"></div> <!-- injected media block -->
+          <div class="now-playing-content"></div> 
+          <!-- injected media block -->
           <div class="now-playing-controls">
             <button id="btnLoop" class="ctrl-btn mode-btn">🔁</button>
             <button class="ctrl-btn prev">⏮️</button>
