@@ -1,0 +1,830 @@
+@font-face{
+
+  font-family: roobert ;   
+
+       src: url(https://static1.squarespace.com/static/61805088a13441018ea5ff98/t/6290c9c83b09d5791eaabc09/1653656008106/Roobert-Regular.otf);
+
+  }
+
+* {
+  box-sizing: border-box;
+  font-family: 'roobert';
+  font-style: sans-serif;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+.main-header {
+  display: flex;
+  align-items: center;
+  height: 56px;
+  background: white;
+  color: #073066;
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding: 0 24px;
+  gap: 5px;
+}
+
+.header-logo {
+  height: 40px;
+  width: auto;
+  margin-right: 0;
+  display: block;
+}
+
+.app-grid {
+  display: grid;
+  grid-template-columns: 300px 900px 1fr;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Devices Panel Background */
+.left-sidebar {
+  background: white;
+  width: 300px;
+  min-width: 300px;
+  max-width: 3px;
+  height: 1000px;
+  padding: 0;
+  border-right: 1px solid #ccc;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Devices/Cameras/Microphone Tabs */
+.box-header-devices {
+  width: 300px;
+  height: 56px;
+  background: #073066;
+  padding: 20px 18px 10px 18px;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+.sidebar-header {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+.camera-list {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  padding: 16px 10px;
+  margin-bottom: 0;
+  display: grid;
+  gap: 5px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Camera Card */
+.camera-card {
+  width: 280px;
+  height: 150px;
+  background: #232427;
+  color: white;
+  border: 2px solid #232427;
+  margin: 0;
+  text-align: center;
+  font-weight: 500;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: box-shadow 0.2s, border-color 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+}
+
+/* Camera Card Active State */
+.camera-card.active,
+.camera-card.selected {
+  border: 2px solid #4ade80;
+}
+
+/* Microphone Tab */
+.section-label {
+  width: 300px;
+  height: 57px;
+  background: #073066;
+  border-bottom: 1px solid #222;
+  padding: 17px 18px 10px 18px;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  justify-content: space-between;
+}
+
+.section-icons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon-btn-plus {
+  width: 11px;
+  height: 11px;
+  cursor: pointer;
+  filter: brightness(0) invert(1);
+  opacity: 100;
+  transition: opacity 0.2s;
+}
+
+.icon-btn {
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  filter: brightness(0) invert(1);
+  opacity: 100;
+  transition: opacity 0.2s;
+}
+
+.icon-btn:hover {
+  opacity: 1;
+}
+
+
+/* Microphone List */
+.mic-list {
+  padding: 0 10px;
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Microphone Card */
+.mic-card {
+  width: 280px;
+  height: 54.94px;
+  background: #ffaf00;
+  color: #fff;
+  text-shadow: 0px 0px 5px black;
+  border: none;
+  border-radius: 4px;
+  margin: 12px auto 0 auto;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 0 18px;
+  box-sizing: border-box;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.mic-card .mic-icon {
+  font-size: 1.2em;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  padding: 0 0 0 0;
+  gap: 0;
+  background-color: white;
+  border-right: 1px solid #ccc;
+  height: 1000px;
+}
+
+/* --- Stream Preview Header --- */
+.stream-preview-header {
+  width: 909px;
+  height: 57px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding-left: 24px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-bottom: 1px solid #232427;
+  box-sizing: border-box;
+}
+
+/* --- Space below header --- */
+.stream-preview-spacer {
+  width: 909px;
+  height: 168.18px;
+  background: transparent;
+}
+
+/* --- Stream Preview Area --- */
+.stream-preview-wrapper {
+  position: relative;
+  width: 900px;
+  height: 600px;
+  margin: 0 auto;
+}
+
+
+.stream-preview-area {
+  width: 900px;
+  height: 400px;
+  background: #d3d3d3;
+  position: relative;
+  z-index: 2;
+  margin-top: 99px;
+  margin-bottom: 100px;
+}
+
+.stream-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #0F0E11;
+  z-index: 1;
+}
+
+.stream-preview {
+  width: 900px;
+  height: 57px;
+  background: #073066;
+  border-bottom: 1px solid #222;
+  padding: 17px 18px 10px 18px;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  justify-content: space-between;
+}
+
+
+/* --- Controls and Stream Manager Background --- */
+.controls-wrapper {
+  position: relative;
+  width: 900px;
+  height: 70px;
+  margin: 0 auto;
+  background-color: white;
+  align-content: center;
+}
+
+.controls {
+  margin-left: 18px;
+  display: flex;
+  background-color: white;
+  position: relative;
+}
+
+.stream-controls-bg {
+  width: 900px;
+  height: 400px;
+  background: white;
+  border-radius: 0 0 10px 10px;
+  margin: 0 auto;
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  padding-top: 18px;
+}
+
+/* --- Stream Controls --- */
+.stream-controls-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18px;
+  width: 100%;
+  justify-content: flex-start;
+  padding-left: 24px;
+  gap: 0;
+}
+
+.ctrl-btn {
+  margin-left: 5px;
+  width: 240px;
+  height: 40px;
+  border-radius: 5px;
+  background: #073066;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.ctrl-btn:not(:last-child) {
+  margin-right: 7px;
+}
+
+.ctrl-btn:hover {
+  background: #05234B;
+}
+
+/* --- Previous, Pause, Next Buttons --- */
+.media-nav-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 5px;
+  color: #fff;
+  border: none;
+  font-size: 1.2rem;
+  margin-right: 5px;
+  padding: 11px 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.media-nav-btn:last-child {
+  margin-right: 0;
+}
+
+.media-nav-btn:hover {
+  background: #444;
+}
+
+.stream-manager {
+  background: #073066;
+  color: #fff;
+  border-radius: 8px;
+  padding: 24px;
+  margin: 10px 24px 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.stream-manager-header {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.stream-manager-title {
+  font-size: 1.05rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.stream-manager-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.stream-manager-desc {
+  color: #ccc;
+  font-size: 0.98rem;
+  max-width: 70%;
+}
+
+.stream-manager-session {
+  text-align: right;
+}
+
+.session-time {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.session {
+  font-size: 15px;
+  font-weight: lighter;
+  margin-bottom: 28px;
+}
+
+.viewers-count {
+  font-size: 1.1rem;
+  color: white;
+}
+
+.viewers {
+  font-size: 1.1rem;
+  color: white;
+}
+
+/* Not Being Used */
+.currently-playing {
+  margin-top: 12px;
+}
+
+.playing-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.playing-bar .track-title {
+  font-weight: 500;
+  color: #fff;
+}
+
+.playing-bar input[type="range"] {
+  flex: 1;
+  accent-color: #4ade80;
+  height: 4px;
+}
+
+/* Queue and Files Panel */
+.right-section {
+  display: flex;
+  height: 100%;
+  width: 664px;
+  background: white;
+}
+
+.box-header-queue {
+  width: 320px;
+  height: 56px;
+  background: #073066;
+  padding: 15px 18px 10px 18px;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+.queue-panel {
+  width: 320px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.box-header-files {
+  width: 344px;
+  height: 56px;
+  background: #073066;
+  padding: 15px 18px 10px 18px;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+
+.files-panel {
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.tabs {
+  display: flex;
+  gap: 24px;
+  margin: 18px 0 0 24px;
+  font-size: 1.1rem;
+}
+
+.tabs .tab {
+  color: #aaa;
+  cursor: pointer;
+  padding-bottom: 4px;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-bottom 0.2s;
+}
+
+.tabs .tab.active {
+  color: #fff;
+  border-bottom: 2px solid #4ade80;
+}
+
+.queue-tabs {
+  display: flex;
+  gap: 18px;
+  align-content: center;
+  font-size: 1.1rem;
+  background-color: #073066;
+}
+
+.queue-tab.active {
+  color: #fff;
+  border-bottom: 2px solid white;
+}
+
+.now-playing-block,
+.next-up,
+.your-playlist {
+  margin: 18px 24px 0 24px; 
+}
+
+.now-playing-block strong {
+  font-size: 1rem;
+  color: black;
+}
+
+.ctrl-btn-msc {
+  margin-top: 10px;
+  margin-left: 5px;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #073066;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.ctrl-btn-msc:not(:last-child) {
+  margin-right: 7px;
+}
+
+.ctrl-btn-msc:hover {
+  background: #05234B;
+}
+
+.media-block {
+  background: #073066;
+  color: #fff;
+  border-radius: 7px;
+  padding: 12px 10px;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+  border: 1px solid #444;
+}
+
+.media-block img {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  object-fit: cover;
+  background: #bbb;
+}
+
+.next-up {
+  margin: 18px 24px 0 24px;
+}
+
+.next-up strong {
+  font-size: 1rem;
+  color: black;
+}
+
+.next-up .media-block {
+  background: #073066;
+  color: #fff;
+  border-radius: 7px;
+  padding: 12px 10px;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+  border: 1px solid #444;
+}
+
+.section-label-playlist {
+  margin-top: 15px;
+  width: 320px;
+  height: 57px;
+  background: #073066;
+  border-bottom: 1px solid #222;
+  padding: 10px 18px 10px 18px;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  justify-content: space-between;
+}
+
+.your-playlist {
+  margin: 18px 20px 0 24px;
+}
+
+.your-playlist label {
+  font-size: 1rem;
+  color: #fff;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.your-playlist select {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 6px;
+  border-radius: 4px;
+  border: 1px solid #444;
+  background: #232427;
+  color: #fff;
+}
+
+.playlist-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.playlist-group button {
+  background: #073066;
+  color: white;
+  border: 2px solid #232427;
+  border-radius: 7px;
+  padding: 18px 0;
+  font-size: 1.05rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+.files-tab {
+  display: flex;
+  gap: 18px;
+  align-content: center;
+  font-size: 1.1rem;
+  background-color: #073066;
+}
+
+.media-files {
+  margin: 18px 20px 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 295px;
+}
+
+.card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* --- File Card Styling --- */
+.file-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: #232427;
+  padding: 10px;
+  border-radius: 10px;
+  color: white;
+  font-weight: 500;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+
+.file-card-img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  background: #999;
+  border-radius: 6px;
+}
+
+.file-card-title {
+  flex: 1;
+}
+
+.section-right {
+  margin-left: 12px;
+  margin-bottom: 20px;
+  padding: 0 12px;
+  width: 290px;
+  height: 270px;
+  background-color: #073066;
+  border-radius: 10px;
+}
+
+.section-label-right {
+  margin-top: 5px;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.section-label-right .plus {
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  color: white;
+}
+
+/* --- Stream Controls --- */
+.stream-controls-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18px;
+  width: 100%;
+  justify-content: flex-start;
+  padding-left: 24px;
+  gap: 0;
+}
+
+/* --- Previous, Pause, Next Buttons --- */
+.media-nav-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 5px;
+  background: #18191c;
+  color: #fff;
+  border: none;
+  font-size: 1.2rem;
+  margin-right: 5px;
+  padding: 11px 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.media-nav-btn:last-child {
+  margin-right: 0;
+}
+
+.media-nav-btn:hover {
+  background: #444;
+}
+
+/* --- Stream Manager Card --- */
+.stream-manager-card {
+  width: 337px;
+  height: 894px;
+  background: #18191c;
+  border-radius: 10px;
+  margin-top: 18px;
+  margin-left: 0;
+  margin-right: 0;
+  padding: 0 5px 10px 5px;
+  box-sizing: border-box;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* --- Music Player Card --- */
+.music-player-card {
+  width: 862px;
+  height: 81px;
+  background: #232427;
+  border-radius: 10px;
+  margin: 24px auto 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 24px;
+  box-sizing: border-box;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 500;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+/* --- Currently Playing Text --- */
+.music-player-card .currently-playing-label {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.music-player-card .track-title {
+  font-size: 1.05rem;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.music-player-card .progress-bar {
+  width: 100%;
+  height: 4px;
+  background: #444;
+  border-radius: 2px;
+  margin-top: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.music-player-card .progress-bar-inner {
+  height: 100%;
+  background: #4ade80;
+  width: 40%; /* Example progress */
+  border-radius: 2px;
+}
