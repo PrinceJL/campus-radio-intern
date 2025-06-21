@@ -85,7 +85,7 @@ function addToFileLibrary(file) {
   const fileURL = URL.createObjectURL(file);
   li.dataset.src = fileURL;
   li.textContent = file.name;
-  li.draggable = true;
+  li.draggable = false;
   li.classList.add('playlist-item');
   li.dataset.type = file.type.startsWith('video') ? 'video' : 'audio';
   li.addEventListener('dragstart', (e) => {
@@ -121,19 +121,19 @@ document.querySelectorAll('.playlist-tabs .tab-btn').forEach(btn => {
   });
 });
 
-// Drag-drop from fileLibrary to playlist
-['videoPlaylist', 'audioPlaylist'].forEach(id => {
-  const ul = document.getElementById(id);
-  ul.addEventListener('dragover', e => e.preventDefault());
-  ul.addEventListener('drop', e => {
-    e.preventDefault();
-    const data = JSON.parse(e.dataTransfer.getData("text/plain"));
-    const li = document.createElement('li');
-    li.textContent = data.name;
-    li.classList.add('playlist-item');
-    ul.appendChild(li);
-  });
-});
+// // Drag-drop from fileLibrary to playlist
+// ['videoPlaylist', 'audioPlaylist'].forEach(id => {
+//   const ul = document.getElementById(id);
+//   ul.addEventListener('dragover', e => e.preventDefault());
+//   ul.addEventListener('drop', e => {
+//     e.preventDefault();
+//     const data = JSON.parse(e.dataTransfer.getData("text/plain"));
+//     const li = document.createElement('li');
+//     li.textContent = data.name;
+//     li.classList.add('playlist-item');
+//     ul.appendChild(li);
+//   });
+// });
 
 // Add Playlist Folder
 document.getElementById('addPlaylistBtn').addEventListener('click', () => {
@@ -296,6 +296,7 @@ const player = audioCtx.createMediaElementSource(audioPlayer);
 player.connect(audioCtx.destination);
 
 //Music queue
+let musicQueueIndex = 0;
 let musicQueue = [];
 let videoQueue = [];
 
@@ -334,6 +335,7 @@ playPauseButton.addEventListener('click', () =>{
       playPauseButton.innerHTML = 'Play';
       audioPlayer.pause();
     }
+      console.log(musicQueueIndex);
   },
   false,
   )
@@ -342,18 +344,21 @@ prevButton.addEventListener('click', () => {
     prevInQueue();
     musicLoader();
     audioPlayer.play();
+    console.log();
 })
 
 nextButton.addEventListener('click', () =>{
   nextInQueue();
   musicLoader();
   audioPlayer.play();
+  console.log();
 })
 
 //still incomplete: still waiting for the new UI
 audioPlaylist.addEventListener('click', (e)=> {
   if (e.target && e.target === 'LI'){
     musicQueueIndex = musicQueue.indexOf(e.target);
+    musicLoader();
   }
 })
 
@@ -362,34 +367,32 @@ function debugging(){
 }
 
 //Music Operations
-let musicQueueIndex = 1;
+
 function nextInQueue(){
   if (musicQueueIndex < (musicQueue.length-1)){
     musicQueueIndex++;
-    } else console.warn ('No next song')
+    } else console.warn ('No next song');
 }
 function prevInQueue(){
   if (musicQueueIndex > 0){
     musicQueueIndex--;
-  } else console.warn ('No previous song')
+  } else console.warn ('No previous song');
 }
 
 function musicLoader(){
   const currentSong = musicQueue[musicQueueIndex];
-  if (musicQueue){
   const nextSong = musicQueue[musicQueueIndex + 1];
   audioPlayer.src = currentSong.src;
-  }
   console.log ('currentsource:', audioPlayer.src);
   console.log('currentSong:', currentSong);
   console.log('musicQueueIndex:', musicQueueIndex);
 }
 
-function crossFade(){
-  while (crossfdButton.){
+// function crossFade(){
+//   while (crossfdButton{
 
-  }
-}
+//   }
+// }
 
 
 // Theme Toggle Functionality
