@@ -1,11 +1,11 @@
 import { setupUploadManager } from './file-handler.js';
 import { setupPlaylistControls, listAllPlaylists } from './playlist-manager.js';
 
-let localStream;
-let selectedDeviceId = null;
-let mainStream = null;
+let currentStream = null;           // Main stream to broadcast (camera or file)
+let selectedDeviceId = null;        // Camera ID selected by user
 const previewBoxes = document.querySelectorAll('.camera-previews video');
-const mainPreview = document.createElement('video');
+
+export const mainPreview = document.createElement('video'); // Main broadcast preview
 mainPreview.autoplay = true;
 mainPreview.muted = true;
 mainPreview.playsInline = true;
@@ -18,22 +18,25 @@ const statusDiv = document.getElementById('broadcast-status');
 const webcamSelect = document.getElementById('webcamSelect');
 
 const socket = io();
-let peerConnections = {};
-const pendingCandidates = {};
+let peerConnections = {};           // Connected viewers
+let pendingCandidates = {};         // ICE candidates before peer is ready
 
-console.log("🔌 Socket.IO initialized.");
+console.log("Socket.IO initialized.");
 
 document.addEventListener('DOMContentLoaded', async () => {
+    // Setup UI controls and upload system
     setupPlaylistControls();
     listAllPlaylists();
-    // Stream preview mount
+    setupUploadManager();
+
+    // Mount stream preview
     const previewContainer = document.getElementById('stream-preview-area');
     if (previewContainer) {
-        previewContainer.innerHTML = "";
+        previewContainer.innerHTML = '';
         previewContainer.appendChild(mainPreview);
     }
 
-    // Setup theme toggle
+    // Setup theme toggling
     const themeToggle = document.getElementById('themeToggle');
     if (themeToggle) {
         const savedTheme = localStorage.getItem('theme');
@@ -43,41 +46,35 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         themeToggle.addEventListener('click', () => {
-            document.body.classList.toggle('light-mode');
-            if (document.body.classList.contains('light-mode')) {
-                localStorage.setItem('theme', 'light');
-                themeToggle.textContent = 'Switch to Dark Mode';
-            } else {
-                localStorage.setItem('theme', 'dark');
-                themeToggle.textContent = 'Switch to Light Mode';
-            }
+            const isLight = document.body.classList.toggle('light-mode');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            themeToggle.textContent = isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode';
         });
     }
 
-    // Init uploads + camera previews
-    setupUploadManager();
+    // Populate camera previews
     await populateCameraPreviews();
     if (previewBoxes[0] && previewBoxes[0].dataset.deviceId) {
         previewBoxes[0].click();
     }
 
     if (statusDiv) {
-        statusDiv.textContent = "Select a camera to preview and stream.";
+        statusDiv.textContent = "Select a camera or load media to preview and stream.";
     }
 });
 
-
-// -------- Camera Logic --------
+// ----- Camera Listing & Preview -----
 
 async function listCameras() {
     const devices = await navigator.mediaDevices.enumerateDevices();
-    webcamSelect.innerHTML = "";
-    devices.filter(d => d.kind === "videoinput").forEach(device => {
+    webcamSelect.innerHTML = '';
+
+    devices.filter(d => d.kind === 'videoinput').forEach((device, index) => {
         const option = document.createElement('option');
         option.value = device.deviceId;
-        option.text = device.label || `Camera ${webcamSelect.length + 1}`;
+        option.text = device.label || `Camera ${index + 1}`;
         webcamSelect.appendChild(option);
-        console.log("📷 Camera found:", option.text);
+        console.log("Camera found:", option.text);
     });
 }
 
@@ -89,92 +86,103 @@ async function startCameraPreview(deviceId, previewEl) {
         });
         previewEl.srcObject = stream;
         previewEl.dataset.deviceId = deviceId;
-        console.log("🔍 Preview started for camera:", deviceId);
+        console.log("Preview started for camera:", deviceId);
         return stream;
-    } catch (err) {
-        if (statusDiv) statusDiv.textContent = "Camera error: " + err.message;
-        console.error("🚨 Error accessing camera:", err);
+    } catch (error) {
+        console.error("Error accessing camera:", error);
+        if (statusDiv) statusDiv.textContent = "Camera error: " + error.message;
         return null;
     }
 }
 
 async function populateCameraPreviews() {
     await listCameras();
+
     const devices = await navigator.mediaDevices.enumerateDevices();
-    const cameras = devices.filter(d => d.kind === "videoinput");
+    const cameras = devices.filter(d => d.kind === 'videoinput');
 
     for (let i = 0; i < previewBoxes.length; i++) {
         if (cameras[i]) {
             await startCameraPreview(cameras[i].deviceId, previewBoxes[i]);
-            previewBoxes[i].style.display = "";
+            previewBoxes[i].style.display = '';
         } else {
-            previewBoxes[i].style.display = "none";
+            previewBoxes[i].style.display = 'none';
         }
     }
 }
 
+// ----- Camera Selection -----
+
 previewBoxes.forEach(box => {
     box.onclick = async function () {
         selectedDeviceId = box.dataset.deviceId;
+
         const newStream = await navigator.mediaDevices.getUserMedia({
             video: { deviceId: { exact: selectedDeviceId } },
             audio: true
         });
 
-        if (mainStream) {
+        if (currentStream) {
             const newVideoTrack = newStream.getVideoTracks()[0];
             const newAudioTrack = newStream.getAudioTracks()[0];
 
             for (const id in peerConnections) {
                 const pc = peerConnections[id];
                 pc.getSenders().forEach(sender => {
-                    if (sender.track.kind === "video" && newVideoTrack) {
+                    if (sender.track.kind === 'video' && newVideoTrack) {
                         sender.replaceTrack(newVideoTrack);
                     }
-                    if (sender.track.kind === "audio" && newAudioTrack) {
+                    if (sender.track.kind === 'audio' && newAudioTrack) {
                         sender.replaceTrack(newAudioTrack);
                     }
                 });
             }
-            mainStream.getTracks().forEach(track => track.stop());
+
+            currentStream.getTracks().forEach(track => track.stop());
         }
 
-        mainStream = newStream;
-        mainPreview.srcObject = mainStream;
-        if (statusDiv) statusDiv.textContent = "Selected camera for streaming.";
+        currentStream = newStream;
+        mainPreview.srcObject = currentStream;
+        if (statusDiv) statusDiv.textContent = "Camera selected for streaming.";
     };
 });
 
-// -------- Streaming Logic --------
+// ----- Start & Stop Broadcasting -----
 
 startBtn?.addEventListener('click', () => {
-    if (!mainStream) {
-        alert("No camera selected for streaming!");
-        statusDiv.textContent = "No camera selected for streaming!";
+
+    const stream = window.currentStream || mainPreview.srcObject;
+    if (!stream) {
+        alert("Nothing to stream! Please select a camera or load a video.");
+        if (statusDiv) statusDiv.textContent = "No media selected for streaming.";
         return;
     }
+    if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
+    }
+    currentStream = stream; // Use what's in preview, even if it's not from a camera
     socket.emit('broadcaster');
-    statusDiv.textContent = "Broadcasting...";
+    if (statusDiv) statusDiv.textContent = "Broadcasting...";
 });
 
 stopBtn?.addEventListener('click', () => {
     Object.values(peerConnections).forEach(pc => pc.close());
     peerConnections = {};
     socket.emit('stop-broadcast');
-    statusDiv.textContent = "Stream stopped.";
+    if (statusDiv) statusDiv.textContent = "Broadcast stopped.";
 });
 
-// -------- WebRTC Signaling --------
+// ----- WebRTC Signaling -----
 
 socket.on('watcher', async (id) => {
-    if (!mainStream) return;
+    if (!currentStream) return;
+
     const pc = new RTCPeerConnection({
         iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
     });
 
     peerConnections[id] = pc;
-
-    mainStream.getTracks().forEach(track => pc.addTrack(track, mainStream));
+    currentStream.getTracks().forEach(track => pc.addTrack(track, currentStream));
 
     pc.onicecandidate = event => {
         if (event.candidate) {
@@ -187,7 +195,7 @@ socket.on('watcher', async (id) => {
         await pc.setLocalDescription(offer);
         socket.emit('offer', id, pc.localDescription);
     } catch (err) {
-        console.error(`Offer error for ${id}:`, err);
+        console.error(`Error creating offer for ${id}:`, err);
     }
 });
 
@@ -221,8 +229,8 @@ socket.on('disconnectPeer', id => {
 });
 
 socket.on('connect', () => {
-    console.log('[Broadcaster] Reconnected to server');
-    if (mainStream?.getTracks().length) {
+    console.log('Reconnected to signaling server.');
+    if (currentStream?.getTracks().length) {
         socket.emit('broadcaster');
     }
 });
@@ -231,3 +239,36 @@ window.onbeforeunload = () => {
     socket.close();
     Object.values(peerConnections).forEach(pc => pc.close());
 };
+
+export function rebroadcastStreamFrom(mainVideoEl) {
+  const stream = mainVideoEl.captureStream?.() || mainVideoEl.mozCaptureStream?.();
+  if (!stream) return;
+
+  if (window.currentStream) {
+    window.currentStream.getTracks().forEach(t => t.stop());
+  }
+
+  window.currentStream = stream;
+
+  for (const id in window.peerConnections) {
+    const pc = window.peerConnections[id];
+    const senders = pc.getSenders();
+
+    stream.getTracks().forEach(track => {
+      const sender = senders.find(s => s.track.kind === track.kind);
+      if (sender) {
+        sender.replaceTrack(track);
+      } else {
+        pc.addTrack(track, stream);
+      }
+    });
+  }
+
+  if (window.socket) {
+    window.socket.emit('broadcaster');
+  }
+}
+
+window.currentStream = currentStream;
+window.peerConnections = peerConnections;
+window.socket = socket;

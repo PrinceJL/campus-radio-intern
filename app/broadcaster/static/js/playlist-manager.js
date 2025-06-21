@@ -1,4 +1,5 @@
 import { generateVideoThumbnail, getVideoDuration } from './file-handler.js';
+import { mainPreview, rebroadcastStreamFrom  } from './broadcaster.js';
 
 let currentIndex = -1;
 let playlistItems = [];
@@ -104,26 +105,36 @@ function playCurrent() {
   const previewArea = document.querySelector('.stream-preview-area');
   const nowPlayingBlock = document.querySelector('.now-playing-block');
 
-  const video = document.createElement('video');
-  video.src = item.url;
-  video.controls = true;
-  video.autoplay = true;
-  video.style.width = '100%';
-  previewArea.innerHTML = '';
-  previewArea.appendChild(video);
+  // Set mainPreview to current media
+  mainPreview.pause();
+  mainPreview.srcObject = null;
+  mainPreview.src = item.url;
+  mainPreview.controls = true;
+  mainPreview.autoplay = true;
+  mainPreview.muted = false;
 
+  mainPreview.onloadedmetadata = () => {
+    rebroadcastStreamFrom(mainPreview);
+  };
+
+  // Inject mainPreview into the preview area
+  previewArea.innerHTML = '';
+  previewArea.appendChild(mainPreview);
+
+  // Show now playing info
   const contentArea = nowPlayingBlock.querySelector('.now-playing-content');
   contentArea.innerHTML = '';
   contentArea.appendChild(createMediaBlock(item.name, item.url, currentIndex));
-
   nowPlayingBlock.classList.add('playing');
+
   const pauseBtn = nowPlayingBlock.querySelector('.ctrl-btn.pause');
   if (pauseBtn) pauseBtn.textContent = '⏸️';
 
-  video.onended = () => {
+  // Handle end of video
+  mainPreview.onended = () => {
     if (loopMode) {
-      video.currentTime = 0;
-      video.play();
+      mainPreview.currentTime = 0;
+      mainPreview.play();
     } else if (shuffleMode) {
       let nextIndex;
       do {
@@ -141,6 +152,7 @@ function playCurrent() {
 
   highlightPlaylistItem(currentIndex);
 }
+
 
 function createMediaBlock(name, url, index) {
   const block = document.createElement('div');
