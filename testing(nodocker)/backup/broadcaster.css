@@ -46,93 +46,48 @@ body {
   background: white;
 }
 
-/* Devices Panel Background */
 .left-sidebar {
-  background: white;
+  background: #232427;
   display: flex;
   flex-direction: column;
   padding: 0;
-  border-right: 1px solid #ccc;
-}
-
-/* Devices/Cameras/Microphone Tabs */
-.box-header-devices {
-  width: 300px;
-  height: 56px;
-  background: #073066;
-  padding: 20px 18px 10px 18px;
-  display: flex;
-  align-items: center;
-  font-size: 16px;
-  font-weight: 600;
-  color: #fff;
-  letter-spacing: 1px;
+  border-right: 1px solid #222;
 }
 
 .sidebar-header {
   font-size: 16px;
   font-weight: 600;
   color: #fff;
+  background: #18191c;
   padding: 16px 18px 10px 18px;
+  border-bottom: 1px solid #222;
   letter-spacing: 1px;
 }
 
 .section-label {
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 500;
   padding: 18px 18px 6px 18px;
   letter-spacing: 1px;
-  color: #fff;
-  background: #073066;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  color: #ccc;
 }
 
-.section-icons {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.icon-btn-plus {
-  width: 11px;
-  height: 11px;
-  cursor: pointer;
-  filter: brightness(0) invert(1);
-  opacity: 100;
-  transition: opacity 0.2s;
-}
-
-.icon-btn {
-  width: 22px;
-  height: 22px;
-  cursor: pointer;
-  filter: brightness(0) invert(1);
-  opacity: 100;
-  transition: opacity 0.2s;
-}
-
-.icon-btn:hover {
-  opacity: 1;
-}
-
-/* Camera */
 .camera-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 16px 10px;
-  margin-bottom: 0;
-  align-content: center;
-  box-sizing: border-box;
+  padding: 0 18px;
+  margin-bottom: 18px;
 }
 
+.mic-list {
+  padding: 0 18px;
+  margin-bottom: 18px;
+}
 .camera-card {
   width: 100%;
   aspect-ratio: 4 / 3;
-  background: #232427;
-  color: white;
+  background: #000;
   border: 2px solid #4ade80;
   border-radius: 8px;
   margin-bottom: 16px;
@@ -146,19 +101,10 @@ body {
   box-shadow: 0 0 6px #4ade80;
 }
 
-/* Microphone */
-.mic-list {
-  padding: 0 18px;
-  margin-bottom: 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
 .mic-card {
-  background: #ffaf00;
-  color: #fff;
-  text-shadow: 0px 0px 5px black;
+  background: #fff;
+  color: #232427;
+  border: 2px solid #232427;
   border-radius: 7px;
   padding: 32px 0;
   margin-bottom: 18px;
@@ -170,6 +116,26 @@ body {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
 }
 
+.mic-label {
+  font-size: 13px;
+  font-weight: 500;
+  padding: 0 18px 6px 18px;
+  color: #ccc;
+}
+
+.mic-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #232427;
+  color: #fff;
+  border: none;
+  padding: 18px 0;
+  margin-bottom: 0;
+  font-size: 1.1rem;
+}
+
 .mic-card .mic-icon {
   font-size: 1.2em;
 }
@@ -179,16 +145,6 @@ body {
   flex-direction: column;
   padding: 0 0 0 0;
   gap: 0;
-  background-color: white;
-  border-right: 1px solid #ccc;
-}
-
-/* --- Stream Preview Header --- */
-.stream-preview-wrapper {
-  position: relative;
-  width: 900px;
-  height: 600px;
-  margin: 0 auto;
 }
 
 .stream-preview-area {
@@ -196,39 +152,7 @@ body {
   border-radius: 8px;
   min-height: 240px;
   margin: 24px 24px 0 24px;
-}
-
-.stream-bar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: #0F0E11;
-  z-index: 1;
-}
-
-.stream-preview {
-  height: 57px;
-  background: #073066;
-  border-bottom: 1px solid #222;
-  padding: 17px 18px 10px 18px;
-  display: flex;
-  align-items: center;
-  font-size: 16px;
-  font-weight: 600;
-  color: #fff;
-  justify-content: space-between;
-}
-
-/* --- Controls and Stream Manager Background --- */
-.controls-wrapper {
-  position: relative;
-  width: 900px;
-  height: 70px;
-  margin: 0 auto;
-  background-color: white;
-  align-content: center;
+  border: 2px solid #232427;
 }
 
 .controls {
@@ -243,7 +167,7 @@ body {
 }
 
 .ctrl-btn {
-  background: #073066;
+  background: #232427;
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -266,11 +190,11 @@ body {
 }
 
 .ctrl-btn:hover {
-  background: #05234B;
+  background: #444;
 }
 
 .stream-manager {
-  background: #073066;
+  background: #232427;
   color: #fff;
   border-radius: 8px;
   padding: 24px;
@@ -314,23 +238,11 @@ body {
   margin-bottom: 4px;
 }
 
-.session {
-  font-size: 15px;
-  font-weight: lighter;
-  margin-bottom: 28px;
-}
-
-.viewers-count {
-  font-size: 1.1rem;
-  color: white;
-}
-
 .viewers {
   font-size: 1.1rem;
-  color: white;
+  color: #aaa;
 }
 
-/* Currently Playing Section */
 .currently-playing {
   margin-top: 12px;
 }
@@ -353,65 +265,11 @@ body {
   height: 4px;
 }
 
-/* Right Section (Queue and Files) */
 .right-section {
   display: flex;
   height: 100%;
-  background: #fff;
-}
-
-.section-right {
-  margin-left: 12px;
-  margin-bottom: 20px;
-  padding: 0 12px;
-  width: 290px;
-  height: 270px;
-  background-color: #073066;
-  border-radius: 10px;
-}
-
-.section-label-right .plus {
-  font-size: 20px;
-  font-weight: bold;
-  cursor: pointer;
-  color: white;
-}
-
-.section-label-right {
-  margin-top: 5px;
-  color: white;
-  font-size: 16px;
-  font-weight: 600;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.box-header-queue {
-  width: 320px;
-  height: 56px;
-  background: #073066;
-  padding: 15px 18px 10px 18px;
-  display: flex;
-  align-items: center;
-  font-size: 16px;
-  font-weight: 600;
-  color: #fff;
-  letter-spacing: 1px;
-}
-
-.box-header-files {
-  width: 344px;
-  height: 56px;
-  background: #073066;
-  padding: 15px 18px 10px 18px;
-  display: flex;
-  align-items: center;
-  font-size: 16px;
-  font-weight: 600;
-  color: #fff;
-  letter-spacing: 1px;
+  background: #232427;
+  border-left: 1px solid #222;
 }
 
 .queue-panel {
@@ -419,6 +277,7 @@ body {
   padding: 0;
   display: flex;
   flex-direction: column;
+  border-right: 1px solid #222;
   height: 100%;
   overflow-y: auto;
 }
@@ -455,9 +314,8 @@ body {
 .queue-tabs {
   display: flex;
   gap: 18px;
-  align-content: center;
+  margin: 18px 0 0 24px;
   font-size: 1.1rem;
-  background-color: #073066;
 }
 
 .queue-tab {
@@ -470,7 +328,7 @@ body {
 
 .queue-tab.active {
   color: #fff;
-  border-bottom: 2px solid white;
+  border-bottom: 2px solid #4ade80;
 }
 
 .center-tabs {
@@ -520,33 +378,11 @@ body {
   color: #fff;
 }
 
-.ctrl-btn-msc {
-  margin-top: 10px;
-  margin-left: 5px;
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: #073066;
-  color: #fff;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.ctrl-btn-msc:not(:last-child) {
-  margin-right: 7px;
-}
-
-.ctrl-btn-msc:hover {
-  background: #05234B;
-}
-
 .media-block {
-  background: #073066;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  background: #222;
   padding: 4px 8px;
   margin-bottom: 5px;
   border-radius: 6px;
@@ -555,6 +391,7 @@ body {
   overflow: hidden;
   box-sizing: border-box;
 }
+
 
 .media-block.playing {
   background-color: #d0e6ff;
@@ -624,11 +461,11 @@ body {
 
 .next-up strong {
   font-size: 1rem;
-  color: black;
+  color: #fff;
 }
 
 .next-up .media-block {
-  background: #073066;
+  background: #232427;
   color: #fff;
   border-radius: 7px;
   padding: 12px 10px;
@@ -639,27 +476,11 @@ body {
   font-weight: 500;
   border: 1px solid #444;
 }
-
 .playlist-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
-}
-
-.section-label-playlist {
-  margin-top: 15px;
-  width: 320px;
-  height: 57px;
-  background: #073066;
-  border-bottom: 1px solid #222;
-  padding: 10px 18px 10px 18px;
-  display: flex;
-  align-items: center;
-  font-size: 16px;
-  font-weight: 600;
-  color: #fff;
-  justify-content: space-between;
 }
 
 .playlist-actions button {
@@ -679,7 +500,7 @@ body {
 }
 
 .your-playlist {
-  margin: 18px 20px 0 24px;
+  margin: 18px 24px 0 24px;
 }
 
 .your-playlist label {
@@ -706,8 +527,8 @@ body {
 }
 
 .playlist-group button {
-  background: #073066;
-  color: white;
+  background: #fff;
+  color: #232427;
   border: 2px solid #232427;
   border-radius: 7px;
   padding: 18px 0;
@@ -724,7 +545,6 @@ body {
   padding: 18px 24px 0 24px;
   font-weight: 600;
   letter-spacing: 1px;
-  background-color: #073066;
 }
 
 .media-files {
@@ -739,16 +559,12 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 6px;
-    background-color: #232427;
+    background-color: #f9f9f9;
     position: relative;
-}
-
-.file-card-title {
-  flex: 1;
 }
 
 .file-card span {

@@ -11,38 +11,53 @@
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
   </head>
   <body>
-    <div class="main-header">CheerSL</div>
+    <div class="main-header">
+      <img src="slu_logo.png" alt="SLU Logo" class="header-logo" />
+      CheerSL
+    </div>
     <div class="app-grid">
       <!-- Left Sidebar -->
       <aside class="left-sidebar">
-        <div class="sidebar-header">Devices</div>
-        <div class="section-label">Cameras</div>
-        <div class="camera-list">
-          <div class="camera-list">
-            <video class="camera-card" autoplay muted playsinline></video>
-            <video class="camera-card" autoplay muted playsinline></video>
-            <video class="camera-card" autoplay muted playsinline></video>
-            <video class="camera-card" autoplay muted playsinline></video>
-          </div>
+        <div class="box-header-devices">
+          <div class="sidebar-header">Devices</div>
         </div>
-        <div class="mic-label">Microphone</div>
+        <div class="section-label">
+          Cameras
+          <span class="section-icons">
+            <img src="plus.png" alt="Add" class="icon-btn-plus" />
+            <img src="drop-down.png" alt="Dropdown" class="icon-btn" />
+          </span>
+        </div>
+        <div class="camera-list">
+          <video class="camera-card" autoplay muted playsinline></video>
+          <video class="camera-card" autoplay muted playsinline></video>
+          <video class="camera-card" autoplay muted playsinline></video>
+          <video class="camera-card" autoplay muted playsinline></video>
+        </div>
+        <div class="section-label">Microphone</div>
         <div class="mic-list">
           <div class="mic-card">
-            <span class="mic-icon">🎤</span> MICROPHONE 1
+            <span class="mic-icon"><img src="plus.png" alt="Add" class="icon-btn-plus" /></span>
           </div>
         </div>
       </aside>
 
       <!-- Main Content -->
       <main class="main-content">
-        <div class="sidebar-header">Stream Preview</div>
-        <div class="stream-preview-area"></div>
-        <div class="controls">
-          <button id="startStream" class="ctrl-btn">Start Stream</button>
-          <button id="stopStream" class="ctrl-btn">Stop Stream</button>
-          <button id="pauseStream" class="ctrl-btn">Pause Stream</button>
-          <div id="broadcast-status" style="text-align: center; font-size: 0.95rem; color: #4ade80; margin: 8px auto;"></div>
-
+        <div class="box-header">
+          <div class="stream-preview">Stream Preview</div>
+        </div>
+        <div class="stream-preview-wrapper">
+          <div class="stream-bar"></div>
+          <div class="stream-preview-area"></div>
+        </div>
+        <div class="controls-wrapper">
+          <div class="controls">
+            <button id="startStream" class="ctrl-btn">Start Stream</button>
+            <button id="stopStream" class="ctrl-btn">Stop Stream</button>
+            <button id="pauseStream" class="ctrl-btn">Pause Stream</button>
+            <div id="broadcast-status" style="text-align: center; font-size: 0.95rem; color: #4ade80; margin: 8px auto;"></div>
+          </div>
         </div>
         <div class="stream-manager">
           <div class="stream-manager-header">Stream Manager</div>
@@ -60,42 +75,9 @@
             </div>
             <div class="stream-manager-session">
               <div class="session-time">0:00:00</div>
-              <div class="viewers">0<br />Viewers</div>
-            </div>
-          </div>
-          <div class="currently-playing">
-            <div><strong>Currently Playing</strong></div>
-            <!-- <div>
-            <div class="dj-player">
-                <div class="deck" id="deckA">
-                  <audio id="audioA" controls></audio>
-                  <button id="playPauseA">Play/Pause A</button>
-                  <input type="range" id="volumeA" min="0" max="1" step="0.01">
-                </div>
-
-                <div class="deck" id="deckB">
-                  <audio id="audioB" controls></audio>
-                  <button id="playPauseB">Play/Pause B</button>
-                  <input type="range" id="volumeB" min="0" max="1" step="0.01">
-                </div>
-
-                <input type="range" id="crossfader" min="0" max="1" step="0.01" value="0.5">
-
-                <div id="queueList">
-                 Playlist items 
-              </div>
-            </div>
-          </div> -->
-
-            <div class="playing-bar">
-              <div class="track-title">
-                <img
-                  src="https://via.placeholder.com/32x32?text=IMG"
-                  alt="placeholder"
-                />
-                Music / Video Title
-              </div>
-              <input type="range" min="0" max="100" />
+              <div class="session">Session</div>
+              <div class="viewers-count">0</div>
+              <div class="viewers">Viewers</div>
             </div>
           </div>
         </div>
@@ -105,20 +87,30 @@
       <div class="right-section">
         <!-- Queue/Playlist Panel -->
         <div class="queue-panel">
-          <div class="queue-tabs">
-            <div class="queue-tab active">Queue</div>
-            <div class="queue-tab">Recently played</div>
-          </div>
+          <div class="box-header-queue">
+            <div class="queue-tabs">
+              <div class="queue-tab active">Queue</div>
+              <div class="queue-tab">Recently played</div>
+            </div>
+          </div>  
           <div class="now-playing-block">
             <strong>Now Playing</strong>
             <div class="now-playing-content"></div>
             <!-- injected media block -->
             <div class="now-playing-controls">
-              <button id="btnLoop" class="ctrl-btn mode-btn">🔁</button>
-              <button class="ctrl-btn prev">⏮️</button>
-              <button class="ctrl-btn pause">⏸️</button>
-              <button class="ctrl-btn next">⏭️</button>
-              <button id="btnShuffle" class="ctrl-btn mode-btn">🔀</button>
+              <button id="btnLoop" class="ctrl-btn-msc mode-btn">
+                <img src="shuffle.png" alt="Shuffle" style="height:20px;width:20px;vertical-align:middle;" /></button>
+              <button class="ctrl-btn-msc prev">
+                <img src="previous.png" alt="Previous" style="height:15px;width:15px;vertical-align:middle;" />
+              </button>
+              <button class="ctrl-btn-msc pause">
+                <img src="pause-button.png" alt="Pause" style="height:20px;width:20px;vertical-align:middle;" />
+              </button>
+              <button class="ctrl-btn-msc next">
+                <img src="next-button.png" alt="Next" style="height:18px;width:18px;vertical-align:middle;" /></button>
+              <button id="btnShuffle" class="ctrl-btn-msc mode-btn">
+                <img src="loop.png" alt="Loop" style="height:20px;width:20px;vertical-align:middle;" />
+              </button>
             </div>
           </div>
 
@@ -126,41 +118,69 @@
             <div class="playlist-header">
               <strong>Next from: (Playlist)</strong>
               <div class="playlist-actions">
-                <button id="savePlaylistBtn" title="Save Playlist">➕</button>
-                <button id="saveOrderBtn" title="Save Current Order">💾</button>
+                <button id="savePlaylistBtn" title="Save Playlist">
+                  <img src="plus(2).png" alt="Add" class="icon-btn-plus" />
+                </button>
+                <button id="saveOrderBtn" title="Save Current Order">
+                  <img src="diskette.png" alt="Save" class="icon-btn" />
+                </button>
               </div>
             </div>
             <div class="playlist-items"></div>
           </div>
+
+          <!-- Video Playlist -->
+          <div class="section-label-playlist">
+            Video Playlist
+            <span class="section-icons">
+              <img src="plus.png" alt="Add" class="icon-btn-plus" />
+              <img src="drop-down.png" alt="Dropdown" class="icon-btn" />
+            </span>
+          </div>
           <div class="your-playlist">
-            <label>Your Playlist</label>
             <div class="playlist-group"></div>
           </div>
-        </div>
+
         <!-- Files Panel -->
         <div class="files-panel">
-          <div class="files-tab">Files</div>
+          <div class="box-header-files">
+            <div class="files-tab">Files</div>
+          </div>
+
           <div class="media-files">
-            <div class="file-card" data-type="video">
-              <div class="file-card-header">
-                <span>Videos</span>
-                <span class="upload-icon">+</span>
+            <!-- Videos Section -->
+            <div class="section-right">
+              <div class="section-label-right">Videos <span class="plus" data-type="video">
+                <img src="plus.png" alt="Add" class="icon-btn-plus" />
+              </span></div>
+              <div class="card-list">
+                <div class="file-card">
+                  <div class="file-container"></div>
+                </div>
               </div>
-              <div class="file-container"></div>
             </div>
-            <div class="file-card" data-type="audio">
-              <div class="file-card-header">
-                <span>Audio</span>
-                <span class="upload-icon">+</span>
+            <!-- Audio Section -->
+            <div class="section-right">
+              <div class="section-label-right">Videos <span class="plus" data-type="audio">
+                <img src="plus.png" alt="Add" class="icon-btn-plus" />
+              </span></div>
+              <div class="card-list">
+                <div class="file-card">
+                  <div class="file-container"></div>
+                </div>
               </div>
-              <div class="file-container"></div>
             </div>
-            <div class="file-card" data-type="image">
-              <div class="file-card-header">
-                <span>Image</span>
-                <span class="upload-icon">+</span>
+
+            <!-- Images Section -->
+            <div class="section-right">
+              <div class="section-label-right">Videos <span class="plus" data-type="image">
+                <img src="plus.png" alt="Add" class="icon-btn-plus" />
+              </span></div>
+              <div class="card-list">
+                <div class="file-card">
+                  <div class="file-container"></div>
+                </div>
               </div>
-              <div class="file-container"></div>
             </div>
           </div>
         </div>
