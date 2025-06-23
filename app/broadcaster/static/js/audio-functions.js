@@ -1,5 +1,4 @@
-import { setupUploadManager } from "./file-handler";
-import { normalizeUrl} from "./playlist-manager";
+import { setupUploadManager } from "./file-handler.js";
 
 setupUploadManager();
 
