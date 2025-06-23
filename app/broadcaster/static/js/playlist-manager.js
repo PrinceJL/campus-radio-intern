@@ -1,27 +1,11 @@
-// playlist-manager.js
 import { generateVideoThumbnail, getVideoDuration } from './file-handler.js';
-import { mainPreview, rebroadcastFromVideo } from './broadcaster.js';
+import { mainPreview, switchToStream } from './broadcaster.js';
 
 let currentIndex = -1;
 let playlistItems = [];
 let loopMode = false;
 let shuffleMode = false;
 let currentPlaylistName = null;
-
-const btnLoop = document.getElementById('btnLoop');
-const btnShuffle = document.getElementById('btnShuffle');
-
-btnLoop?.addEventListener('click', () => {
-  loopMode = !loopMode;
-  shuffleMode = false;
-  updateModeButtons();
-});
-
-btnShuffle?.addEventListener('click', () => {
-  shuffleMode = !shuffleMode;
-  loopMode = false;
-  updateModeButtons();
-});
 
 function updateModeButtons() {
   btnLoop.classList.toggle('active', loopMode);
@@ -121,7 +105,7 @@ function playCurrent() {
       console.warn('[DBG] captureStream() failed.');
     } else {
       console.log('[DBG] Stream captured, rebroadcasting...');
-      rebroadcastFromVideo(mainPreview);
+      switchToStream(stream);
     }
   };
 
@@ -151,14 +135,19 @@ function playCurrent() {
   };
 
   const previewArea = document.querySelector('.stream-preview-area');
-  if (!previewArea.contains(mainPreview)) {
-    previewArea.innerHTML = '';
-    previewArea.appendChild(mainPreview);
+  previewArea.innerHTML = '';
+  previewArea.appendChild(mainPreview);
+
+  const nowPlayingContent = document.querySelector('.now-playing-content');
+  const nowPlayingBlock = document.querySelector('.now-playing-block');
+
+  if (nowPlayingContent) {
+    nowPlayingContent.innerHTML = '';
+    nowPlayingContent.appendChild(createMediaBlock(name, url, currentIndex));
   }
 
-  const nowPlaying = document.querySelector('.now-playing-content');
-  nowPlaying.innerHTML = '';
-  nowPlaying.appendChild(createMediaBlock(name, url, currentIndex));
+  // ✅ Show now-playing-controls
+  nowPlayingBlock?.classList.add('playing');
 
   mainPreview.play().then(() => {
     console.log('[DBG] Video play promise resolved.');
@@ -171,27 +160,27 @@ export function clearPlaylist() {
   playlistItems = [];
   currentIndex = -1;
   currentPlaylistName = null;
+  document.querySelector('.now-playing-block').classList.remove('playing');
   document.querySelector('.playlist-items').innerHTML = '';
   document.querySelector('.now-playing-content').innerHTML = '';
-  document.querySelector('.stream-preview-area').innerHTML = '';
 }
 
-export function setupPlaylistControls() {
-  document.querySelector('.ctrl-btn.prev')?.addEventListener('click', () => {
+export function setupNowPlayingControls() {
+  document.querySelector('.ctrl-btn-msc.prev')?.addEventListener('click', () => {
     if (currentIndex > 0) {
       currentIndex--;
       playCurrent();
     }
   });
 
-  document.querySelector('.ctrl-btn.next')?.addEventListener('click', () => {
+  document.querySelector('.ctrl-btn-msc.next')?.addEventListener('click', () => {
     if (currentIndex < playlistItems.length - 1) {
       currentIndex++;
       playCurrent();
     }
   });
 
-  document.querySelector('.ctrl-btn.pause')?.addEventListener('click', () => {
+  document.querySelector('.ctrl-btn-msc.pause')?.addEventListener('click', () => {
     if (!mainPreview) return;
     if (mainPreview.paused) {
       mainPreview.play();
@@ -199,8 +188,60 @@ export function setupPlaylistControls() {
       mainPreview.pause();
     }
   });
+
+  document.querySelector('ctrl.btn-msc.loop')?.addEventListener('click', () => {
+    loopMode = !loopMode;
+    shuffleMode = false;
+    updateModeButtons();
+  });
+  
+  document.querySelector('.ctrl-btn-msc.shuffle')?.addEventListener('click', () => {
+    shuffleMode = !shuffleMode;
+    loopMode = false;
+    updateModeButtons();
+  });
 }
 
+document.getElementById('savePlaylistBtn')?.addEventListener('click', () => {
+  const name = prompt("Enter a name for the new playlist:");
+  if (!name) return;
+  savePlaylist(name);
+});
+
+document.getElementById('saveOrderBtn')?.addEventListener('click', () => {
+  if (!currentPlaylistName) {
+    alert("No loaded playlist to save.");
+    return;
+  }
+  savePlaylist(currentPlaylistName);
+});
+
+async function savePlaylist(name) {
+  try {
+    const res = await fetch('/playlists', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name,
+        items: playlistItems
+      })
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      alert(data.error || 'Failed to save playlist.');
+    } else {
+      alert(`Playlist "${name}" saved successfully.`);
+      currentPlaylistName = name;
+      await listAllPlaylists();
+    }
+  } catch (err) {
+    console.error('[SavePlaylist]', err);
+    alert("Error saving playlist.");
+  }
+}
 export async function listAllPlaylists() {
   try {
     const res = await fetch('/playlists');
