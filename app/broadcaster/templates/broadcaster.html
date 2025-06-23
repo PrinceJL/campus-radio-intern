@@ -13,7 +13,7 @@
   </head>
   <body>
     <div class="main-header">
-      <img src="slu_logo.png" alt="SLU Logo" class="header-logo" />
+      <img src="{{ url_for('broadcaster.static', filename='icon/slu_logo.png') }}" alt="SLU Logo" class="header-logo" />
       CheerSL
     </div>
     <div class="app-grid">
@@ -25,15 +25,15 @@
         <div class="section-label">
           Cameras
           <span class="section-icons">
-            <img src="plus.png" alt="Add" class="icon-btn-plus" />
-            <img src="drop-down.png" alt="Dropdown" class="icon-btn" />
+            <img src="{{ url_for('broadcaster.static', filename='icon/plus.png') }}" alt="Add" class="icon-btn-plus" />
+            <img src="{{ url_for('broadcaster.static', filename='icon/drop-down.png') }}" alt="Dropdown" class="icon-btn" />
           </span>
         </div>
         <div class="camera-list"></div>
         <div class="section-label">Microphone</div>
         <div class="mic-list">
           <div class="mic-card">
-            <span class="mic-icon"><img src="plus.png" alt="Add" class="icon-btn-plus" /></span>
+            <span class="mic-icon"><img src="{{ url_for('broadcaster.static', filename='icon/microphone.png') }}" alt="Add" class="icon-btn-plus" /></span>
           </div>
         </div>
       </aside>
@@ -95,17 +95,17 @@
             <!-- injected media block -->
             <div class="now-playing-controls">
               <button id="btnLoop" class="ctrl-btn-msc mode-btn">
-                <img src="shuffle.png" alt="Shuffle" style="height:20px;width:20px;vertical-align:middle;" /></button>
+                <img src="{{ url_for('broadcaster.static', filename='icon/shuffle.png') }}" alt="Shuffle" style="height:20px;width:20px;vertical-align:middle;" /></button>
               <button class="ctrl-btn-msc prev">
-                <img src="previous.png" alt="Previous" style="height:15px;width:15px;vertical-align:middle;" />
+                <img src="{{ url_for('broadcaster.static', filename='icon/previous.png') }}" alt="Previous" style="height:15px;width:15px;vertical-align:middle;" />
               </button>
               <button class="ctrl-btn-msc pause">
-                <img src="pause-button.png" alt="Pause" style="height:20px;width:20px;vertical-align:middle;" />
+                <img src="{{ url_for('broadcaster.static', filename='icon/pause-button.png') }}" alt="Pause" style="height:20px;width:20px;vertical-align:middle;" />
               </button>
               <button class="ctrl-btn-msc next">
-                <img src="next-button.png" alt="Next" style="height:18px;width:18px;vertical-align:middle;" /></button>
+                <img src="{{ url_for('broadcaster.static', filename='icon/next-button.png') }}" alt="Next" style="height:18px;width:18px;vertical-align:middle;" /></button>
               <button id="btnShuffle" class="ctrl-btn-msc mode-btn">
-                <img src="loop.png" alt="Loop" style="height:20px;width:20px;vertical-align:middle;" />
+                <img src="{{ url_for('broadcaster.static', filename='icon/loop.png') }}" alt="Loop" style="height:20px;width:20px;vertical-align:middle;" />
               </button>
             </div>
           </div>
@@ -115,10 +115,10 @@
               <strong>Next from: (Playlist)</strong>
               <div class="playlist-actions">
                 <button id="savePlaylistBtn" title="Save Playlist">
-                  <img src="plus(2).png" alt="Add" class="icon-btn-plus" />
+                  <img src="{{ url_for('broadcaster.static', filename='icon/plus (2).png') }}" alt="Add" class="icon-btn-plus" />
                 </button>
                 <button id="saveOrderBtn" title="Save Current Order">
-                  <img src="diskette.png" alt="Save" class="icon-btn" />
+                  <img src="{{ url_for('broadcaster.static', filename='icon/diskette.png') }}" alt="Save" class="icon-btn-save" />
                 </button>
               </div>
             </div>
@@ -129,14 +129,14 @@
           <div class="section-label-playlist">
             Video Playlist
             <span class="section-icons">
-              <img src="plus.png" alt="Add" class="icon-btn-plus" />
-              <img src="drop-down.png" alt="Dropdown" class="icon-btn" />
+              <img src="{{ url_for('broadcaster.static', filename='icon/plus.png') }}" alt="Add" class="icon-btn-plus" />
+              <img src="{{ url_for('broadcaster.static', filename='icon/drop-down.png') }}" alt="Dropdown" class="icon-btn" />
             </span>
           </div>
           <div class="your-playlist">
             <div class="playlist-group"></div>
           </div>
-
+        </div>  
         <!-- Files Panel -->
         <div class="files-panel">
           <div class="box-header-files">
@@ -147,7 +147,7 @@
             <!-- Videos Section -->
             <div class="section-right">
               <div class="section-label-right">Videos <span class="plus">
-                <img src="plus.png" alt="Add" class="icon-btn-plus" />
+                <img src="{{ url_for('broadcaster.static', filename='icon/plus.png') }}" alt="Add" class="icon-btn-plus" />
               </span></div>
               <div class="card-list">
                 <div class="file-card" data-type="video">
@@ -158,7 +158,7 @@
             <!-- Audio Section -->
             <div class="section-right">
               <div class="section-label-right">Videos <span class="plus" >
-                <img src="plus.png" alt="Add" class="icon-btn-plus" />
+                <img src="{{ url_for('broadcaster.static', filename='icon/plus.png') }}" alt="Add" class="icon-btn-plus" />
               </span></div>
               <div class="card-list">
                 <div class="file-card" data-type="audio">
@@ -170,7 +170,7 @@
             <!-- Images Section -->
             <div class="section-right">
               <div class="section-label-right">Videos <span class="plus">
-                <img src="plus.png" alt="Add" class="icon-btn-plus" />
+                <img src="{{ url_for('broadcaster.static', filename='icon/plus.png') }}" alt="Add" class="icon-btn-plus" />
               </span></div>
               <div class="card-list">
                 <div class="file-card" data-type="image">
