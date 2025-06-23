@@ -1,5 +1,5 @@
 import { queueVideo } from './playlist-manager.js';
-import { queueAudio } from './audio-functions.js';
+// import { queueAudio } from './audio-functions.js';
 
 export function setupUploadManager() {
     setupUploadButtons();
@@ -19,9 +19,11 @@ function setupUploadButtons() {
         input.style.display = 'none';
         document.body.appendChild(input);
 
-        const icon = card.querySelector('.upload-icon');
+        const section = card.closest('.section-right');
+        const icon = section?.querySelector('.plus');
         if (icon) {
             icon.addEventListener('click', (e) => {
+                console.log(`Clicked upload for ${type}`);
                 e.stopPropagation(); // prevent bubbling
                 input.click();
             });
