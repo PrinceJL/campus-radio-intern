@@ -1,3 +1,12 @@
+//TODO
+// MAKE THE MICROPHONE DETECT THE MICROPHONE ON DEVICE
+// ONNCE THE START STREAM CLICKED THE SESSION TIMES SHOUOLD START
+// IF THERE IS A VIEWER DETECTED
+// EDIT SOME UI TO MAKE IT BETTER
+// LIVE INDICATION
+// STRREAM MANAGER FUNCTIONALITY
+// FOOTER API
+// STREAM SCHEDULING
 import { setupUploadManager } from './file-handler.js';
 import { setupPlaylistControls, listAllPlaylists } from './playlist-manager.js';
 
@@ -86,31 +95,55 @@ stopBtn?.addEventListener('click', () => {
     socket.emit('stop-broadcast');
     statusDiv.textContent = "Broadcast stopped.";
 });
-
 export async function switchToStream(stream) {
   if (currentStream) currentStream.getTracks().forEach(track => track.stop());
   currentStream = stream;
 
-  // ONLY override mainPreview.srcObject if it's not already playing a video file
-  if (!mainPreview.src || mainPreview.srcObject) {
-    mainPreview.srcObject = stream;
-    try {
-      await mainPreview.play();
-    } catch (err) {
-      console.warn('[DBG] mainPreview play() failed in switchToStream:', err);
-    }
-  } else {
-    console.log('[DBG] mainPreview already playing video file. Skipping srcObject override.');
+  // Reset preview: clear previous video src if any
+  mainPreview.pause();
+  mainPreview.removeAttribute('src');
+  mainPreview.srcObject = stream;
+
+  try {
+    await mainPreview.play();
+  } catch (err) {
+    console.warn('[DBG] mainPreview play() failed in switchToStream:', err);
   }
 
-  // Reset peer connections
+  // Reset connections
   Object.entries(peerConnections).forEach(([id, pc]) => {
     pc.close();
     delete peerConnections[id];
   });
 
   socket.emit('broadcaster');
-  statusDiv.textContent = "Broadcasting new stream.";
+  statusDiv.textContent = "Broadcasting camera.";
+}
+export async function rebroadcastFromVideo(videoEl) {
+  const stream = videoEl.captureStream?.();
+  if (!stream) {
+    console.warn('[DBG] captureStream() failed for video.');
+    return;
+  }
+
+  if (currentStream) currentStream.getTracks().forEach(track => track.stop());
+  currentStream = stream;
+
+  // Do NOT clear srcObject if a video is playing
+  try {
+    await videoEl.play();  // play it visibly first
+  } catch (err) {
+    console.warn('[DBG] rebroadcast play() failed:', err);
+  }
+
+  // Attach stream to broadcaster
+  Object.entries(peerConnections).forEach(([id, pc]) => {
+    pc.close();
+    delete peerConnections[id];
+  });
+
+  socket.emit('broadcaster');
+  statusDiv.textContent = "Broadcasting video.";
 }
 
 

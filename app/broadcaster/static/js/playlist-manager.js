@@ -1,6 +1,6 @@
 // playlist-manager.js
 import { generateVideoThumbnail, getVideoDuration } from './file-handler.js';
-import { mainPreview, switchToStream } from './broadcaster.js';
+import { mainPreview, rebroadcastFromVideo } from './broadcaster.js';
 
 let currentIndex = -1;
 let playlistItems = [];
@@ -119,9 +119,9 @@ function playCurrent() {
     const stream = mainPreview.captureStream?.() || mainPreview.mozCaptureStream?.();
     if (!stream) {
       console.warn('[DBG] captureStream() failed.');
-    } else {  
+    } else {
       console.log('[DBG] Stream captured, rebroadcasting...');
-      switchToStream(stream);
+      rebroadcastFromVideo(mainPreview);
     }
   };
 
@@ -151,8 +151,10 @@ function playCurrent() {
   };
 
   const previewArea = document.querySelector('.stream-preview-area');
-  previewArea.innerHTML = '';
-  previewArea.appendChild(mainPreview);
+  if (!previewArea.contains(mainPreview)) {
+    previewArea.innerHTML = '';
+    previewArea.appendChild(mainPreview);
+  }
 
   const nowPlaying = document.querySelector('.now-playing-content');
   nowPlaying.innerHTML = '';
