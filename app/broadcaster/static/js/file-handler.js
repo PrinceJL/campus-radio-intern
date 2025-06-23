@@ -1,4 +1,5 @@
 import { queueVideo } from './playlist-manager.js';
+import { queueAudio } from './audio-functions.js';
 
 export function setupUploadManager() {
     setupUploadButtons();
@@ -85,6 +86,8 @@ function displayInCard(container, name, url) {
         console.log(`Clicked on ${name}`);
         if (isVideo) {
             queueVideo(name, url);
+        } else if (isAudio) {
+            queueAudio(name, url);
         }
     });
     const fileContainer = container.querySelector('.file-container');
