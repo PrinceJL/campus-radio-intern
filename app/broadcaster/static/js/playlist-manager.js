@@ -1,12 +1,9 @@
+// playlist-manager.js
 import { generateVideoThumbnail, getVideoDuration } from './file-handler.js';
-import { mainPreview, rebroadcastStreamFrom  } from './broadcaster.js';
+import { mainPreview, switchToStream } from './broadcaster.js';
 
-
-//Shared object
 let currentIndex = -1;
 let playlistItems = [];
-let prevClickTimeout = null;
-let prevClickCount = 0;
 let loopMode = false;
 let shuffleMode = false;
 let currentPlaylistName = null;
@@ -32,61 +29,139 @@ function updateModeButtons() {
 }
 
 export function queueVideo(name, url) {
-  const normUrl = normalizeUrl(url);
-  if (playlistItems.some(item => normalizeUrl(item.url) === normUrl)) {
-    console.log(`⚠️ Skipping duplicate: ${name} (${normUrl})`);
-    return;
-  }
-  playlistItems.push({ name, url });
-  console.log(`✅ Queued: ${name} (${normUrl})`);
+  const normUrl = new URL(url, window.location.origin).pathname;
+  playlistItems.push({ name, url: normUrl });
   renderPlaylist();
-}
-function normalizeUrl(url) {
-  const a = document.createElement('a');
-  a.href = url;
-  return a.pathname; // Ensures consistent comparison
 }
 
 function renderPlaylist() {
-  const nextUp = document.querySelector('.playlist-items');
-  if (!nextUp) return;
-  nextUp.innerHTML = '';
+  const container = document.querySelector('.playlist-items');
+  if (!container) return;
 
+  container.innerHTML = '';
   playlistItems.forEach((item, index) => {
     const block = createMediaBlock(item.name, item.url, index);
-
-    block.addEventListener('click', (e) => {
-      if (e.target.classList.contains('delete-btn')) return;
-      currentIndex = index;
-      playCurrent();
-    });
-
-    const delBtn = document.createElement('button');
-    delBtn.textContent = '❌';
-    delBtn.classList.add('delete-btn');
-    delBtn.style.marginLeft = '8px';
-    delBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      playlistItems.splice(index, 1);
-      if (currentIndex >= playlistItems.length) currentIndex = playlistItems.length - 1;
-      renderPlaylist();
-    });
-
-    block.querySelector('.media-right')?.appendChild(delBtn);
-    nextUp.appendChild(block);
+    container.appendChild(block);
   });
+}
 
-  Sortable.create(nextUp, {
-    animation: 150,
-    handle: '.media-block',
-    draggable: '.media-block',
-    onEnd: () => {
-      const reordered = Array.from(nextUp.querySelectorAll('.media-block')).map(el =>
-        playlistItems[parseInt(el.dataset.index)]
-      );
-      playlistItems = reordered;
-      renderPlaylist();
+function createMediaBlock(name, url, index) {
+  const block = document.createElement('div');
+  block.className = 'media-block';
+  block.dataset.index = index;
+
+  const mediaInfo = document.createElement('div');
+  mediaInfo.className = 'media-info';
+
+  const preview = document.createElement('img');
+  preview.width = 40;
+  preview.height = 40;
+
+  const ext = name.split('.').pop().toLowerCase();
+  if (ext.match(/(mp4|webm|avi|mov)/)) {
+    generateVideoThumbnail(url, preview);
+  } else {
+    preview.src = 'https://via.placeholder.com/40x40?text=NA';
+  }
+
+  const label = document.createElement('span');
+  label.className = 'media-title';
+  label.textContent = name;
+
+  mediaInfo.append(preview, label);
+
+  const rightSide = document.createElement('div');
+  rightSide.className = 'media-right';
+
+  if (ext.match(/(mp4|webm|avi|mov)/)) {
+    const duration = document.createElement('span');
+    duration.className = 'media-duration';
+    getVideoDuration(url, dur => duration.textContent = dur);
+    rightSide.appendChild(duration);
+  }
+
+  const delBtn = document.createElement('button');
+  delBtn.textContent = '❌';
+  delBtn.className = 'delete-btn';
+  delBtn.onclick = (e) => {
+    e.stopPropagation();
+    playlistItems.splice(index, 1);
+    if (currentIndex >= playlistItems.length) currentIndex = playlistItems.length - 1;
+    renderPlaylist();
+  };
+  rightSide.appendChild(delBtn);
+
+  block.append(mediaInfo, rightSide);
+
+  block.onclick = () => {
+    currentIndex = index;
+    playCurrent();
+  };
+
+  return block;
+}
+
+function playCurrent() {
+  if (currentIndex < 0 || currentIndex >= playlistItems.length) return;
+
+  const { name, url } = playlistItems[currentIndex];
+  console.log('[DBG] Now playing:', name, url);
+
+  mainPreview.pause();
+  mainPreview.srcObject = null;
+  mainPreview.src = url;
+  mainPreview.controls = true;
+  mainPreview.autoplay = true;
+  mainPreview.muted = false;
+
+  mainPreview.onplaying = () => {
+    console.log('[DBG] onplaying fired.');
+    const stream = mainPreview.captureStream?.() || mainPreview.mozCaptureStream?.();
+    if (!stream) {
+      console.warn('[DBG] captureStream() failed.');
+    } else {  
+      console.log('[DBG] Stream captured, rebroadcasting...');
+      switchToStream(stream);
     }
+  };
+
+  mainPreview.onerror = (e) => {
+    console.error('[DBG] Video error:', e);
+  };
+
+  mainPreview.onloadedmetadata = () => {
+    console.log('[DBG] Metadata loaded, duration:', mainPreview.duration);
+  };
+
+  mainPreview.onended = () => {
+    console.log('[DBG] Video ended.');
+    if (loopMode) mainPreview.play();
+    else if (shuffleMode) {
+      let next;
+      do next = Math.floor(Math.random() * playlistItems.length);
+      while (next === currentIndex);
+      currentIndex = next;
+      playCurrent();
+    } else if (currentIndex < playlistItems.length - 1) {
+      currentIndex++;
+      playCurrent();
+    } else {
+      currentIndex = -1;
+    }
+  };
+
+  const previewArea = document.querySelector('.stream-preview-area');
+  previewArea.innerHTML = '';
+  previewArea.appendChild(mainPreview);
+
+  const nowPlaying = document.querySelector('.now-playing-content');
+  nowPlaying.innerHTML = '';
+  nowPlaying.appendChild(createMediaBlock(name, url, currentIndex));
+
+  mainPreview.play().then(() => {
+    console.log('[DBG] Video play promise resolved.');
+  }).catch(err => {
+    console.warn('[DBG] play() failed:', err);
   });
 }
 
@@ -95,297 +170,64 @@ export function clearPlaylist() {
   currentIndex = -1;
   currentPlaylistName = null;
   document.querySelector('.playlist-items').innerHTML = '';
+  document.querySelector('.now-playing-content').innerHTML = '';
   document.querySelector('.stream-preview-area').innerHTML = '';
-  document.querySelector('.now-playing-block .now-playing-content').innerHTML = '';
-}
-
-
-function playCurrent() {
-  if (currentIndex < 0 || currentIndex >= playlistItems.length) return;
-
-  const item = playlistItems[currentIndex];
-  const previewArea = document.querySelector('.stream-preview-area');
-  const nowPlayingBlock = document.querySelector('.now-playing-block');
-
-  // Set mainPreview to current media
-  mainPreview.pause();
-  mainPreview.srcObject = null;
-  mainPreview.src = item.url;
-  mainPreview.controls = true;
-  mainPreview.autoplay = true;
-  mainPreview.muted = false;
-
-  mainPreview.onloadedmetadata = () => {
-    rebroadcastStreamFrom(mainPreview);
-  };
-
-  // Inject mainPreview into the preview area
-  previewArea.innerHTML = '';
-  previewArea.appendChild(mainPreview);
-
-  // Show now playing info
-  const contentArea = nowPlayingBlock.querySelector('.now-playing-content');
-  contentArea.innerHTML = '';
-  contentArea.appendChild(createMediaBlock(item.name, item.url, currentIndex));
-  nowPlayingBlock.classList.add('playing');
-
-  const pauseBtn = nowPlayingBlock.querySelector('.ctrl-btn.pause');
-  if (pauseBtn) pauseBtn.textContent = '⏸️';
-
-  // Handle end of video
-  mainPreview.onended = () => {
-    if (loopMode) {
-      mainPreview.currentTime = 0;
-      mainPreview.play();
-    } else if (shuffleMode) {
-      let nextIndex;
-      do {
-        nextIndex = Math.floor(Math.random() * playlistItems.length);
-      } while (nextIndex === currentIndex && playlistItems.length > 1);
-      currentIndex = nextIndex;
-      playCurrent();
-    } else if (currentIndex < playlistItems.length - 1) {
-      currentIndex++;
-      playCurrent();
-    } else {
-      currentIndex = -1;
-    }
-  };
-
-  highlightPlaylistItem(currentIndex);
-}
-
-
-function createMediaBlock(name, url, index) {
-  const block = document.createElement('div');
-  block.classList.add('media-block');
-  block.dataset.index = index;
-
-  const mediaInfo = document.createElement('div');
-  mediaInfo.classList.add('media-info');
-
-  const preview = document.createElement('img');
-  preview.alt = name;
-  preview.width = 40;
-  preview.height = 40;
-
-  const ext = name.split('.').pop().toLowerCase();
-  if (ext.match(/(mp4|webm|avi|mov)/)) {
-    generateVideoThumbnail(url, preview);
-  } else if (ext.match(/(mp3|wav|ogg)/)) {
-    preview.src = 'https://via.placeholder.com/40x40?text=MP3';
-  } else {
-    preview.src = 'https://via.placeholder.com/40x40?text=?';
-  }
-
-  const label = document.createElement('span');
-  label.classList.add('media-title');
-  label.textContent = name.length > 20 ? name.slice(0, 17) + '...' : name;
-
-  mediaInfo.appendChild(preview);
-  mediaInfo.appendChild(label);
-
-  const rightSide = document.createElement('div');
-  rightSide.classList.add('media-right');
-
-  if (ext.match(/(mp4|webm|avi|mov)/)) {
-    const durationSpan = document.createElement('span');
-    durationSpan.classList.add('media-duration');
-    getVideoDuration(url, dur => durationSpan.textContent = dur);
-    rightSide.appendChild(durationSpan);
-  }
-
-  block.appendChild(mediaInfo);
-  block.appendChild(rightSide);
-  return block;
-}
-
-function highlightPlaylistItem(index) {
-  const blocks = document.querySelectorAll('.next-up .media-block');
-  blocks.forEach((b, i) => {
-    b.classList.toggle('active', i === index);
-  });
 }
 
 export function setupPlaylistControls() {
-  const ctrlPrev = document.querySelector('.ctrl-btn.prev');
-  const ctrlNext = document.querySelector('.ctrl-btn.next');
-  const ctrlPause = document.querySelector('.ctrl-btn.pause');
-
-  ctrlPrev?.addEventListener('click', () => {
-    const video = document.querySelector('.stream-preview-area video');
-    if (!video) return;
-
-    prevClickCount++;
-    clearTimeout(prevClickTimeout);
-
-    prevClickTimeout = setTimeout(() => {
-      if (prevClickCount === 1) {
-        video.currentTime = 0;
-        video.play();
-      } else if (prevClickCount >= 2) {
-        if (currentIndex > 0) {
-          currentIndex--;
-          playCurrent();
-        } else {
-          video.currentTime = 0;
-          video.play();
-        }
-      }
-      prevClickCount = 0;
-    }, 250);
-  });
-
-  ctrlNext?.addEventListener('click', () => {
-    if (playlistItems.length === 0) return;
-    if (shuffleMode) {
-      let nextIndex;
-      do {
-        nextIndex = Math.floor(Math.random() * playlistItems.length);
-      } while (nextIndex === currentIndex && playlistItems.length > 1);
-      currentIndex = nextIndex;
-    } else if (currentIndex < playlistItems.length - 1) {
-      currentIndex++;
-    } else {
-      currentIndex = -1;
-      return;
+  document.querySelector('.ctrl-btn.prev')?.addEventListener('click', () => {
+    if (currentIndex > 0) {
+      currentIndex--;
+      playCurrent();
     }
-    playCurrent();
   });
 
-  ctrlPause?.addEventListener('click', () => {
-    const video = document.querySelector('.stream-preview-area video');
-    if (!video) return;
-    if (video.paused) {
-      video.play();
-      ctrlPause.textContent = '⏸️';
+  document.querySelector('.ctrl-btn.next')?.addEventListener('click', () => {
+    if (currentIndex < playlistItems.length - 1) {
+      currentIndex++;
+      playCurrent();
+    }
+  });
+
+  document.querySelector('.ctrl-btn.pause')?.addEventListener('click', () => {
+    if (!mainPreview) return;
+    if (mainPreview.paused) {
+      mainPreview.play();
     } else {
-      video.pause();
-      ctrlPause.textContent = '▶️';
+      mainPreview.pause();
     }
   });
 }
-
-// Save Playlist
-document.getElementById('savePlaylistBtn')?.addEventListener('click', () => {
-  const name = prompt("Enter a new playlist name:");
-  if (!name) return;
-
-  fetch('/playlists', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      name,
-      items: playlistItems.map(item => ({ name: item.name, url: item.url }))
-    })
-  })
-    .then(res => res.json())
-    .then(data => {
-      alert(`Created playlist "${name}"`);
-      currentPlaylistName = name;
-    })
-    .catch(err => {
-      console.error('Create playlist error:', err);
-      alert('Failed to create playlist.');
-    });
-});
-
-// Save Current Order
-document.getElementById('saveOrderBtn')?.addEventListener('click', () => {
-  if (!currentPlaylistName) {
-    alert("No active playlist to save. Use ➕ to create one first.");
-    return;
-  }
-
-  fetch('/playlists', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      name: currentPlaylistName,
-      items: playlistItems.map(item => ({ name: item.name, url: item.url }))
-    })
-  })
-    .then(res => res.json())
-    .then(data => {
-      alert(`Playlist "${currentPlaylistName}" saved!`);
-    })
-    .catch(err => {
-      console.error('Save playlist error:', err);
-      alert('Failed to save playlist.');
-    });
-});
 
 export async function listAllPlaylists() {
   try {
     const res = await fetch('/playlists');
     const data = await res.json();
     const group = document.querySelector('.playlist-group');
-    if (!group) return;
-
     group.innerHTML = '';
 
     data.forEach(pl => {
       const wrapper = document.createElement('div');
-      wrapper.classList.add('playlist-btn');
-      wrapper.dataset.name = pl.name;
-
-      const label = document.createElement('span');
-      label.textContent = pl.name;
-
-      const removeBtn = document.createElement('span');
-      removeBtn.textContent = '🗑️';
-      removeBtn.classList.add('remove-icon');
-      removeBtn.title = 'Delete playlist';
-
-      removeBtn.addEventListener('click', async (e) => {
-        e.stopPropagation();
-        const confirmed = confirm(`Delete playlist "${pl.name}"? This will remove it from the database.`);
-        if (!confirmed) return;
-
-        try {
-          const delRes = await fetch(`/playlists/${encodeURIComponent(pl.name)}`, {
-            method: 'DELETE'
-          });
-
-          const result = await delRes.json();
-          if (delRes.ok) {
-            alert(`Deleted "${pl.name}"`);
-            wrapper.remove(); // Remove from UI
-          } else {
-            alert(result.error || 'Failed to delete playlist.');
-          }
-        } catch (err) {
-          console.error('Error deleting playlist:', err);
-          alert('Network error while deleting playlist.');
-        }
-      });
-
-      // Clicking the main button loads the playlist
-      wrapper.addEventListener('click', () => {
-        loadPlaylist(pl.name);
-      });
-
-      wrapper.appendChild(label);
-      wrapper.appendChild(removeBtn);
+      wrapper.className = 'playlist-btn';
+      wrapper.textContent = pl.name;
+      wrapper.onclick = () => loadPlaylist(pl.name);
       group.appendChild(wrapper);
     });
   } catch (err) {
-    console.error('Failed to load playlists:', err);
+    console.error('[LoadPlaylists]', err);
   }
 }
-
 
 async function loadPlaylist(name) {
   try {
     const res = await fetch(`/playlists/${name}`);
     const data = await res.json();
-    if (!res.ok) return alert(data.error || 'Failed to load');
+    if (!res.ok) return alert(data.error || 'Load failed');
 
     clearPlaylist();
     data.items.forEach(item => queueVideo(item.name, item.url));
     currentPlaylistName = name;
   } catch (err) {
-    console.error('Load error:', err);
-    alert('Failed to load playlist.');
+    console.error('[LoadPlaylist]', err);
   }
 }
