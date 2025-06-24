@@ -18,7 +18,7 @@
     <div class="app-grid">
       <!-- Left Sidebar -->
       <aside class="left-sidebar">
-        <div class="box-header-devices">
+        <div class="box-header-grid">
           <div class="sidebar-header">Devices</div>
         </div>
         <div class="section-label">
@@ -85,60 +85,61 @@
       <div class="right-section">
         <!-- Queue/Playlist Panel -->
         <div class="queue-panel">
-          <div class="box-header-queue">
+          <div class="box-header-grid">
             <div class="queue-tabs">
-              <div class="queue-tab active">Queue</div>
-              <div class="queue-tab">Recently played</div>
-            </div>
-          </div>  
-          <div class="now-playing-block">
-            <strong>Now Playing</strong>
-            <div class="now-playing-content"></div>
-            <!-- injected media block -->
-            <div class="now-playing-controls">
-              <button id="btnLoop" class="ctrl-btn-msc mode-btn">
-                <img src="{{ url_for('broadcaster.static', filename='icon/shuffle.png') }}" alt="Shuffle" style="height:20px;width:20px;vertical-align:middle;" /></button>
-              <button class="ctrl-btn-msc prev">
-                <img src="{{ url_for('broadcaster.static', filename='icon/previous.png') }}" alt="Previous" style="height:15px;width:15px;vertical-align:middle;" />
-              </button>
-              <button class="ctrl-btn-msc pause">
-                <img src="{{ url_for('broadcaster.static', filename='icon/pause-button.png') }}" alt="Pause" style="height:20px;width:20px;vertical-align:middle;" />
-              </button>
-              <button class="ctrl-btn-msc next">
-                <img src="{{ url_for('broadcaster.static', filename='icon/next-button.png') }}" alt="Next" style="height:18px;width:18px;vertical-align:middle;" /></button>
-              <button id="btnShuffle" class="ctrl-btn-msc mode-btn">
-                <img src="{{ url_for('broadcaster.static', filename='icon/loop.png') }}" alt="Loop" style="height:20px;width:20px;vertical-align:middle;" />
-              </button>
+              <div class="queue-tab">Queue</div>
             </div>
           </div>
-
-          <div class="next-up">
-            <div class="playlist-header">
-              <strong>Next from: (Playlist)</strong>
-              <div class="playlist-actions">
-                <button id="savePlaylistBtn" title="Save Playlist">
-                  <img src="{{ url_for('broadcaster.static', filename='icon/plus (2).png') }}" alt="Add" class="icon-btn-plus" />
+          <div class = "right-side-border">
+            <div class="now-playing-block">
+              <strong>Now Playing</strong>
+              <div class="now-playing-content"></div>
+              <!-- injected media block -->
+              <div class="now-playing-controls">
+                <button id="btnLoop" class="ctrl-btn-msc mode-btn">
+                  <img src="{{ url_for('broadcaster.static', filename='icon/shuffle.png') }}" alt="Shuffle" style="height:20px;width:20px;vertical-align:middle;" /></button>
+                <button class="ctrl-btn-msc prev">
+                  <img src="{{ url_for('broadcaster.static', filename='icon/previous.png') }}" alt="Previous" style="height:15px;width:15px;vertical-align:middle;" />
                 </button>
-                <button id="saveOrderBtn" title="Save Current Order">
-                  <img src="{{ url_for('broadcaster.static', filename='icon/diskette.png') }}" alt="Save" class="icon-btn-save" />
+                <button class="ctrl-btn-msc pause">
+                  <img src="{{ url_for('broadcaster.static', filename='icon/pause-button.png') }}" alt="Pause" style="height:20px;width:20px;vertical-align:middle;" />
+                </button>
+                <button class="ctrl-btn-msc next">
+                  <img src="{{ url_for('broadcaster.static', filename='icon/next-button.png') }}" alt="Next" style="height:18px;width:18px;vertical-align:middle;" /></button>
+                <button id="btnShuffle" class="ctrl-btn-msc mode-btn">
+                  <img src="{{ url_for('broadcaster.static', filename='icon/loop.png') }}" alt="Loop" style="height:20px;width:20px;vertical-align:middle;" />
                 </button>
               </div>
             </div>
-            <div class="playlist-items"></div>
-          </div>
 
-          <!-- Video Playlist -->
-          <div class="section-label-playlist">
-            Video Playlist
-            <span class="section-icons">
-              <img src="{{ url_for('broadcaster.static', filename='icon/plus.png') }}" alt="Add" class="icon-btn-plus" />
-              <img src="{{ url_for('broadcaster.static', filename='icon/drop-down.png') }}" alt="Dropdown" class="icon-btn" />
-            </span>
+            <div class="next-up">
+              <div class="playlist-header">
+                <strong>Next from: (Playlist)</strong>
+                <div class="playlist-actions">
+                  <button id="savePlaylistBtn" title="Save Playlist">
+                    <img src="{{ url_for('broadcaster.static', filename='icon/plus (2).png') }}" alt="Add" class="icon-btn-plus" />
+                  </button>
+                  <button id="saveOrderBtn" title="Save Current Order">
+                    <img src="{{ url_for('broadcaster.static', filename='icon/diskette.png') }}" alt="Save" class="icon-btn-save" />
+                  </button>
+                </div>
+              </div>
+              <div class="playlist-items"></div>
+            </div>
+
+            <!-- Video Playlist -->
+            <div class="section-label-playlist">
+              Video Playlist
+              <span class="section-icons">
+                <img src="{{ url_for('broadcaster.static', filename='icon/plus.png') }}" alt="Add" class="icon-btn-plus" />
+                <img src="{{ url_for('broadcaster.static', filename='icon/drop-down.png') }}" alt="Dropdown" class="icon-btn" />
+              </span>
+            </div>
+            <div class="your-playlist">
+              <div class="playlist-group"></div>
+            </div>
           </div>
-          <div class="your-playlist">
-            <div class="playlist-group"></div>
-          </div>
-        </div>  
+        </div>
         <!-- Files Panel -->
         <div class="files-panel">
           <div class="box-header-files">
