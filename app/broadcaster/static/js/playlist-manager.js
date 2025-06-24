@@ -1,23 +1,36 @@
 import { generateVideoThumbnail, getVideoDuration } from './file-handler.js';
-import { mainPreview, switchToStream } from './broadcaster.js';
+import { videoPreview, switchToStream } from './broadcaster.js';
 
-let currentIndex = -1;
 let playlistItems = [];
+let currentIndex = -1;
 let loopMode = false;
 let shuffleMode = false;
 let currentPlaylistName = null;
 
+// UI buttons
+const btnLoop = document.querySelector('.ctrl-btn-msc.loop');
+const btnShuffle = document.querySelector('.ctrl-btn-msc.shuffle');
+
+/**
+ * Toggle UI button states based on loop/shuffle modes
+ */
 function updateModeButtons() {
-  btnLoop.classList.toggle('active', loopMode);
-  btnShuffle.classList.toggle('active', shuffleMode);
+  btnLoop?.classList.toggle('active', loopMode);
+  btnShuffle?.classList.toggle('active', shuffleMode);
 }
 
+/**
+ * Add a new video to the queue and update playlist view
+ */
 export function queueVideo(name, url) {
   const normUrl = new URL(url, window.location.origin).pathname;
   playlistItems.push({ name, url: normUrl });
   renderPlaylist();
 }
 
+/**
+ * Render all queued videos in the playlist
+ */
 function renderPlaylist() {
   const container = document.querySelector('.playlist-items');
   if (!container) return;
@@ -29,6 +42,9 @@ function renderPlaylist() {
   });
 }
 
+/**
+ * Create a playlist item block
+ */
 function createMediaBlock(name, url, index) {
   const block = document.createElement('div');
   block.className = 'media-block';
@@ -42,7 +58,7 @@ function createMediaBlock(name, url, index) {
   preview.height = 40;
 
   const ext = name.split('.').pop().toLowerCase();
-  if (ext.match(/(mp4|webm|avi|mov)/)) {
+  if (/(mp4|webm|avi|mov)/.test(ext)) {
     generateVideoThumbnail(url, preview);
   } else {
     preview.src = 'https://via.placeholder.com/40x40?text=NA';
@@ -57,7 +73,7 @@ function createMediaBlock(name, url, index) {
   const rightSide = document.createElement('div');
   rightSide.className = 'media-right';
 
-  if (ext.match(/(mp4|webm|avi|mov)/)) {
+  if (/(mp4|webm|avi|mov)/.test(ext)) {
     const duration = document.createElement('span');
     duration.className = 'media-duration';
     getVideoDuration(url, dur => duration.textContent = dur);
@@ -65,8 +81,8 @@ function createMediaBlock(name, url, index) {
   }
 
   const delBtn = document.createElement('button');
-  delBtn.textContent = '❌';
   delBtn.className = 'delete-btn';
+  delBtn.textContent = '❌';
   delBtn.onclick = (e) => {
     e.stopPropagation();
     playlistItems.splice(index, 1);
@@ -76,7 +92,6 @@ function createMediaBlock(name, url, index) {
   rightSide.appendChild(delBtn);
 
   block.append(mediaInfo, rightSide);
-
   block.onclick = () => {
     currentIndex = index;
     playCurrent();
@@ -85,86 +100,93 @@ function createMediaBlock(name, url, index) {
   return block;
 }
 
+/**
+ * Play the currently selected video
+ */
 function playCurrent() {
   if (currentIndex < 0 || currentIndex >= playlistItems.length) return;
 
   const { name, url } = playlistItems[currentIndex];
   console.log('[DBG] Now playing:', name, url);
 
-  mainPreview.pause();
-  mainPreview.srcObject = null;
-  mainPreview.src = url;
-  mainPreview.controls = true;
-  mainPreview.autoplay = true;
-  mainPreview.muted = false;
+  // Reset videoPreview
+  videoPreview.pause();
+  videoPreview.srcObject = null;
+  videoPreview.removeAttribute('src');
+  videoPreview.load(); // ensure it's flushed
+  videoPreview.src = url;
+  videoPreview.controls = true;
+  videoPreview.autoplay = true;
+  videoPreview.muted = false;
 
-  mainPreview.onplaying = () => {
-    console.log('[DBG] onplaying fired.');
-    const stream = mainPreview.captureStream?.() || mainPreview.mozCaptureStream?.();
-    if (!stream) {
-      console.warn('[DBG] captureStream() failed.');
-    } else {
-      console.log('[DBG] Stream captured, rebroadcasting...');
-      switchToStream(stream);
-    }
+  // Bind capture logic
+  videoPreview.onplaying = () => {
+    console.log('[DBG] Video started. Capturing stream...');
+    const stream = videoPreview.captureStream?.();
+    if (stream) switchToStream(stream);
+    else console.warn('[WARN] captureStream failed');
   };
 
-  mainPreview.onerror = (e) => {
-    console.error('[DBG] Video error:', e);
-  };
+  // Error/Metadata/End handlers
+  videoPreview.onerror = e => console.error('[Video Error]', e);
+  videoPreview.onloadedmetadata = () => console.log('[Metadata] Duration:', videoPreview.duration);
+  videoPreview.onended = () => handleVideoEnd();
 
-  mainPreview.onloadedmetadata = () => {
-    console.log('[DBG] Metadata loaded, duration:', mainPreview.duration);
-  };
+  // Show video preview container, hide camera
+  document.getElementById('video-preview-container')?.style.setProperty('display', 'block');
+  document.getElementById('camera-preview-container')?.style.setProperty('display', 'none');
 
-  mainPreview.onended = () => {
-    console.log('[DBG] Video ended.');
-    if (loopMode) mainPreview.play();
-    else if (shuffleMode) {
-      let next;
-      do next = Math.floor(Math.random() * playlistItems.length);
-      while (next === currentIndex);
-      currentIndex = next;
-      playCurrent();
-    } else if (currentIndex < playlistItems.length - 1) {
-      currentIndex++;
-      playCurrent();
-    } else {
-      currentIndex = -1;
-    }
-  };
-
-  const previewArea = document.querySelector('.stream-preview-area');
-  previewArea.innerHTML = '';
-  previewArea.appendChild(mainPreview);
-
-  const nowPlayingContent = document.querySelector('.now-playing-content');
-  const nowPlayingBlock = document.querySelector('.now-playing-block');
-
-  if (nowPlayingContent) {
-    nowPlayingContent.innerHTML = '';
-    nowPlayingContent.appendChild(createMediaBlock(name, url, currentIndex));
+  const videoMount = document.getElementById('video-preview-container');
+  if (videoMount) {
+    videoMount.innerHTML = '';
+    videoMount.appendChild(videoPreview);
   }
 
-  // ✅ Show now-playing-controls
+  // Update now-playing UI
+  const nowPlayingContent = document.querySelector('.now-playing-content');
+  const nowPlayingBlock = document.querySelector('.now-playing-block');
+  nowPlayingContent.innerHTML = '';
+  nowPlayingContent.appendChild(createMediaBlock(name, url, currentIndex));
   nowPlayingBlock?.classList.add('playing');
 
-  mainPreview.play().then(() => {
-    console.log('[DBG] Video play promise resolved.');
-  }).catch(err => {
-    console.warn('[DBG] play() failed:', err);
-  });
+  videoPreview.play().catch(err => console.warn('[play()] error:', err));
 }
 
+/**
+ * Handle what happens when a video ends
+ */
+function handleVideoEnd() {
+  if (loopMode) return videoPreview.play();
+
+  if (shuffleMode) {
+    let next;
+    do next = Math.floor(Math.random() * playlistItems.length);
+    while (next === currentIndex);
+    currentIndex = next;
+    playCurrent();
+  } else if (currentIndex < playlistItems.length - 1) {
+    currentIndex++;
+    playCurrent();
+  } else {
+    currentIndex = -1;
+  }
+}
+
+/**
+ * Clear playlist and reset UI
+ */
 export function clearPlaylist() {
   playlistItems = [];
   currentIndex = -1;
   currentPlaylistName = null;
-  document.querySelector('.now-playing-block').classList.remove('playing');
+  document.querySelector('.now-playing-block')?.classList.remove('playing');
   document.querySelector('.playlist-items').innerHTML = '';
   document.querySelector('.now-playing-content').innerHTML = '';
 }
 
+/**
+ * Setup all playback control buttons
+ */
 export function setupNowPlayingControls() {
   document.querySelector('.ctrl-btn-msc.prev')?.addEventListener('click', () => {
     if (currentIndex > 0) {
@@ -181,38 +203,32 @@ export function setupNowPlayingControls() {
   });
 
   document.querySelector('.ctrl-btn-msc.pause')?.addEventListener('click', () => {
-    if (!mainPreview) return;
-    if (mainPreview.paused) {
-      mainPreview.play();
-    } else {
-      mainPreview.pause();
-    }
+    if (!videoPreview) return;
+    videoPreview.paused ? videoPreview.play() : videoPreview.pause();
   });
 
-  document.querySelector('ctrl.btn-msc.loop')?.addEventListener('click', () => {
+  btnLoop?.addEventListener('click', () => {
     loopMode = !loopMode;
     shuffleMode = false;
     updateModeButtons();
   });
-  
-  document.querySelector('.ctrl-btn-msc.shuffle')?.addEventListener('click', () => {
+
+  btnShuffle?.addEventListener('click', () => {
     shuffleMode = !shuffleMode;
     loopMode = false;
     updateModeButtons();
   });
 }
 
+// ---------------- Playlist Saving ----------------
+
 document.getElementById('savePlaylistBtn')?.addEventListener('click', () => {
   const name = prompt("Enter a name for the new playlist:");
-  if (!name) return;
-  savePlaylist(name);
+  if (name) savePlaylist(name);
 });
 
 document.getElementById('saveOrderBtn')?.addEventListener('click', () => {
-  if (!currentPlaylistName) {
-    alert("No loaded playlist to save.");
-    return;
-  }
+  if (!currentPlaylistName) return alert("No loaded playlist to save.");
   savePlaylist(currentPlaylistName);
 });
 
@@ -220,33 +236,32 @@ async function savePlaylist(name) {
   try {
     const res = await fetch('/playlists', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        name,
-        items: playlistItems
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, items: playlistItems })
     });
 
     const data = await res.json();
-    if (!res.ok) {
-      alert(data.error || 'Failed to save playlist.');
-    } else {
-      alert(`Playlist "${name}" saved successfully.`);
-      currentPlaylistName = name;
-      await listAllPlaylists();
-    }
+    if (!res.ok) return alert(data.error || 'Failed to save playlist.');
+
+    alert(`Playlist "${name}" saved successfully.`);
+    currentPlaylistName = name;
+    await listAllPlaylists();
   } catch (err) {
     console.error('[SavePlaylist]', err);
     alert("Error saving playlist.");
   }
 }
+
+/**
+ * Load list of all saved playlists
+ */
 export async function listAllPlaylists() {
   try {
     const res = await fetch('/playlists');
     const data = await res.json();
+
     const group = document.querySelector('.playlist-group');
+    if (!group) return;
     group.innerHTML = '';
 
     data.forEach(pl => {
@@ -261,6 +276,9 @@ export async function listAllPlaylists() {
   }
 }
 
+/**
+ * Load a playlist and queue all items
+ */
 async function loadPlaylist(name) {
   try {
     const res = await fetch(`/playlists/${name}`);

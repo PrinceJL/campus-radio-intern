@@ -44,7 +44,7 @@
         </div>
         <div class="stream-preview-wrapper">
           <div class="stream-bar"></div>
-          <div class="stream-preview-area">
+          <div id="stream-preview-area" class="stream-preview-area">
             <div id="camera-preview-container" style="display: none;"></div>
             <div id="video-preview-container" style="display: block;"></div>
           </div>
@@ -112,20 +112,20 @@
               </div>
             </div>
 
-            <div class="next-up">
-              <div class="playlist-header">
-                <strong>Next from: (Playlist)</strong>
-                <div class="playlist-actions">
-                  <button id="savePlaylistBtn" title="Save Playlist">
-                    <img src="{{ url_for('broadcaster.static', filename='icon/plus (2).png') }}" alt="Add" class="icon-btn-plus" />
-                  </button>
-                  <button id="saveOrderBtn" title="Save Current Order">
-                    <img src="{{ url_for('broadcaster.static', filename='icon/diskette.png') }}" alt="Save" class="icon-btn-save" />
-                  </button>
+              <div class="next-up">
+                <div class="playlist-header">
+                  <strong>Next from: (Playlist)</strong>
+                  <div class="playlist-actions">
+                    <button id="savePlaylistBtn" title="Save Playlist">
+                      <img src="{{ url_for('broadcaster.static', filename='icon/plus (2).png') }}" alt="Add" class="icon-btn-plus" />
+                    </button>
+                    <button id="saveOrderBtn" title="Save Current Order">
+                      <img src="{{ url_for('broadcaster.static', filename='icon/diskette.png') }}" alt="Save" class="icon-btn-save" />
+                    </button>
+                  </div>
                 </div>
+                <div class="playlist-items"></div>
               </div>
-              <div class="playlist-items"></div>
-            </div>
 
             <!-- Video Playlist -->
             <div class="section-label-playlist">

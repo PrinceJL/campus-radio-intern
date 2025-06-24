@@ -10,12 +10,20 @@ const startBtn = document.getElementById('startStream');
 const stopBtn = document.getElementById('stopStream');
 const statusDiv = document.getElementById('broadcast-status');
 
-export const mainPreview = document.createElement('video');
-mainPreview.autoplay = true;
-mainPreview.muted = true;
-mainPreview.playsInline = true;
-mainPreview.style.width = "100%";
-mainPreview.style.height = "100%";
+export const cameraPreview = document.createElement('video');
+cameraPreview.autoplay = true;
+cameraPreview.muted = true;
+cameraPreview.playsInline = true;
+cameraPreview.style.width = "100%";
+cameraPreview.style.height = "100%";
+
+export const videoPreview = document.createElement('video');
+videoPreview.controls = true;
+videoPreview.autoplay = true;
+videoPreview.playsInline = true;
+videoPreview.style.width = "100%";
+videoPreview.style.height = "100%";
+
 
 const socket = io();
 
@@ -26,15 +34,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupUploadManager();
     setupThemeToggle();
 
-    const container = document.getElementById('stream-preview-area');
-    if (container) {
-        container.innerHTML = '';
-        container.appendChild(mainPreview);
+    // Mount the video element in both containers
+    const videoDiv = document.getElementById('video-preview-container');
+    const cameraDiv = document.getElementById('camera-preview-container');
+
+    if (videoDiv) {
+        videoDiv.innerHTML = '';
+        videoDiv.appendChild(videoPreview);
     }
+    if (cameraDiv) {
+        cameraDiv.innerHTML = '';
+        cameraDiv.appendChild(cameraPreview);
+    }
+
 
     await populateCameraPreviews();
     statusDiv.textContent = "Select a camera or video to stream.";
 });
+
 
 // ---------------- CAMERA HANDLING ----------------
 async function populateCameraPreviews() {
@@ -62,16 +79,35 @@ async function populateCameraPreviews() {
         video.onclick = async () => {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: cam.deviceId }, audio: true });
+                pauseVideoIfPlaying();
+                toggleVisibility('camera');
                 await switchToStream(stream);
             } catch (err) {
                 statusDiv.textContent = "Camera access error.";
+                console.log("Camera access error:", err);
             }
         };
 
         container.appendChild(video);
     }
 }
+function pauseVideoIfPlaying() {
+    if (!videoPreview.paused && !videoPreview.srcObject) {
+        videoPreview.pause();
+    }
+}
 
+function toggleVisibility(source) {
+    const cameraDiv = document.getElementById('camera-preview-container');
+    const videoDiv = document.getElementById('video-preview-container');
+    if (source === 'camera') {
+        cameraDiv.style.display = 'block';
+        videoDiv.style.display = 'none';
+    } else if (source === 'video') {
+        videoDiv.style.display = 'block';
+        cameraDiv.style.display = 'none';
+    }
+}
 // ---------------- STREAM CONTROL ----------------
 
 startBtn?.addEventListener('click', () => {
@@ -88,36 +124,37 @@ stopBtn?.addEventListener('click', () => {
 });
 
 export async function switchToStream(stream) {
-  if (currentStream) currentStream.getTracks().forEach(track => track.stop());
-  currentStream = stream;
+    if (currentStream) currentStream.getTracks().forEach(track => track.stop());
+    currentStream = stream;
 
-  // ONLY override mainPreview.srcObject if it's not already playing a video file
-  if (!mainPreview.src || mainPreview.srcObject) {
-    mainPreview.srcObject = stream;
+    cameraPreview.srcObject = null;
+    cameraPreview.srcObject = stream;
+
     try {
-      await mainPreview.play();
+        await cameraPreview.play();
     } catch (err) {
-      console.warn('[DBG] mainPreview play() failed in switchToStream:', err);
+        console.warn('[DBG] cameraPreview play() failed:', err);
     }
-  } else {
-    console.log('[DBG] mainPreview already playing video file. Skipping srcObject override.');
-  }
 
-  // Reset peer connections
-  Object.entries(peerConnections).forEach(([id, pc]) => {
-    pc.close();
-    delete peerConnections[id];
-  });
+    Object.entries(peerConnections).forEach(([id, pc]) => {
+        pc.close();
+        delete peerConnections[id];
+    });
 
-  socket.emit('broadcaster');
-  statusDiv.textContent = "Broadcasting new stream.";
+    socket.emit('broadcaster');
+    statusDiv.textContent = "Broadcasting new stream.";
 }
-
 
 export function rebroadcastStreamFrom(videoEl) {
     const stream = videoEl.captureStream?.();
-    if (stream) switchToStream(stream);
+    if (stream) {
+        videoPreview.srcObject = null;
+        videoPreview.src = videoEl.src;
+        videoPreview.play();
+        switchToStream(stream);
+    }
 }
+
 
 // ---------------- THEME TOGGLE ----------------
 function setupThemeToggle() {
