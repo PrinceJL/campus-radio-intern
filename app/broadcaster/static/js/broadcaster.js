@@ -266,3 +266,17 @@ window.onbeforeunload = () => {
 window.currentStream = currentStream;
 window.peerConnections = peerConnections;
 window.socket = socket;
+
+// Highlight for uploaded-media
+document.addEventListener('click', function(e) {
+  // Uploaded media
+  if (e.target.closest('.uploaded-media')) {
+    document.querySelectorAll('.uploaded-media.selected').forEach(el => el.classList.remove('selected'));
+    e.target.closest('.uploaded-media').classList.add('selected');
+  }
+  // Camera card
+  else if (e.target.closest('.camera-card')) {
+    document.querySelectorAll('.camera-card.selected').forEach(el => el.classList.remove('selected'));
+    e.target.closest('.camera-card').classList.add('selected');
+  }
+});

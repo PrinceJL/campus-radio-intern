@@ -19,6 +19,35 @@ function updateModeButtons() {
   btnShuffle?.classList.toggle('active', shuffleMode);
 }
 
+function updatePlayPauseIcon() {
+  const icon = document.getElementById('playPauseIcon');
+  if (!icon) return;
+  if (videoPreview.paused) {
+    icon.src = '/broadcaster/static/icon/play.png';
+    icon.alt = 'Play';
+  } else {
+    icon.src = '/broadcaster/static/icon/pause-button.png';
+    icon.alt = 'Pause';
+  }
+}
+
+// Attach event listeners to update icon on play/pause
+videoPreview.addEventListener('play', updatePlayPauseIcon);
+videoPreview.addEventListener('pause', updatePlayPauseIcon);
+
+// Play/pause toggle on button click
+document.getElementById('btnPlayPause')?.addEventListener('click', () => {
+  if (videoPreview.paused) {
+    videoPreview.play();
+  } else {
+    videoPreview.pause();
+  }
+  // updatePlayPauseIcon(); // Not needed, handled by event listeners
+});
+
+// Set initial icon state on page load
+updatePlayPauseIcon();
+
 /**
  * Add a new video to the queue and update playlist view
  */
@@ -82,7 +111,7 @@ function createMediaBlock(name, url, index) {
 
   const delBtn = document.createElement('button');
   delBtn.className = 'delete-btn';
-  delBtn.textContent = '❌';
+  delBtn.innerHTML = `<img src="${window.STATIC_ICON_PATH}close.png" alt="Delete" style="width:16px;height:16px;vertical-align:middle;">`;
   delBtn.onclick = (e) => {
     e.stopPropagation();
     playlistItems.splice(index, 1);
@@ -210,6 +239,7 @@ export function setupNowPlayingControls() {
     videoPreview.paused ? videoPreview.play() : videoPreview.pause();
   });
 
+
   btnLoop?.addEventListener('click', () => {
     console.log("Toggle Loop Mode");
     loopMode = !loopMode;
@@ -273,6 +303,19 @@ export async function listAllPlaylists() {
       const wrapper = document.createElement('div');
       wrapper.className = 'playlist-btn';
       wrapper.textContent = pl.name;
+
+      // Create remove icon
+      const remove = document.createElement('span');
+      remove.className = 'delete-btn';
+      remove.innerHTML = `<img src="${window.STATIC_ICON_PATH}close.png" alt="Delete">`;
+      remove.onclick = (e) => {
+        e.stopPropagation();
+        if (confirm(`Delete playlist "${pl.name}"?`)) {
+          deletePlaylist(pl.name);
+        }
+      };
+
+      wrapper.appendChild(remove);
       wrapper.onclick = () => loadPlaylist(pl.name);
       group.appendChild(wrapper);
     });
@@ -297,3 +340,10 @@ async function loadPlaylist(name) {
     console.error('[LoadPlaylist]', err);
   }
 }
+
+// ---------------- Playlist Adding ----------------
+
+document.getElementById('savePlaylistBtn-video')?.addEventListener('click', () => {
+  const name = prompt("Enter a name for the new playlist:");
+  if (name) savePlaylist(name);
+});

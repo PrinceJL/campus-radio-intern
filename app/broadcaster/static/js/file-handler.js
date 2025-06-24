@@ -84,6 +84,17 @@ function displayInCard(container, name, url) {
     media.appendChild(preview);
     media.appendChild(label);
 
+    const delBtn = document.createElement('button');
+    delBtn.className = 'delete-btn';
+    delBtn.innerHTML = `<img src="${window.STATIC_ICON_PATH}close.png" alt="Delete" style="width:10px;height:10px;vertical-align:middle;">`;
+    delBtn.onclick = (e) => {
+        e.stopPropagation();
+        // Call your delete function here
+        const ext = name.split('.').pop().toLowerCase();
+        deleteUploadedFile(ext, name, media);
+    };
+    media.appendChild(delBtn);
+
     media.addEventListener('click', () => {
         console.log(`Clicked on ${name}`);
         if (isVideo) {
@@ -174,9 +185,16 @@ async function deleteUploadedFile(ext, filename, blockElement) {
         const res = await fetch(`/uploads/${ext}/${filename}`, {
             method: 'DELETE'
         });
-        const data = await res.json();
+
+        // Try to parse JSON, but don't fail if empty
+        let data = {};
+        try {
+            data = await res.json();
+        } catch (e) {
+            // Ignore if response is empty
+        }
+
         if (res.ok) {
-            x``
             blockElement.remove();
             console.log('Deleted:', filename);
         } else {

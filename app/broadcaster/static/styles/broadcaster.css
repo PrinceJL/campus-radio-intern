@@ -50,6 +50,12 @@ body {
   background: white;
 }
 
+/* Highlighted Feature*/
+.selected, .highlighted {
+  outline: 2px solid #4ade80;
+  background: #e6fff3 !important;
+}
+
 /* Devices Panel Background */
 .left-sidebar {
   background: white;
@@ -120,6 +126,27 @@ body {
   filter: brightness(0) invert(1);
   opacity: 100;
   transition: opacity 0.2s;
+  background: transparent !important;
+}
+
+button.icon-btn-plus {
+  background: transparent !important;
+  border: none;
+  padding: 0;
+  margin: 0 4px;
+  box-shadow: none;
+  border-radius: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+button.icon-btn-plus img {
+  width: 11px;
+  height: 11px;
+  background: transparent;
+  display: block;
+  pointer-events: none;
 }
 
 .icon-btn {
@@ -164,10 +191,10 @@ body {
 
 .camera-card {
   width: 100%;
+  height: 150px;
   aspect-ratio: 4 / 3;
   background: #232427;
   color: white;
-  border: 2px solid #4ade80;
   border-radius: 8px;
   margin-bottom: 16px;
   object-fit: cover;
@@ -220,7 +247,7 @@ body {
 .stream-preview-wrapper {
   position: relative;
   width: 900px;
-  height: 400px;
+  height: 500px;
   margin: 0 auto;
 }
 
@@ -230,6 +257,10 @@ body {
   object-fit: cover;
 }
 
+#camera-preview-container {
+  height: 500px;
+}
+
 .stream-preview-area {
   background: #d3d3d3;
   border-radius: 8px;
@@ -237,6 +268,9 @@ body {
   margin: 24px 24px 0 24px;
 }
 
+.camera-preview-container{
+  height: 360px;
+}
 
 .stream-preview {
   height: 57px;
@@ -384,6 +418,10 @@ body {
   height: 4px;
 }
 
+.savePlaylistBtn-video img{
+  background: transparent;
+}
+
 /* Right Section (Queue and Files) */
 .right-section {
   display: flex;
@@ -506,6 +544,12 @@ body {
   border-bottom: 2px solid #4ade80;
 }
 
+.now-playing-content {
+  margin-top: 10px;
+  border-radius: 10px;
+  color: #073066;
+}
+
 .now-playing-controls {
   display: none;
   justify-content: center;
@@ -540,10 +584,6 @@ body {
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s;
-}
-
-.ctrl-btn-msc:not(:last-child) {
-  margin-right: 7px;
 }
 
 .ctrl-btn-msc:hover {
@@ -604,9 +644,27 @@ body {
 .delete-btn {
   background: transparent;
   border: none;
-  color: red;
-  font-size: 14px;
-  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  box-shadow: none;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  width: 11px;
+  height: 11px;
+}
+.delete-btn img {
+  background: transparent;
+  display: block;
+  width: 11px;
+  height: 11px;
+}
+
+.uploaded-media .delete-btn {
+  margin-left: auto;
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
 }
 
 .delete-file-btn {
@@ -623,7 +681,6 @@ body {
   height: 32px;
   border-radius: 4px;
   object-fit: cover;
-  background: #bbb;
 }
 
 .next-up {
@@ -740,34 +797,6 @@ body {
   gap: 12px;
 }
 
-.file-card {
-    pointer-events: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    background-color: #232427;
-    position: relative;
-}
-
-.file-card-title {
-  flex: 1;
-}
-
-.file-card span {
-    pointer-events: none;
-}
-
-.file-card .upload-icon {
-    cursor: pointer;
-    pointer-events: auto;        /* allow only icon to be clickable */
-    font-size: 20px;
-    margin-top: 4px;
-}
-
 .uploaded-media {
   display: flex;
   align-items: center;
@@ -777,10 +806,12 @@ body {
   cursor: pointer;
   border: 1px solid #ccc;
   border-radius: 4px;
+  background-color: #fff;
+  color: #0F0E11;
 }
 
 .uploaded-media:hover {
-  background-color: #f0f0f0;
+  background-color: #ccc;
 }
 
 .uploaded-media img {
@@ -809,7 +840,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #1f1f1f;
+  background: #073066;
   color: white;
   padding: 10px 12px;
   border-radius: 6px;
@@ -822,7 +853,7 @@ body {
 }
 
 .playlist-btn:hover {
-  background: #292929;
+  background: #05234B;
 }
 
 .playlist-btn .remove-icon {
@@ -838,15 +869,14 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #2a2d32;
+  background: #073066;
   padding: 10px 12px;
   border-radius: 6px;
   transition: background 0.2s;
-  border: 1px solid #3d3d3d;
 }
 
 .media-block:hover {
-  background: #353a40;
+  background: #05234B;
 }
 
 .media-title {
@@ -883,42 +913,6 @@ body {
 }
 .upload-btn:hover {
   background-color: #666;
-}
-.file-card {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  background: #2c2c2c;
-  color: white;
-  padding: 12px;
-  margin-bottom: 12px;
-  border-radius: 6px;
-  transition: background 0.2s;
-  gap: 10px;
-}
-
-.file-card:hover {
-  background: #3a3a3a;
-}
-
-.file-card .file-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  pointer-events: none;
-}
-
-.file-card .file-card-header span {
-  font-weight: 600;
-  font-size: 1rem;
-  color: #ddd;
-}
-
-.file-card .upload-icon {
-  font-size: 20px;
-  color: #4ade80;
-  cursor: pointer;
-  pointer-events: auto;
 }
 
 /* Responsive adjustments */
