@@ -190,6 +190,7 @@ export function clearPlaylist() {
 export function setupNowPlayingControls() {
   document.querySelector('.ctrl-btn-msc.prev')?.addEventListener('click', () => {
     if (currentIndex > 0) {
+      console.log("Press Previous");
       currentIndex--;
       playCurrent();
     }
@@ -197,6 +198,7 @@ export function setupNowPlayingControls() {
 
   document.querySelector('.ctrl-btn-msc.next')?.addEventListener('click', () => {
     if (currentIndex < playlistItems.length - 1) {
+      console.log("Press Next");
       currentIndex++;
       playCurrent();
     }
@@ -204,16 +206,19 @@ export function setupNowPlayingControls() {
 
   document.querySelector('.ctrl-btn-msc.pause')?.addEventListener('click', () => {
     if (!videoPreview) return;
+    console.log("Pause/Play Video");
     videoPreview.paused ? videoPreview.play() : videoPreview.pause();
   });
 
   btnLoop?.addEventListener('click', () => {
+    console.log("Toggle Loop Mode");
     loopMode = !loopMode;
     shuffleMode = false;
     updateModeButtons();
   });
 
   btnShuffle?.addEventListener('click', () => {
+    console.log("Toggle Shuffle Mode");
     shuffleMode = !shuffleMode;
     loopMode = false;
     updateModeButtons();

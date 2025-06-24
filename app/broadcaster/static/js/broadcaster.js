@@ -1,11 +1,16 @@
 import { setupUploadManager } from './file-handler.js';
 import { setupNowPlayingControls, listAllPlaylists } from './playlist-manager.js';
+import { startSessionTimer, stopSessionTimer, incrementViewerCount, decrementViewerCount, updateViewerCount } from './stream-utils.js';
 
 let currentStream = null;
 let selectedDeviceId = null;
 let peerConnections = {};
-let pendingCandidates = {};
+let pendingCandidates = {}
+let connectedViewers = new Set();
+let isStreaming = false;
+let isMuted = false;
 
+const muteBtn = document.getElementById('muteStream');
 const startBtn = document.getElementById('startStream');
 const stopBtn = document.getElementById('stopStream');
 const statusDiv = document.getElementById('broadcast-status');
@@ -109,11 +114,20 @@ function toggleVisibility(source) {
     }
 }
 // ---------------- STREAM CONTROL ----------------
+muteBtn?.addEventListener('click', () => {
+    isMuted = !isMuted;
+    muteStream();
+    muteBtn.textContent = isMuted ? "Unmute" : "Mute";
+
+});
 
 startBtn?.addEventListener('click', () => {
     if (!currentStream) return alert("Nothing to stream.");
     socket.emit('broadcaster');
     statusDiv.textContent = "Broadcasting...";
+    startSessionTimer();
+
+    isStreaming = true;
 });
 
 stopBtn?.addEventListener('click', () => {
@@ -121,7 +135,18 @@ stopBtn?.addEventListener('click', () => {
     peerConnections = {};
     socket.emit('stop-broadcast');
     statusDiv.textContent = "Broadcast stopped.";
+    stopSessionTimer();
+    updateViewerCount(0);
+    isStreaming = false;
 });
+function muteStream(applyToCurrent = true) {
+    if (applyToCurrent && currentStream) {
+        currentStream.getAudioTracks().forEach(track => {
+            track.enabled = !isMuted;
+        });
+    }
+    statusDiv.textContent = isMuted ? "Audio muted for viewers." : "Audio unmuted.";
+}
 
 export async function switchToStream(stream) {
     if (currentStream) currentStream.getTracks().forEach(track => track.stop());
@@ -140,9 +165,13 @@ export async function switchToStream(stream) {
         pc.close();
         delete peerConnections[id];
     });
-
-    socket.emit('broadcaster');
-    statusDiv.textContent = "Broadcasting new stream.";
+    if (isStreaming) {
+        socket.emit('broadcaster');
+        statusDiv.textContent = "Broadcasting new stream.";
+        if (isMuted) {
+            muteStream();
+        }
+    }
 }
 
 export function rebroadcastStreamFrom(videoEl) {
@@ -172,6 +201,11 @@ function setupThemeToggle() {
 // ---------------- WEBRTC SIGNALING ----------------
 socket.on('watcher', async (id) => {
     if (!currentStream) return;
+    if (!connectedViewers.has(id)) {
+        connectedViewers.add(id);
+        incrementViewerCount();
+    }
+
     const pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
     peerConnections[id] = pc;
     currentStream.getTracks().forEach(track => pc.addTrack(track, currentStream));
@@ -209,8 +243,14 @@ socket.on('candidate', (id, candidate) => {
 });
 
 socket.on('disconnectPeer', id => {
-    peerConnections[id]?.close();
-    delete peerConnections[id];
+    if (peerConnections[id]) {
+        peerConnections[id].close();
+        delete peerConnections[id];
+    }
+    if (connectedViewers.has(id)) {
+        connectedViewers.delete(id);
+        decrementViewerCount();
+    }
 });
 
 socket.on('connect', () => {
