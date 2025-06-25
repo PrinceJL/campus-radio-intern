@@ -41,7 +41,6 @@ export function queueAudio(name,url){
      });
  
      const delBtn = document.createElement('button');
-     delBtn.textContent = '❌';
      delBtn.classList.add('delete-btn');
      delBtn.style.marginLeft = '8px';
      delBtn.addEventListener('click', (e) => {

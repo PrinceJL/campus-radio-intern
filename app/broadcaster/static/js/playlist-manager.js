@@ -133,7 +133,7 @@ function createMediaBlock(name, url, index) {
 
   const delBtn = document.createElement('button');
   delBtn.className = 'delete-btn';
-  delBtn.innerHTML = `<img src="${window.STATIC_ICON_PATH}close.png" alt="Delete" style="width:16px;height:16px;vertical-align:middle;">`;
+  delBtn.innerHTML = `<img src="${window.STATIC_ICON_PATH}close.png" alt="Delete" style="width:11px;height:11px;vertical-align:middle;">`;
   delBtn.onclick = (e) => {
     e.stopPropagation();
     playlistItems.splice(index, 1);
@@ -205,6 +205,9 @@ function playCurrent() {
 
 /**
  * Handle what happens when a video ends
+ * #Need to fix this logic to handle the ending of videos properly
+ * it needs to not play the video or supercede the current camera if camera is set to be shown
+ * 
  */
 function handleVideoEnd() {
   if (loopMode) return videoPreview.play();
