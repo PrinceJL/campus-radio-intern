@@ -42,7 +42,6 @@ document.getElementById('btnPlayPause')?.addEventListener('click', () => {
   } else {
     videoPreview.pause();
   }
-  // updatePlayPauseIcon(); // Not needed, handled by event listeners
 });
 
 // Set initial icon state on page load
@@ -53,9 +52,10 @@ updatePlayPauseIcon();
  */
 export function queueVideo(name, url) {
   const normUrl = new URL(url, window.location.origin).pathname;
-  playlistItems.push({ name, url: normUrl });
+  playlistItems.push({ id: crypto.randomUUID(), name, url: normUrl });
   renderPlaylist();
 }
+
 
 /**
  * Render all queued videos in the playlist
@@ -68,6 +68,28 @@ function renderPlaylist() {
   playlistItems.forEach((item, index) => {
     const block = createMediaBlock(item.name, item.url, index);
     container.appendChild(block);
+  });
+
+  // Make it sortable
+  Sortable.create(container, {
+    animation: 150,
+    onEnd: function (evt) {
+      const oldIndex = evt.oldIndex;
+      const newIndex = evt.newIndex;
+      if (oldIndex === newIndex) return;
+
+      const movedItem = playlistItems.splice(oldIndex, 1)[0];
+      playlistItems.splice(newIndex, 0, movedItem);
+
+      // 🔁 Recalculate currentIndex based on the video URL
+      if (currentIndex !== -1) {
+        const currentUrl = videoPreview.src;
+        const match = playlistItems.findIndex(item => currentUrl.includes(item.url));
+        if (match !== -1) currentIndex = match;
+      }
+
+      renderPlaylist(); // Re-render updated list
+    }
   });
 }
 
@@ -200,7 +222,6 @@ function handleVideoEnd() {
     currentIndex = -1;
   }
 }
-
 /**
  * Clear playlist and reset UI
  */
@@ -347,3 +368,36 @@ document.getElementById('savePlaylistBtn-video')?.addEventListener('click', () =
   const name = prompt("Enter a name for the new playlist:");
   if (name) savePlaylist(name);
 });
+
+
+// ---------------- Playlist Deletion ----------------
+export function removeFromPlaylistByUrl(url) {
+  const removedCount = playlistItems.filter(item => item.url === url).length;
+  playlistItems = playlistItems.filter(item => item.url !== url);
+
+  if (removedCount > 0) {
+    console.log(`Removed ${removedCount} instance(s) of "${url}" from playlist`);
+    renderPlaylist();
+  }
+
+  if (currentIndex >= playlistItems.length) {
+    currentIndex = playlistItems.length - 1;
+  }
+}
+
+async function deletePlaylist(name) {
+  try {
+    const res = await fetch(`/playlists/${name}`, { method: 'DELETE' });
+    const data = await res.json();
+
+    if (!res.ok) return alert(data.error || 'Failed to delete playlist.');
+
+    alert(`Playlist "${name}" deleted successfully.`);
+    if (currentPlaylistName === name) clearPlaylist();
+    await listAllPlaylists();
+  } catch (err) {
+    console.error('[DeletePlaylist]', err);
+    alert('Error deleting playlist.');
+  }
+}
+

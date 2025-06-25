@@ -1,4 +1,5 @@
-import { queueVideo } from './playlist-manager.js';
+import { queueVideo, removeFromPlaylistByUrl, listAllPlaylists   } from './playlist-manager.js';
+
 // import { queueAudio } from './audio-functions.js';
 
 export function setupUploadManager() {
@@ -180,23 +181,35 @@ export function generateVideoThumbnail(videoUrl, imgElement) {
         imgElement.src = 'https://via.placeholder.com/40x40?text=VID';
     });
 }
+
 async function deleteUploadedFile(ext, filename, blockElement) {
+    const confirmMsg = `Are you sure you want to delete "${filename}"?\nThis will remove it from all playlists and from the database.`;
+    if (!confirm(confirmMsg)) return;
+
     try {
         const res = await fetch(`/uploads/${ext}/${filename}`, {
             method: 'DELETE'
         });
 
-        // Try to parse JSON, but don't fail if empty
         let data = {};
         try {
             data = await res.json();
-        } catch (e) {
-            // Ignore if response is empty
-        }
+        } catch (e) { }
 
         if (res.ok) {
-            blockElement.remove();
             console.log('Deleted:', filename);
+            blockElement.remove();
+
+            const fileUrl = `/uploads/${ext}/${filename}`;
+            removeFromPlaylistByUrl(fileUrl);
+
+            // 🔥 NEW: Remove from all playlists in DB
+            await fetch('/playlists/remove_file', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: fileUrl })
+            });
+            await listAllPlaylists();
         } else {
             alert(data.error || 'Delete failed.');
         }
@@ -205,4 +218,5 @@ async function deleteUploadedFile(ext, filename, blockElement) {
         alert('Network error during delete.');
     }
 }
+
 

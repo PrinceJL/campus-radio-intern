@@ -136,7 +136,6 @@ stopBtn?.addEventListener('click', () => {
     socket.emit('stop-broadcast');
     statusDiv.textContent = "Broadcast stopped.";
     stopSessionTimer();
-    updateViewerCount(0);
     isStreaming = false;
 });
 function muteStream(applyToCurrent = true) {

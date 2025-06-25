@@ -50,17 +50,45 @@ def serve_file(ext, filename):
     response.headers['Access-Control-Allow-Origin'] = '*'
     return response
 
-
 @uploads_bp.route('/uploads/<ext>/<filename>', methods=['DELETE'])
 def delete_file(ext, filename):
     subdir = os.path.join(UPLOAD_FOLDER, ext)
     file_path = os.path.join(subdir, filename)
-    if os.path.exists(file_path):
+
+    # Step 1: Verify file exists
+    if not os.path.exists(file_path):
+        return jsonify({"error": "File not found"}), 404
+
+    # Step 2: Prepare full file URL used in playlists
+    file_url = f"/uploads/{ext}/{filename}"
+
+    # Step 3: Attempt to remove from all playlists
+    try:
+        playlist_result = db.playlists.update_many(
+            {},
+            {"$pull": {"items": {"url": file_url}}}
+        )
+    except Exception as e:
+        return jsonify({
+            "error": "Failed to clean playlist references.",
+            "details": str(e)
+        }), 500
+
+    # Step 4: Only delete file after playlist cleanup
+    try:
         os.remove(file_path)
         db.files.delete_one({"filename": filename})
-        return jsonify({"message": f"{filename} deleted."}), 200
-    else:
-        return jsonify({"error": "File not found"}), 404
+    except Exception as e:
+        return jsonify({
+            "error": "Failed to delete file after playlist cleanup.",
+            "details": str(e)
+        }), 500
+
+    return jsonify({
+        "message": f"{filename} deleted.",
+        "playlists_updated": playlist_result.modified_count
+    }), 200
+
 
 @uploads_bp.route('/uploads/files', methods=['GET'])
 def list_files():   
