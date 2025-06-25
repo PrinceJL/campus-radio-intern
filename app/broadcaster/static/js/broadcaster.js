@@ -1,6 +1,6 @@
 import { setupUploadManager } from './file-handler.js';
 import { setupNowPlayingControls, listAllPlaylists } from './playlist-manager.js';
-import { startSessionTimer, stopSessionTimer, incrementViewerCount, decrementViewerCount, updateViewerCount } from './stream-utils.js';
+import { startSessionTimer, stopSessionTimer, incrementViewerCount, decrementViewerCount } from './stream-utils.js';
 
 let currentStream = null;
 let selectedDeviceId = null;
@@ -33,6 +33,27 @@ videoPreview.style.height = "100%";
 const socket = io();
 
 // ---------------- INIT ----------------
+// Setup ticker controls
+document.getElementById('startTickerBtn').addEventListener('click', () => {
+    const message = document.getElementById('tickerMessage').value;
+    const speed = parseFloat(document.getElementById('tickerSpeed').value) || 10;
+    const loops = parseInt(document.getElementById('tickerLoops').value) || 0;
+    const interval = parseFloat(document.getElementById('tickerInterval').value) || 0;
+    console.log("[Broadcaster] Sent start-ticker");
+    socket.emit('start-ticker', {
+        message,
+        speed,
+        loops,
+        interval
+    });
+});
+// Stop ticker
+document.getElementById('stopTickerBtn').addEventListener('click', () => {
+    socket.emit('stop-ticker');
+    console.log("[Broadcaster] Sent stop-ticker");
+});
+
+
 document.addEventListener('DOMContentLoaded', async () => {
     setupNowPlayingControls();
     listAllPlaylists();

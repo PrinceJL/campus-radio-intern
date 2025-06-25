@@ -62,15 +62,13 @@
           <div class="stream-manager-header">Stream Manager</div>
           <div class="stream-manager-title">Stream Title</div>
           <div class="stream-manager-content">
-            <div class="stream-manager-desc">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a
-              libero interdum, imperdiet ipsum non, sagittis ex. Praesent neque
-              urna, condimentum quis aliquet id, scelerisque posuere ex. Donec
-              venenatis ut justo euismod pharetra. Ut fringilla tortor quis quam
-              malesuada, vitae finibus nibh sollicitudin. Aliquam habitant vitae
-              neque quis pellentesque. Ut ex eros, condimentum eget porttitor
-              ac, convallis non odio. Integer id nisi sit amet justo finibus
-              euismod. Fusce imperdiet egestas viverra.
+            <div class="ticker-controls">
+              <input type="text" id="tickerMessage" placeholder="Enter ticker message" />
+              <input type="number" id="tickerSpeed" placeholder="Speed (seconds)" />
+              <input type="number" id="tickerLoops" placeholder="Loop count (0 = infinite)" />
+              <input type="number" id="tickerInterval" placeholder="Interval (seconds)" />
+              <button id="startTickerBtn">Start Ticker</button>
+              <button id="stopTickerBtn">Stop Ticker</button>
             </div>
             <div class="stream-manager-session">
               <div class="session-time">0:00:00</div>

@@ -115,3 +115,45 @@ video.onended = () => {
         showBRB(true);
     }
 };
+
+let tickerTimeouts = [];
+
+socket.on('start-ticker', ({ message, speed, loops, interval }) => {
+    console.log("[Viewer] Received start-ticker:", message, speed, loops, interval);
+    const tickerContainer = document.getElementById('ticker-container');
+    const tickerText = document.getElementById('ticker-content');
+    tickerText.textContent = message;
+
+    // Apply speed (animation duration)
+    tickerText.style.animationDuration = `${speed}s`;
+
+    tickerContainer.style.display = 'block';
+
+    // Clear previous timers
+    tickerTimeouts.forEach(clearTimeout);
+    tickerTimeouts = [];
+
+    let count = 0;
+    const loopTicker = () => {
+        tickerContainer.style.display = 'block';
+        tickerText.style.animation = 'none';
+        // Force reflow
+        void tickerText.offsetWidth;
+        tickerText.style.animation = `scroll-left ${speed}s linear`;
+
+        count++;
+        if (loops === 0 || count < loops) {
+            tickerTimeouts.push(setTimeout(loopTicker, (speed + interval) * 1000));
+        }
+    };
+
+    loopTicker();
+});
+
+socket.on('stop-ticker', () => {
+    const tickerContainer = document.getElementById('ticker-container');
+    console.log("[Viewer] Received stop-ticker");
+    tickerContainer.style.display = 'none';
+    tickerTimeouts.forEach(clearTimeout);
+    tickerTimeouts = [];
+});

@@ -57,3 +57,14 @@ def register_webrtc_events(socketio):
             if broadcaster_sid:
                 emit('disconnectPeer', sid, room=broadcaster_sid)
             viewers.pop(sid, None)
+            
+    @socketio.on('start-ticker')
+    def handle_start_ticker(data):
+        print(f"[Ticker Start] {data}")
+        emit('start-ticker', data, broadcast=True)
+
+    @socketio.on('stop-ticker')
+    def handle_stop_ticker():
+        print("[Ticker Stop]")
+        emit('stop-ticker', broadcast=True)
+    
