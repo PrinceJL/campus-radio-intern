@@ -98,12 +98,11 @@ async function populateCameraPreviews() {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
                 video: {
-                    deviceId: cam.deviceId,
+                    deviceId: { exact: cam.deviceId },
                     frameRate: { ideal: 60, max: 60 },
                     width: { ideal: 1920 },
                     height: { ideal: 1080 }
-                },
-                audio: false
+                }
             });
             video.srcObject = stream;
         } catch (e) {
@@ -114,7 +113,7 @@ async function populateCameraPreviews() {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({
                     video: {
-                        deviceId: cam.deviceId,
+                        deviceId: { exact: cam.deviceId },
                         frameRate: { ideal: 60, max: 60 },
                         width: { ideal: 1920 },
                         height: { ideal: 1080 }
