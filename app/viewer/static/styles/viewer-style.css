@@ -1,24 +1,19 @@
-html,
-body {
+html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-}
-
-body {
   font-family: "Segoe UI", Arial, sans-serif;
   background: #000;
   color: #fff;
-  height: 100vh;
-  width: 100vw;
   overflow: hidden;
-  position: relative;
 }
 
 #video-container {
   position: relative;
   width: 100vw;
   height: 100vh;
+  overflow: hidden;
+  background: black;
 }
 
 #radio-stream,
@@ -26,42 +21,48 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: black;
 }
 
 #brb-standby {
   z-index: 2;
-  background: #000;
 }
 #radio-stream {
-  z-index: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: contain; /* or 'cover' depending on UX preference */
+  image-rendering: auto;
 }
+
+
 h1 {
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 100vw;
+  width: 100%;
   margin: 0;
-  padding: 24px 0 24px 0;
+  padding: 16px;
   background: rgba(0, 0, 0, 0.5);
-  color: #fff;
-  font-size: 2em;
+  font-size: 1.8em;
   text-align: center;
-  z-index: 2;
+  z-index: 3;
   letter-spacing: 1px;
 }
 
 .viewer-icon-btn {
   position: absolute;
-  bottom: 32px;
-  z-index: 3;
+  bottom: 24px;
+  z-index: 4;
   background: rgba(45, 114, 217, 0.9);
   border: none;
   border-radius: 50%;
   padding: 10px;
-  margin-left: 10px;
   cursor: pointer;
   transition: background 0.2s;
   width: 48px;
@@ -70,65 +71,54 @@ h1 {
   align-items: center;
   justify-content: center;
 }
+
 .viewer-icon-btn img {
   width: 28px;
   height: 28px;
-  display: block;
 }
+
 .viewer-icon-btn:hover {
   background: #1a4e96;
 }
 
+#fullscreen-btn { right: 24px; }
+#captions-btn  { right: 84px; }
+#settings-btn  { right: 144px; }
+
 #ticker-container {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 40px;
-    background-color: rgba(0, 0, 0, 0.85);
-    color: white;
-    overflow: hidden;
-    z-index: 1000;
-    display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  background-color: rgba(0, 0, 0, 0.85);
+  color: white;
+  overflow: hidden;
+  z-index: 1000;
+  display: none;
 }
 
 #ticker-content {
-    white-space: nowrap;
-    display: inline-block;
-    padding-left: 100%;
-    font-size: 1.2rem;
-    line-height: 40px;
+  white-space: nowrap;
+  display: inline-block;
+  padding-left: 100%;
+  font-size: 1.2rem;
+  line-height: 40px;
 }
 
-/* Scrolling animation */
 @keyframes scroll-left {
-    from {
-        transform: translateX(0%);
-    }
-    to {
-        transform: translateX(-100%);
-    }
+  from { transform: translateX(0%); }
+  to   { transform: translateX(-100%); }
 }
 
-
-#fullscreen-btn {
-  right: 24px;
-}
-#captions-btn {
-  right: 84px;
-}
-#settings-btn {
-  right: 144px;
-}
-
-@media (max-width: 700px) {
+@media (max-width: 768px) {
   h1 {
-    font-size: 1.1em;
-    padding: 12px 0 12px 0;
+    font-size: 1em;
+    padding: 10px;
   }
   .viewer-icon-btn {
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
     padding: 6px;
   }
   .viewer-icon-btn img {

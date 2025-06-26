@@ -141,8 +141,25 @@
             <div class="your-playlist">
               <div class="playlist-group"></div>
             </div>
+
+                        <!-- Audio Playlist -->
+            <div class="section-label-playlist">
+             Audio Playlist
+              <span class="section-icons">
+                  <button id="savePlaylistBtn-video" class="icon-btn-plus" title="Save Playlist">
+                    <img src="{{ url_for('broadcaster.static', filename='icon/plus.png') }}" alt="Add"/>
+                  </button>
+                <img src="{{ url_for('broadcaster.static', filename='icon/drop-down.png') }}" alt="Dropdown" class="icon-btn" />
+              </span>
+            </div>
+            <div class="audio-your-playlist">
+              <div class="audio-playlist-group"></div>
+            </div>
+
           </div>
         </div>
+
+        
         <!-- Files Panel -->
         <div class="files-panel">
           <div class="box-header-files">
