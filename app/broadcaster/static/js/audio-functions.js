@@ -11,24 +11,100 @@ player.connect(audioCtx.destination);
 
 //Music queue
 let musicQueueIndex = 0;
+let musicQueue = [];
 let audioPlaylistItems = [];
 
-//import normalizeUrl
-export function queueAudio(name,url){
-   const normUrl = normalizeUrl(url);
-   if (audioPlaylistItems.some(item => normalizeUrl(item.url) === normUrl)) {
-     console.log(`⚠️ Skipping duplicate: ${name} (${normUrl})`);
-     return;
-   }
-   audioPlayList.push({ name, url });
-   console.log(`✅ Queued: ${name} (${normUrl})`);
-   //have to create renderPlaylist function for audio
-   renderAudioPlaylist();
- }
 
+//get audio from uploaded files and play on click
+//all clicked audio files will be pushed to audio queue
+//all items in the audio queue can be saved to a playlist
+//render audio queue
+//access audio player 
+//there are two audio players: deck a and deck b.
+  //under these audio players are audio functions such as panning, volume control, crossfade etc.
+
+//
+export function queueAudio(name, url) {
+  const normUrl = new URL(url, window.location.origin).pathname;
+  audioPlaylistItems.push({ id: crypto.randomUUID(), name, url: normUrl });
+  renderAudioQueue();
+  console.log(name);
+}
+
+function renderAudioQueue() {
+   const nextUp = document.querySelector('.audio-playlist-items');
+   if (!nextUp) return;
+   nextUp.innerHTML = '';
+ 
+   audioPlaylistItems.forEach((item, index) => {
+     const block = createMediaBlock(item.name, item.url, index);
+ 
+     block.addEventListener('click', (e) => {
+       if (e.target.classList.contains('delete-btn')) return;
+       currentIndex = index;
+       playCurrent();
+     });
+ 
+     const delBtn = document.createElement('button');
+     delBtn.classList.add('delete-btn');
+     delBtn.style.marginLeft = '8px';
+     delBtn.addEventListener('click', (e) => {
+       e.stopPropagation();
+       playlistItems.splice(index, 1);
+       if (currentIndex >= playlistItems.length) currentIndex = playlistItems.length - 1;
+       renderPlaylist();
+     });
+ 
+     block.querySelector('.media-right')?.appendChild(delBtn);
+     nextUp.appendChild(block);
+   });
+ 
+   Sortable.create(nextUp, {
+     animation: 150,
+     handle: '.media-block',
+     draggable: '.media-block',
+     onEnd: () => {
+       const reordered = Array.from(nextUp.querySelectorAll('.media-block')).map(el =>
+         playlistItems[parseInt(el.dataset.index)]
+       );
+       playlistItems = reordered;
+       renderAudioPlaylist();
+     }
+   });
+    const container = document.querySelector('.audio-playlist-items');
+     if (!container) return;
+   
+     container.innerHTML = '';
+     playlistItems.forEach((item, index) => {
+       const block = createMediaBlock(item.name, item.url, index);
+       container.appendChild(block);
+     });
+   
+     // Make it sortable
+     Sortable.create(container, {
+       animation: 150,
+       onEnd: function (evt) {
+         const oldIndex = evt.oldIndex;
+         const newIndex = evt.newIndex;
+         if (oldIndex === newIndex) return;
+   
+         const movedItem = playlistItems.splice(oldIndex, 1)[0];
+         playlistItems.splice(newIndex, 0, movedItem);
+   
+         // 🔁 Recalculate currentIndex based on the video URL
+         if (currentIndex !== -1) {
+           const currentUrl = videoPreview.src;
+           const match = playlistItems.findIndex(item => currentUrl.includes(item.url));
+           if (match !== -1) currentIndex = match;
+         }
+   
+         renderPlaylist(); // Re-render updated list
+       }
+     });
+   }
 
  function renderAudioPlaylist() {
-   const nextUp = document.querySelector('.playlist-items');
+   const nextUp = document.querySelector('.audio-playlist-items');
    if (!nextUp) return;
    nextUp.innerHTML = '';
  

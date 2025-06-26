@@ -1,6 +1,6 @@
 import { queueVideo, removeFromPlaylistByUrl, listAllPlaylists   } from './playlist-manager.js';
 
-// import { queueAudio } from './audio-functions.js';
+import { queueAudio} from './audio-functions.js';
 
 export function setupUploadManager() {
     setupUploadButtons();
