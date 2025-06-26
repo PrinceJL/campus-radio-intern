@@ -1,21 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Campus Radio Viewer</title>
-    <link rel="stylesheet" href="{{ url_for('viewer.static', filename='styles/viewer-style.css') }}">
-    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
-</head>
-<body>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('viewer.static', filename='styles/viewer-style.css') }}"
+    />
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+  </head>
+  <body>
     <div id="video-container">
-        <video id="radio-stream" autoplay playsinline controls></video>
-        <img id="brb-standby" src="{{ url_for('viewer.static', filename='asset/brb.jpg') }}" alt="BRB Standby" style="display:none;">
-    </div>
-    <div id="ticker-container" style="display: none;">
-        <div id="ticker-content">Welcome to Campus Radio — Stay tuned for the latest news and music!</div>
+      <video id="radio-stream" autoplay playsinline muted></video>
+      <div id="brb-standby"></div>
+      <h1>Live Broadcast</h1>
+      <button id="fullscreen-btn" class="viewer-icon-btn">
+        <img src="fullscreen-icon.svg" alt="Fullscreen" />
+      </button>
+      <button id="captions-btn" class="viewer-icon-btn">
+        <img src="captions-icon.svg" alt="Captions" />
+      </button>
+      <button id="settings-btn" class="viewer-icon-btn">
+        <img src="settings-icon.svg" alt="Settings" />
+      </button>
     </div>
 
+    <div id="ticker-container">
+      <div id="ticker-content">Live news ticker scrolling here...</div>
+    </div>
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script src="{{ url_for('viewer.static', filename='js/viewer-script.js') }}"></script>
-</body>
+  </body>
 </html>
