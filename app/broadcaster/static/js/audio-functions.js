@@ -1,4 +1,5 @@
 import { setupUploadManager } from "./file-handler.js";
+import { normalizeUrl } from "./playlist-manager.js";
 
 setupUploadManager();
 
@@ -64,18 +65,9 @@ export function queueAudio(name,url){
          playlistItems[parseInt(el.dataset.index)]
        );
        playlistItems = reordered;
-       renderPlaylist();
+       renderAudioPlaylist();
      }
    });
- }
- 
- export function clearPlaylist() {
-   playlistItems = [];
-   currentIndex = -1;
-   currentPlaylistName = null;
-   document.querySelector('.playlist-items').innerHTML = '';
-   document.querySelector('.stream-preview-area').innerHTML = '';
-   document.querySelector('.now-playing-block .now-playing-content').innerHTML = '';
  }
  
  
@@ -88,8 +80,10 @@ export function queueAudio(name,url){
    const nowPlayingBlock = document.querySelector('.now-playing-block');
 
    if (audioA.src === true){
-    
-   }
+    audioB.src = item.src[currentIndex + 1]
+   } else audioA.src = item.src;
+   audioA.play();
+
    // needs fixing: audio deck a and b
   //  mainPreview.pause();
   //  mainPreview.srcObject = null;
@@ -156,7 +150,7 @@ let audioPlayList = document.getElementById('playlist')
 
 // Play/Pause
 playPauseA.addEventListener('click', () => {
-musicLoader();
+
     if (audioCtx.state === "suspended") {
       audioCtx.resume();
     }
@@ -164,35 +158,41 @@ musicLoader();
     if (playPauseButton.dataset.playing === "false") {
       playPauseButton.dataset.playing = "true";
       playPauseButton.innerHTML = 'Pause';
-      audioPlayer.play();
+      audioA.play();
     } else if (playPauseButton.dataset.playing === "true") {
       playPauseButton.dataset.playing = "false";
       playPauseButton.innerHTML = 'Play';
-      audioPlayer.pause();
+      audioA.pause();
     }
       console.log(musicQueueIndex);
+    let state = 
+      playPauseA.getAttribute("aria-checked") === "true" ? 'true': false;
+      playPauseA.setAttribute("aria-checked", state ? true : false);
   },
-  false,
+  false
   );
 
+
 playPauseB.addEventListener('click', () => {
-musicLoader();
-    if (audioCtx.state === "suspended") {
+  if (audioCtx.state === "suspended") {
       audioCtx.resume();
     }
     // Play or pause track depending on state
     if (playPauseButton.dataset.playing === "false") {
       playPauseButton.dataset.playing = "true";
       playPauseButton.innerHTML = 'Pause';
-      audioPlayer.play();
+      audioB.play();
     } else if (playPauseButton.dataset.playing === "true") {
       playPauseButton.dataset.playing = "false";
       playPauseButton.innerHTML = 'Play';
-      audioPlayer.pause();
+      audioB.pause();
     }
       console.log(musicQueueIndex);
+    let state = 
+      playPauseB.getAttribute("aria-checked") === "true" ? 'true': false;
+      playPauseB.setAttribute("aria-checked", state ? true : false);
   },
-  false,
+  false
   );
 
 // Volume Control
@@ -204,7 +204,7 @@ volumeB.addEventListener('input', () => {
   audioB.volume = volumeB.value;
 });
 
-// Crossfade Control
+// Crossfade Control- change implementation
 crossfader.addEventListener('input', () => {
   audioA.volume = 1 - crossfader.value;
   audioB.volume = crossfader.value;

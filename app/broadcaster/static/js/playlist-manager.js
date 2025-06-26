@@ -2,7 +2,6 @@ import { generateVideoThumbnail, getVideoDuration } from './file-handler.js';
 import { mainPreview, rebroadcastStreamFrom  } from './broadcaster.js';
 
 
-//Shared object
 let currentIndex = -1;
 let playlistItems = [];
 let prevClickTimeout = null;
@@ -41,7 +40,7 @@ export function queueVideo(name, url) {
   console.log(`✅ Queued: ${name} (${normUrl})`);
   renderPlaylist();
 }
-function normalizeUrl(url) {
+export function normalizeUrl(url) {
   const a = document.createElement('a');
   a.href = url;
   return a.pathname; // Ensures consistent comparison
