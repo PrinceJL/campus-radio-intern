@@ -15,13 +15,13 @@
       <div id="brb-standby"></div>
       <h1>Live Broadcast</h1>
       <button id="fullscreen-btn" class="viewer-icon-btn">
-        <img src="fullscreen-icon.svg" alt="Fullscreen" />
+        <img src="{{ url_for('viewer.static', filename='asset/fullscreen.svg') }}" alt="Fullscreen" />
       </button>
       <button id="captions-btn" class="viewer-icon-btn">
-        <img src="captions-icon.svg" alt="Captions" />
+        <img src="{{ url_for('viewer.static', filename='asset/subtitles.svg') }}" alt="Captions" />
       </button>
       <button id="settings-btn" class="viewer-icon-btn">
-        <img src="settings-icon.svg" alt="Settings" />
+        <img src="{{ url_for('viewer.static', filename='asset/settings.svg') }}" alt="Settings" />
       </button>
     </div>
 

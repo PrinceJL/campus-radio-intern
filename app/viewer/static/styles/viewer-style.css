@@ -31,8 +31,15 @@ html, body {
   z-index: 2;
 }
 #radio-stream {
-  z-index: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: contain; /* or 'cover' depending on UX preference */
+  image-rendering: auto;
 }
+
 
 h1 {
   position: absolute;
