@@ -3,7 +3,7 @@ import { normalizeUrl } from "./playlist-manager.js";
 
 setupUploadManager();
 
-//Web audio API
+//Audio player
 const audioPlayer = document.getElementById('audioPlayer');
 const audioCtx = new (window.AudioContext ||window.webkitURL);
 const player = audioCtx.createMediaElementSource(audioPlayer);
@@ -13,7 +13,7 @@ player.connect(audioCtx.destination);
 let musicQueueIndex = 0;
 let audioPlaylistItems = [];
 
-//queueing audio
+//import normalizeUrl
 export function queueAudio(name,url){
    const normUrl = normalizeUrl(url);
    if (audioPlaylistItems.some(item => normalizeUrl(item.url) === normUrl)) {
@@ -42,13 +42,12 @@ export function queueAudio(name,url){
      });
  
      const delBtn = document.createElement('button');
-     delBtn.textContent = '❌';
      delBtn.classList.add('delete-btn');
      delBtn.style.marginLeft = '8px';
      delBtn.addEventListener('click', (e) => {
        e.stopPropagation();
        playlistItems.splice(index, 1);
-       if (currentIndex >= playlistItems.length) currentIndex = audioPlaylistItems.length - 1;
+       if (currentIndex >= playlistItems.length) currentIndex = playlistItems.length - 1;
        renderPlaylist();
      });
  
@@ -74,9 +73,8 @@ export function queueAudio(name,url){
  function playCurrentAudio() {
    if (currentIndex < 0 || currentIndex >= playlistItems.length) return;
  
-  //can add visualizer for audio
-
    const item = audioPlayList[currentIndex];
+   const previewArea = document.querySelector('.stream-preview-area');
    const nowPlayingBlock = document.querySelector('.now-playing-block');
 
    if (audioA.src === true){
@@ -85,53 +83,52 @@ export function queueAudio(name,url){
    audioA.play();
 
    // needs fixing: audio deck a and b
-  //  mainPreview.pause();
-  //  mainPreview.srcObject = null;
-  //  mainPreview.src = item.url;
-  //  mainPreview.controls = true;
-  //  mainPreview.autoplay = true;
-  //  mainPreview.muted = false;
+   mainPreview.pause();
+   mainPreview.srcObject = null;
+   mainPreview.src = item.url;
+   mainPreview.controls = true;
+   mainPreview.autoplay = true;
+   mainPreview.muted = false;
  
-//    mainPreview.onloadedmetadata = () => {
-//      rebroadcastStreamFrom(mainPreview);
-//    };
+   mainPreview.onloadedmetadata = () => {
+     rebroadcastStreamFrom(mainPreview);
+   };
  
-// Inject mainPreview into the preview area
-//    previewArea.innerHTML = '';
-//    previewArea.appendChild(mainPreview);
+   // Inject mainPreview into the preview area
+   previewArea.innerHTML = '';
+   previewArea.appendChild(mainPreview);
  
-//    // Show now playing info
-//    const contentArea = nowPlayingBlock.querySelector('.now-playing-content');
-//    contentArea.innerHTML = '';
-//    contentArea.appendChild(createMediaBlock(item.name, item.url, currentIndex));
-//    nowPlayingBlock.classList.add('playing');
+   // Show now playing info
+   const contentArea = nowPlayingBlock.querySelector('.now-playing-content');
+   contentArea.innerHTML = '';
+   contentArea.appendChild(createMediaBlock(item.name, item.url, currentIndex));
+   nowPlayingBlock.classList.add('playing');
  
-//    const pauseBtn = nowPlayingBlock.querySelector('.ctrl-btn.pause');
-//    if (pauseBtn) pauseBtn.textContent = '⏸️';
+   const pauseBtn = nowPlayingBlock.querySelector('.ctrl-btn.pause');
+   if (pauseBtn) pauseBtn.textContent = '⏸️';
  
-//    // Handle end of video
-//    mainPreview.onended = () => {
-//      if (loopMode) {
-//        mainPreview.currentTime = 0;
-//        mainPreview.play();
-//      } else if (shuffleMode) {
-//        let nextIndex;
-//        do {
-//          nextIndex = Math.floor(Math.random() * playlistItems.length);
-//        } while (nextIndex === currentIndex && playlistItems.length > 1);
-//        currentIndex = nextIndex;
-//        playCurrent();
-//      } else if (currentIndex < playlistItems.length - 1) {
-//        currentIndex++;
-//        playCurrent();
-//      } else {
-//        currentIndex = -1;
-//      }
-//    };
+   // Handle end of video
+   mainPreview.onended = () => {
+     if (loopMode) {
+       mainPreview.currentTime = 0;
+       mainPreview.play();
+     } else if (shuffleMode) {
+       let nextIndex;
+       do {
+         nextIndex = Math.floor(Math.random() * playlistItems.length);
+       } while (nextIndex === currentIndex && playlistItems.length > 1);
+       currentIndex = nextIndex;
+       playCurrent();
+     } else if (currentIndex < playlistItems.length - 1) {
+       currentIndex++;
+       playCurrent();
+     } else {
+       currentIndex = -1;
+     }
+   };
  
-//    highlightPlaylistItem(currentIndex);
+   highlightPlaylistItem(currentIndex);
  }
-
  //Functions to be added:
  //play current function
  //automatically load next song to deck b

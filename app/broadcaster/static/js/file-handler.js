@@ -1,4 +1,5 @@
-import { queueVideo } from './playlist-manager.js';
+import { queueVideo, removeFromPlaylistByUrl, listAllPlaylists   } from './playlist-manager.js';
+
 // import { queueAudio } from './audio-functions.js';
 
 export function setupUploadManager() {
@@ -83,6 +84,17 @@ function displayInCard(container, name, url) {
 
     media.appendChild(preview);
     media.appendChild(label);
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'delete-btn';
+    delBtn.innerHTML = `<img src="${window.STATIC_ICON_PATH}close.png" alt="Delete" style="width:10px;height:10px;vertical-align:middle;">`;
+    delBtn.onclick = (e) => {
+        e.stopPropagation();
+        // Call your delete function here
+        const ext = name.split('.').pop().toLowerCase();
+        deleteUploadedFile(ext, name, media);
+    };
+    media.appendChild(delBtn);
 
     media.addEventListener('click', () => {
         console.log(`Clicked on ${name}`);
@@ -170,85 +182,34 @@ export function generateVideoThumbnail(videoUrl, imgElement) {
     });
 }
 
-
-function insertUploadedFile(name, url) {
-    const ext = name.split('.').pop().toLowerCase();
-    const fileType = ext.match(/(mp4|webm|avi|mov)/) ? 'video' :
-        ext.match(/(mp3|wav|ogg)/) ? 'audio' :
-            ext.match(/(png|jpg|jpeg|gif|bmp|webp)/) ? 'image' : 'other';
-
-    const container =
-        fileType === 'video' ? document.querySelector('.next-up') :
-            fileType === 'audio' ? document.querySelector('.now-playing-block') :
-                fileType === 'image' ? document.querySelector('.media-files') : null;
-
-    if (!container) return;
-
-    const block = document.createElement('div');
-    block.classList.add('media-block');
-
-    const mediaInfo = document.createElement('div');
-    mediaInfo.classList.add('media-info');
-
-    const preview = document.createElement('img');
-    preview.alt = name;
-    preview.width = 40;
-    preview.height = 40;
-
-    if (fileType === 'image') {
-        preview.src = url;
-    } else if (fileType === 'video') {
-        generateVideoThumbnail(url, preview);
-    } else if (fileType === 'audio') {
-        preview.src = 'https://via.placeholder.com/40x40?text=MP3';
-    } else {
-        preview.src = 'https://via.placeholder.com/40x40?text=?';
-    }
-
-    const label = document.createElement('span');
-    label.classList.add('media-title');
-    label.textContent = name.length > 20 ? name.slice(0, 17) + '...' : name;
-
-    mediaInfo.appendChild(preview);
-    mediaInfo.appendChild(label);
-
-    const rightSide = document.createElement('div');
-    rightSide.classList.add('media-right');
-
-    // Add duration for video
-    if (fileType === 'video') {
-        const durationSpan = document.createElement('span');
-        durationSpan.classList.add('media-duration');
-        rightSide.appendChild(durationSpan);
-
-        getVideoDuration(url, (durationText) => {
-            durationSpan.textContent = durationText;
-        });
-    }
-
-    const del = document.createElement('button');
-    del.textContent = '❌';
-    del.classList.add('delete-file-btn');
-    del.addEventListener('click', () => deleteUploadedFile(ext, name, block));
-    rightSide.appendChild(del);
-
-    block.appendChild(mediaInfo);
-    block.appendChild(rightSide);
-    container.appendChild(block);
-}
-
-
-
 async function deleteUploadedFile(ext, filename, blockElement) {
+    const confirmMsg = `Are you sure you want to delete "${filename}"?\nThis will remove it from all playlists and from the database.`;
+    if (!confirm(confirmMsg)) return;
+
     try {
         const res = await fetch(`/uploads/${ext}/${filename}`, {
             method: 'DELETE'
         });
-        const data = await res.json();
+
+        let data = {};
+        try {
+            data = await res.json();
+        } catch (e) { }
+
         if (res.ok) {
-            x``
-            blockElement.remove();
             console.log('Deleted:', filename);
+            blockElement.remove();
+
+            const fileUrl = `/uploads/${ext}/${filename}`;
+            removeFromPlaylistByUrl(fileUrl);
+
+            // 🔥 NEW: Remove from all playlists in DB
+            await fetch('/playlists/remove_file', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: fileUrl })
+            });
+            await listAllPlaylists();
         } else {
             alert(data.error || 'Delete failed.');
         }
@@ -257,4 +218,5 @@ async function deleteUploadedFile(ext, filename, blockElement) {
         alert('Network error during delete.');
     }
 }
+
 

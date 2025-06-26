@@ -11,6 +11,10 @@
         <video id="radio-stream" autoplay playsinline controls></video>
         <img id="brb-standby" src="{{ url_for('viewer.static', filename='asset/brb.jpg') }}" alt="BRB Standby" style="display:none;">
     </div>
+    <div id="ticker-container" style="display: none;">
+        <div id="ticker-content">Welcome to Campus Radio — Stay tuned for the latest news and music!</div>
+    </div>
+
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script src="{{ url_for('viewer.static', filename='js/viewer-script.js') }}"></script>
 </body>
