@@ -11,3 +11,7 @@ broadcaster_bp = Blueprint(
 @broadcaster_bp.route('/')
 def broadcaster_home():
     return render_template('broadcaster.html')
+
+@broadcaster_bp.route('/login')
+def broadcaster_home():
+    return render_template('login.html')
