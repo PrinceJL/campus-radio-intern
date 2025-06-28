@@ -29,6 +29,8 @@ videoPreview.playsInline = true;
 videoPreview.style.width = "100%";
 videoPreview.style.height = "100%";
 
+export const audioA = document.createElement('audio');
+audioA.autoplay = true;
 
 const socket = io();
 

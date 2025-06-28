@@ -19,7 +19,7 @@ function updateModeButtons() {
   btnShuffle?.classList.toggle('active', shuffleMode);
 }
 
-function updatePlayPauseIcon() {
+export function updatePlayPauseIcon() {
   const icon = document.getElementById('playPauseIcon');
   if (!icon) return;
   if (videoPreview.paused) {
@@ -96,7 +96,7 @@ function renderPlaylist() {
 /**
  * Create a playlist item block
  */
-function createMediaBlock(name, url, index) {
+ function createMediaBlock(name, url, index) {
   const block = document.createElement('div');
   block.className = 'media-block';
   block.dataset.index = index;
