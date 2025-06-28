@@ -1,117 +1,136 @@
+// viewer.js
 const video = document.getElementById('radio-stream');
 const brb = document.getElementById('brb-standby');
-const socket = io();  // Connect to your Flask-SocketIO server
+const socket = io();
 let peerConnection = null;
 
 function showBRB(show) {
-    brb.style.display = show ? 'block' : 'none';
-    video.style.display = show ? 'none' : 'block';
+  brb.style.display = show ? 'block' : 'none';
+  video.style.display = show ? 'none' : 'block';
 }
 
 showBRB(true);
 
-// When connected to the signaling server
 socket.on('connect', () => {
-    console.log('[Viewer] Connected to signaling server');
-    socket.emit('watcher');  // Notify broadcaster you're ready to watch
+  console.log('[Viewer] Connected to signaling server');
+  socket.emit('watcher');
 });
 
-// When the broadcaster sends an offer
 socket.on('offer', async (id, description) => {
-    console.log('[Viewer] Received offer from broadcaster:', id);
+  console.log('[Viewer] Received offer from broadcaster:', id);
 
-    peerConnection = new RTCPeerConnection({
-        iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
-    });
+  peerConnection = new RTCPeerConnection({
+    iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+  });
 
-    let receivedStream = null;
+  let receivedStream = new MediaStream();
 
-    peerConnection.ontrack = event => {
-        console.log('[Viewer] Received track from broadcaster:', event.track.kind);
+  peerConnection.ontrack = event => {
+    if (!receivedStream.getTracks().includes(event.track)) {
+      receivedStream.addTrack(event.track);
+      video.srcObject = receivedStream;
+    }
 
-        if (!receivedStream) {
-            receivedStream = new MediaStream();
-            video.srcObject = receivedStream;
-        }
+    showBRB(false);
+    video.muted = false;
 
-        // Add the new track if not already in the stream
-        if (!receivedStream.getTracks().includes(event.track)) {
-            receivedStream.addTrack(event.track);
-        }
+    video.play().catch(e => console.warn('[Viewer] Autoplay blocked:', e));
 
-        showBRB(false);
-        video.muted = false;
-
-        video.play().catch(e => {
-            console.warn('[Viewer] Autoplay blocked:', e);
+    // Optional: Debug actual resolution
+    const receiver = peerConnection.getReceivers().find(r => r.track.kind === 'video');
+    if (receiver) {
+      setInterval(async () => {
+        const stats = await receiver.getStats();
+        stats.forEach(report => {
+          if (report.type === 'inbound-rtp' && report.kind === 'video') {
+            console.log(`[Viewer] Resolution: ${report.frameWidth}x${report.frameHeight}, FPS: ${report.framesPerSecond}`);
+          }
         });
-    };
-
-
-    peerConnection.onicecandidate = event => {
-        if (event.candidate) {
-            console.log('[Viewer] Sending ICE candidate to broadcaster');
-            socket.emit('candidate', id, event.candidate);
-        }
-    };
-
-    peerConnection.onconnectionstatechange = () => {
-        console.log('[Viewer] Connection state:', peerConnection.connectionState);
-        if (['disconnected', 'failed', 'closed'].includes(peerConnection.connectionState)) {
-            showBRB(true);
-        }
-    };
-
-    try {
-        await peerConnection.setRemoteDescription(new RTCSessionDescription(description));
-        const answer = await peerConnection.createAnswer();
-        await peerConnection.setLocalDescription(answer);
-        socket.emit('answer', id, peerConnection.localDescription);
-        console.log('[Viewer] Sent answer back to broadcaster');
-    } catch (err) {
-        console.error('[Viewer] Error handling offer:', err);
-        showBRB(true);
+      }, 3000);
     }
-});
+  };
 
-// Handle incoming ICE candidates from broadcaster
-socket.on('candidate', (id, candidate) => {
-    if (peerConnection) {
-        peerConnection.addIceCandidate(new RTCIceCandidate(candidate))
-            .then(() => console.log('[Viewer] ICE candidate added'))
-            .catch(err => console.error('[Viewer] Error adding ICE candidate:', err));
+  peerConnection.onicecandidate = event => {
+    if (event.candidate) {
+      socket.emit('candidate', id, event.candidate);
     }
-});
+  };
 
-// Broadcaster is back (e.g. restarted)
-socket.on('broadcaster', () => {
-    console.log('[Viewer] Broadcaster rejoined, re-emitting watcher');
-    socket.emit('watcher');
-});
-
-// When explicitly told to disconnect (e.g. broadcaster closes)
-socket.on('disconnectPeer', id => {
-    console.warn('[Viewer] Peer disconnected:', id);
-    if (peerConnection) {
-        peerConnection.close();
-        peerConnection = null;
+  peerConnection.onconnectionstatechange = () => {
+    if (['disconnected', 'failed', 'closed'].includes(peerConnection.connectionState)) {
+      showBRB(true);
     }
+  };
+
+  try {
+    await peerConnection.setRemoteDescription(new RTCSessionDescription(description));
+    const answer = await peerConnection.createAnswer();
+    await peerConnection.setLocalDescription(answer);
+    socket.emit('answer', id, peerConnection.localDescription);
+  } catch (err) {
+    console.error('[Viewer] Error handling offer:', err);
     showBRB(true);
+  }
 });
 
-// Handle page unload
+socket.on('candidate', (id, candidate) => {
+  if (peerConnection) {
+    peerConnection.addIceCandidate(new RTCIceCandidate(candidate))
+      .catch(err => console.error('[Viewer] Error adding ICE candidate:', err));
+  }
+});
+
+socket.on('broadcaster', () => {
+  socket.emit('watcher');
+});
+
+socket.on('disconnectPeer', id => {
+  if (peerConnection) {
+    peerConnection.close();
+    peerConnection = null;
+  }
+  showBRB(true);
+});
+
 window.onbeforeunload = () => {
-    console.log('[Viewer] Closing viewer');
-    socket.close();
-    if (peerConnection) {
-        peerConnection.close();
-    }
+  socket.close();
+  if (peerConnection) {
+    peerConnection.close();
+  }
 };
 
-// Fallback BRB if stream ends
 video.onended = () => {
-    if (!video.srcObject || video.paused || video.ended) {
-        console.log('[Viewer] Video paused or ended');
-        showBRB(true);
-    }
+  showBRB(true);
 };
+
+// Ticker logic
+let tickerTimeouts = [];
+socket.on('start-ticker', ({ message, speed, loops, interval }) => {
+  const tickerContainer = document.getElementById('ticker-container');
+  const tickerText = document.getElementById('ticker-content');
+  tickerText.textContent = message;
+  tickerText.style.animationDuration = `${speed}s`;
+  tickerContainer.style.display = 'block';
+
+  tickerTimeouts.forEach(clearTimeout);
+  tickerTimeouts = [];
+
+  let count = 0;
+  const loopTicker = () => {
+    tickerText.style.animation = 'none';
+    void tickerText.offsetWidth;
+    tickerText.style.animation = `scroll-left ${speed}s linear`;
+    count++;
+    if (loops === 0 || count < loops) {
+      tickerTimeouts.push(setTimeout(loopTicker, (speed + interval) * 1000));
+    }
+  };
+  loopTicker();
+});
+
+socket.on('stop-ticker', () => {
+  const tickerContainer = document.getElementById('ticker-container');
+  tickerContainer.style.display = 'none';
+  tickerTimeouts.forEach(clearTimeout);
+  tickerTimeouts = [];
+});

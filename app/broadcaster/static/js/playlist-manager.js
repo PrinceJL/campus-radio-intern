@@ -19,7 +19,7 @@ function updateModeButtons() {
   btnShuffle?.classList.toggle('active', shuffleMode);
 }
 
-function updatePlayPauseIcon() {
+export function updatePlayPauseIcon() {
   const icon = document.getElementById('playPauseIcon');
   if (!icon) return;
   if (videoPreview.paused) {
@@ -42,7 +42,6 @@ document.getElementById('btnPlayPause')?.addEventListener('click', () => {
   } else {
     videoPreview.pause();
   }
-  // updatePlayPauseIcon(); // Not needed, handled by event listeners
 });
 
 // Set initial icon state on page load
@@ -53,9 +52,10 @@ updatePlayPauseIcon();
  */
 export function queueVideo(name, url) {
   const normUrl = new URL(url, window.location.origin).pathname;
-  playlistItems.push({ name, url: normUrl });
+  playlistItems.push({ id: crypto.randomUUID(), name, url: normUrl });
   renderPlaylist();
 }
+
 
 /**
  * Render all queued videos in the playlist
@@ -69,12 +69,34 @@ function renderPlaylist() {
     const block = createMediaBlock(item.name, item.url, index);
     container.appendChild(block);
   });
+
+  // Make it sortable
+  Sortable.create(container, {
+    animation: 150,
+    onEnd: function (evt) {
+      const oldIndex = evt.oldIndex;
+      const newIndex = evt.newIndex;
+      if (oldIndex === newIndex) return;
+
+      const movedItem = playlistItems.splice(oldIndex, 1)[0];
+      playlistItems.splice(newIndex, 0, movedItem);
+
+      // 🔁 Recalculate currentIndex based on the video URL
+      if (currentIndex !== -1) {
+        const currentUrl = videoPreview.src;
+        const match = playlistItems.findIndex(item => currentUrl.includes(item.url));
+        if (match !== -1) currentIndex = match;
+      }
+
+      renderPlaylist(); // Re-render updated list
+    }
+  });
 }
 
 /**
  * Create a playlist item block
  */
-function createMediaBlock(name, url, index) {
+ function createMediaBlock(name, url, index) {
   const block = document.createElement('div');
   block.className = 'media-block';
   block.dataset.index = index;
@@ -111,7 +133,7 @@ function createMediaBlock(name, url, index) {
 
   const delBtn = document.createElement('button');
   delBtn.className = 'delete-btn';
-  delBtn.innerHTML = `<img src="${window.STATIC_ICON_PATH}close.png" alt="Delete" style="width:16px;height:16px;vertical-align:middle;">`;
+  delBtn.innerHTML = `<img src="${window.STATIC_ICON_PATH}close.png" alt="Delete" style="width:11px;height:11px;vertical-align:middle;">`;
   delBtn.onclick = (e) => {
     e.stopPropagation();
     playlistItems.splice(index, 1);
@@ -183,6 +205,9 @@ function playCurrent() {
 
 /**
  * Handle what happens when a video ends
+ * #Need to fix this logic to handle the ending of videos properly
+ * it needs to not play the video or supercede the current camera if camera is set to be shown
+ * 
  */
 function handleVideoEnd() {
   if (loopMode) return videoPreview.play();
@@ -200,7 +225,6 @@ function handleVideoEnd() {
     currentIndex = -1;
   }
 }
-
 /**
  * Clear playlist and reset UI
  */
@@ -347,3 +371,36 @@ document.getElementById('savePlaylistBtn-video')?.addEventListener('click', () =
   const name = prompt("Enter a name for the new playlist:");
   if (name) savePlaylist(name);
 });
+
+
+// ---------------- Playlist Deletion ----------------
+export function removeFromPlaylistByUrl(url) {
+  const removedCount = playlistItems.filter(item => item.url === url).length;
+  playlistItems = playlistItems.filter(item => item.url !== url);
+
+  if (removedCount > 0) {
+    console.log(`Removed ${removedCount} instance(s) of "${url}" from playlist`);
+    renderPlaylist();
+  }
+
+  if (currentIndex >= playlistItems.length) {
+    currentIndex = playlistItems.length - 1;
+  }
+}
+
+async function deletePlaylist(name) {
+  try {
+    const res = await fetch(`/playlists/${name}`, { method: 'DELETE' });
+    const data = await res.json();
+
+    if (!res.ok) return alert(data.error || 'Failed to delete playlist.');
+
+    alert(`Playlist "${name}" deleted successfully.`);
+    if (currentPlaylistName === name) clearPlaylist();
+    await listAllPlaylists();
+  } catch (err) {
+    console.error('[DeletePlaylist]', err);
+    alert('Error deleting playlist.');
+  }
+}
+

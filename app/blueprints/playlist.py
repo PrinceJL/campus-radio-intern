@@ -45,9 +45,35 @@ def save_playlist():
 
     return jsonify({"message": "Playlist saved", "updated": result.modified_count > 0}), 200
 
+@playlist_bp.route('/playlists/remove_file', methods=['POST'])
+def remove_file_from_all_playlists():
+    data = request.json
+    file_url = data.get('url')
+
+    if not file_url:
+        return jsonify({'error': 'Missing URL'}), 400
+
+    result = db.playlists.update_many(
+        {},
+        {'$pull': {'items': {'url': file_url}}}
+    )
+
+    return jsonify({
+        'message': f'Removed from {result.modified_count} playlist(s).'
+    })
+
+
 @playlist_bp.route("/playlists/<name>", methods=["DELETE"])
 def delete_playlist(name):
     result = db.playlists.delete_one({"name": name})
     if result.deleted_count == 0:
         return jsonify({"error": "Playlist not found"}), 404
     return jsonify({"message": f"Playlist '{name}' deleted"}), 200
+
+@playlist_bp.route("/playlists", methods=["DELETE"])
+def delete_all_playlists():
+    result = db.playlists.delete_many({})
+    return jsonify({
+        "message": f"Deleted {result.deleted_count} playlists.",
+        "status": "ok"
+    }), 200
