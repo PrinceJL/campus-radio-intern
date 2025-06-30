@@ -23,8 +23,17 @@ body {
 
 .image-section {
     width: 50%;
-    background: url('background.jpg') no-repeat center center;
+    background: no-repeat center center;
+    background-color: #073066;
     background-size: cover;
+}
+
+
+
+.image-section img {
+    width: 100%;
+    margin-top: 60px;
+    object-fit: cover;
 }
 
 .form-section {
@@ -41,7 +50,8 @@ body {
 }
 
 .logo img {
-    width: 150px;
+    width: 70px;
+    height: auto;
 }
 
 .welcome-text {
@@ -101,7 +111,7 @@ input[type="text"]:focus, input[type="password"]:focus {
 .login-button {
     width: 100%;
     padding: 12px;
-    background-color: #007bff;
+    background-color: #073066;
     color: #fff;
     border: none;
     border-radius: 5px;
@@ -110,5 +120,5 @@ input[type="text"]:focus, input[type="password"]:focus {
 }
 
 .login-button:hover {
-    background-color: #05234B;
+    background-color: #062a5a;
 }

@@ -56,6 +56,12 @@ export function queueVideo(name, url) {
   renderPlaylist();
 }
 
+export function queueAudio(name, url) {
+  const normUrl = new URL(url, window.location.origin).pathname;
+  audioQueue.push({ id: crypto.randomUUID(), name, url: normUrl });
+  renderAudioPlaylist();
+  console.log(audioQueue.map(item => item.name));}
+
 
 /**
  * Render all queued videos in the playlist
