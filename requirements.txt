@@ -13,3 +13,4 @@ flask-socketio
 python-socketio
 eventlet
 pymongo
+python-dotenv

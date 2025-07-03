@@ -13,7 +13,13 @@
   </head>
   <body>
     <div class="main-header">
-      <img src="{{ url_for('broadcaster.static', filename='icon/CheersLogo.png') }}" alt="CheerSL Logo" class="header-logo" />
+      <img
+        src="{{ url_for('broadcaster.static', filename='icon/CheersLogo.png') }}"
+        alt="CheerSL Logo"
+        class="header-logo"
+      />
+      <span>Welcome, {{ session.name }}</span>
+      <a href="{{ url_for('auth.logout') }}" class="btn-logout">Logout</a>
     </div>
     <div class="app-grid">
       <!-- Left Sidebar -->
@@ -24,17 +30,46 @@
         <div class="section-label">
           Cameras
           <span class="section-icons">
-            <img src="{{ url_for('broadcaster.static', filename='icon/plus.png') }}" alt="Add" class="icon-btn-plus" />
-            <img src="{{ url_for('broadcaster.static', filename='icon/drop-down.png') }}" alt="Dropdown" class="icon-btn" />
+            <img
+              id="cameraPlusBtn"
+              src="{{ url_for('broadcaster.static', filename='icon/plus.png') }}"
+              alt="Add"
+              class="icon-btn-plus"
+            />
+            <img
+              src="{{ url_for('broadcaster.static', filename='icon/drop-down.png') }}"
+              alt="Dropdown"
+              class="icon-btn"
+            />
           </span>
         </div>
         <div class="camera-list"></div>
-        <div class="section-label">Microphone</div>
-        <div class="mic-list">
-          <div class="mic-card">
-            <span class="mic-icon"><img src="{{ url_for('broadcaster.static', filename='icon/microphone.png') }}" alt="Add" class="icon-btn-plus" /></span>
-          </div>
+        <div
+          id="camera-selection-panel"
+          class="camera-selection-panel"
+          style="display: none"
+        ></div>
+        <div class="section-label">
+          Microphones
+          <span class="section-icons">
+            <img
+              id="microphonePlusBtn"
+              src="{{ url_for('broadcaster.static', filename='icon/plus.png') }}"
+              alt="Add"
+              class="icon-btn-plus"
+            />
+          </span>
         </div>
+
+        <!-- Sidebar list for selected mics -->
+        <div class="microphone-list"></div>
+
+        <!-- Selection panel popup -->
+        <div
+          id="microphone-selection-panel"
+          class="camera-selection-panel"
+          style="display: none"
+        ></div>
       </aside>
 
       <!-- Main Content -->
@@ -45,8 +80,8 @@
         <div class="stream-preview-wrapper">
           <div class="stream-bar"></div>
           <div id="stream-preview-area" class="stream-preview-area">
-            <div id="camera-preview-container" style="display: none;"></div>
-            <div id="video-preview-container" style="display: block;"></div>
+            <div id="camera-preview-container" style="display: none"></div>
+            <div id="video-preview-container" style="display: block"></div>
           </div>
         </div>
         <div class="controls-wrapper">
@@ -55,7 +90,15 @@
             <button id="stopStream" class="ctrl-btn">Stop Stream</button>
             <button id="pauseStream" class="ctrl-btn">Pause Stream</button>
             <button id="muteStream" class="ctrl-btn">Mute Audio</button>
-            <div id="broadcast-status" style="text-align: center; font-size: 0.95rem; color: #4ade80; margin: 8px auto;"></div>
+            <div
+              id="broadcast-status"
+              style="
+                text-align: center;
+                font-size: 0.95rem;
+                color: #4ade80;
+                margin: 8px auto;
+              "
+            ></div>
           </div>
         </div>
         <div class="stream-manager">
@@ -63,10 +106,26 @@
           <div class="stream-manager-title">Stream Title</div>
           <div class="stream-manager-content">
             <div class="ticker-controls">
-              <input type="text" id="tickerMessage" placeholder="Enter ticker message" />
-              <input type="number" id="tickerSpeed" placeholder="Speed (seconds)" />
-              <input type="number" id="tickerLoops" placeholder="Loop count (0 = infinite)" />
-              <input type="number" id="tickerInterval" placeholder="Interval (seconds)" />
+              <input
+                type="text"
+                id="tickerMessage"
+                placeholder="Enter ticker message"
+              />
+              <input
+                type="number"
+                id="tickerSpeed"
+                placeholder="Speed (seconds)"
+              />
+              <input
+                type="number"
+                id="tickerLoops"
+                placeholder="Loop count (0 = infinite)"
+              />
+              <input
+                type="number"
+                id="tickerInterval"
+                placeholder="Interval (seconds)"
+              />
               <button id="startTickerBtn">Start Ticker</button>
               <button id="stopTickerBtn">Stop Ticker</button>
             </div>
@@ -89,7 +148,7 @@
               <div class="queue-tab">Queue</div>
             </div>
           </div>
-          <div class = "right-side-border">
+          <div class="right-side-border">
             <div class="now-playing-block">
               <strong>Now Playing</strong>
               <div class="now-playing-content">
@@ -98,68 +157,120 @@
               <!-- injected media block -->
               <div class="now-playing-controls">
                 <button id="btnLoop" class="ctrl-btn-msc mode-btn">
-                  <img src="{{ url_for('broadcaster.static', filename='icon/shuffle.png') }}" alt="Shuffle" style="height:20px;width:20px;vertical-align:middle;" /></button>
+                  <img
+                    src="{{ url_for('broadcaster.static', filename='icon/shuffle.png') }}"
+                    alt="Shuffle"
+                    style="height: 20px; width: 20px; vertical-align: middle"
+                  />
+                </button>
                 <button class="ctrl-btn-msc prev">
-                  <img src="{{ url_for('broadcaster.static', filename='icon/previous.png') }}" alt="Previous" style="height:15px;width:15px;vertical-align:middle;" />
+                  <img
+                    src="{{ url_for('broadcaster.static', filename='icon/previous.png') }}"
+                    alt="Previous"
+                    style="height: 15px; width: 15px; vertical-align: middle"
+                  />
                 </button>
                 <button class="ctrl-btn-msc playpause" id="btnPlayPause">
-                  <img id="playPauseIcon" src="{{ url_for('broadcaster.static', filename='icon/pause-button.png') }}" alt="Pause" style="height:20px;width:20px;vertical-align:middle;" />
+                  <img
+                    id="playPauseIcon"
+                    src="{{ url_for('broadcaster.static', filename='icon/pause-button.png') }}"
+                    alt="Pause"
+                    style="height: 20px; width: 20px; vertical-align: middle"
+                  />
                 </button>
                 <button class="ctrl-btn-msc next">
-                  <img src="{{ url_for('broadcaster.static', filename='icon/next-button.png') }}" alt="Next" style="height:18px;width:18px;vertical-align:middle;" /></button>
+                  <img
+                    src="{{ url_for('broadcaster.static', filename='icon/next-button.png') }}"
+                    alt="Next"
+                    style="height: 18px; width: 18px; vertical-align: middle"
+                  />
+                </button>
                 <button id="btnShuffle" class="ctrl-btn-msc mode-btn">
-                  <img src="{{ url_for('broadcaster.static', filename='icon/loop.png') }}" alt="Loop" style="height:20px;width:20px;vertical-align:middle;" />
+                  <img
+                    src="{{ url_for('broadcaster.static', filename='icon/loop.png') }}"
+                    alt="Loop"
+                    style="height: 20px; width: 20px; vertical-align: middle"
+                  />
                 </button>
               </div>
             </div>
 
-              <div class="next-up">
-                <div class="playlist-header">
-                  <strong>Next from: (Playlist)</strong>
-                  <div class="playlist-actions">
-                    <button id="savePlaylistBtn" title="Save Playlist">
-                      <img src="{{ url_for('broadcaster.static', filename='icon/plus (2).png') }}" alt="Add" class="icon-btn-plus" />
-                    </button>
-                    <button id="saveOrderBtn" title="Save Current Order">
-                      <img src="{{ url_for('broadcaster.static', filename='icon/diskette.png') }}" alt="Save" class="icon-btn-save" />
-                    </button>
-                  </div>
+            <div class="next-up">
+              <div class="playlist-header">
+                <strong>Next from: (Playlist)</strong>
+                <div class="playlist-actions">
+                  <button id="savePlaylistBtn" title="Save Playlist">
+                    <img
+                      src="{{ url_for('broadcaster.static', filename='icon/plus (2).png') }}"
+                      alt="Add"
+                      class="icon-btn-plus"
+                    />
+                  </button>
+                  <button id="saveOrderBtn" title="Save Current Order">
+                    <img
+                      src="{{ url_for('broadcaster.static', filename='icon/diskette.png') }}"
+                      alt="Save"
+                      class="icon-btn-save"
+                    />
+                  </button>
                 </div>
-                <div class="playlist-items"></div>
               </div>
+              <div class="playlist-items"></div>
+            </div>
+            <div id="playlistTotalDuration" class="playlist-duration-summary">🕒 Total Duration: 0:00</div>
 
             <!-- Video Playlist -->
             <div class="section-label-playlist">
               Video Playlist
               <span class="section-icons">
-                  <button id="savePlaylistBtn-video" class="icon-btn-plus" title="Save Playlist">
-                    <img src="{{ url_for('broadcaster.static', filename='icon/plus.png') }}" alt="Add"/>
-                  </button>
-                <img src="{{ url_for('broadcaster.static', filename='icon/drop-down.png') }}" alt="Dropdown" class="icon-btn" />
+                <button
+                  id="savePlaylistBtn-video"
+                  class="icon-btn-plus"
+                  title="Save Playlist"
+                >
+                  <img
+                    src="{{ url_for('broadcaster.static', filename='icon/plus.png') }}"
+                    alt="Add"
+                  />
+                </button>
+                <img
+                  src="{{ url_for('broadcaster.static', filename='icon/drop-down.png') }}"
+                  alt="Dropdown"
+                  class="icon-btn"
+                />
               </span>
             </div>
             <div class="your-playlist">
               <div class="playlist-group"></div>
             </div>
 
-                        <!-- Audio Playlist -->
+            <!-- Audio Playlist -->
             <div class="section-label-playlist">
-             Audio Playlist
+              Audio Playlist
               <span class="section-icons">
-                  <button id="savePlaylistBtn-video" class="icon-btn-plus" title="Save Playlist">
-                    <img src="{{ url_for('broadcaster.static', filename='icon/plus.png') }}" alt="Add"/>
-                  </button>
-                <img src="{{ url_for('broadcaster.static', filename='icon/drop-down.png') }}" alt="Dropdown" class="icon-btn" />
+                <button
+                  id="savePlaylistBtn-audio"
+                  class="icon-btn-plus"
+                  title="Save Playlist"
+                >
+                  <img
+                    src="{{ url_for('broadcaster.static', filename='icon/plus.png') }}"
+                    alt="Add"
+                  />
+                </button>
+                <img
+                  src="{{ url_for('broadcaster.static', filename='icon/drop-down.png') }}"
+                  alt="Dropdown"
+                  class="icon-btn"
+                />
               </span>
             </div>
             <div class="audio-your-playlist">
               <div class="audio-playlist-group"></div>
             </div>
-
           </div>
         </div>
 
-        
         <!-- Files Panel -->
         <div class="files-panel">
           <div class="box-header-files">
@@ -169,9 +280,16 @@
           <div class="media-files">
             <!-- Videos Section -->
             <div class="section-right">
-              <div class="section-label-right">Videos <span class="plus">
-                <img src="{{ url_for('broadcaster.static', filename='icon/plus.png') }}" alt="Add" class="icon-btn-plus" />
-              </span></div>
+              <div class="section-label-right">
+                Videos
+                <span class="plus">
+                  <img
+                    src="{{ url_for('broadcaster.static', filename='icon/plus.png') }}"
+                    alt="Add"
+                    class="icon-btn-plus"
+                  />
+                </span>
+              </div>
               <div class="card-list">
                 <div class="file-card" data-type="video">
                   <div class="file-container"></div>
@@ -180,9 +298,16 @@
             </div>
             <!-- Audio Section -->
             <div class="section-right">
-              <div class="section-label-right">Audio <span class="plus" >
-                <img src="{{ url_for('broadcaster.static', filename='icon/plus.png') }}" alt="Add" class="icon-btn-plus" />
-              </span></div>
+              <div class="section-label-right">
+                Audio
+                <span class="plus">
+                  <img
+                    src="{{ url_for('broadcaster.static', filename='icon/plus.png') }}"
+                    alt="Add"
+                    class="icon-btn-plus"
+                  />
+                </span>
+              </div>
               <div class="card-list">
                 <div class="file-card" data-type="audio">
                   <div class="file-container"></div>
@@ -192,9 +317,16 @@
 
             <!-- Images Section -->
             <div class="section-right">
-              <div class="section-label-right">Images <span class="plus">
-                <img src="{{ url_for('broadcaster.static', filename='icon/plus.png') }}" alt="Add" class="icon-btn-plus" />
-              </span></div>
+              <div class="section-label-right">
+                Images
+                <span class="plus">
+                  <img
+                    src="{{ url_for('broadcaster.static', filename='icon/plus.png') }}"
+                    alt="Add"
+                    class="icon-btn-plus"
+                  />
+                </span>
+              </div>
               <div class="card-list">
                 <div class="file-card" data-type="image">
                   <div class="file-container"></div>
@@ -207,9 +339,21 @@
     </div>
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-    <script type="module" src="{{ url_for('broadcaster.static', filename='js/playlist-manager.js') }}"></script>
-    <script type="module" src="{{ url_for('broadcaster.static', filename='js/file-handler.js') }}"></script>
-    <script type="module" src="{{ url_for('broadcaster.static', filename='js/broadcaster.js') }}"></script>
-    <script>window.STATIC_ICON_PATH = "{{ url_for('broadcaster.static', filename='icon/') }}";</script>
+    <script
+      type="module"
+      src="{{ url_for('broadcaster.static', filename='js/playlist-manager.js') }}"
+    ></script>
+    <script
+      type="module"
+      src="{{ url_for('broadcaster.static', filename='js/file-handler.js') }}"
+    ></script>
+    <script
+      type="module"
+      src="{{ url_for('broadcaster.static', filename='js/broadcaster.js') }}"
+    ></script>
+    <script>
+      window.STATIC_ICON_PATH =
+        "{{ url_for('broadcaster.static', filename='icon/') }}";
+    </script>
   </body>
 </html>

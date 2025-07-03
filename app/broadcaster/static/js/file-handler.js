@@ -1,6 +1,6 @@
-import { queueVideo, removeFromPlaylistByUrl, listAllPlaylists   } from './playlist-manager.js';
+import { queueVideo, removeFromPlaylistByUrl, listAllPlaylists } from './playlist-manager.js';
 
-import { queueAudio} from './audio-functions.js';
+import { queueAudio } from './audio-functions.js';
 
 export function setupUploadManager() {
     setupUploadButtons();
@@ -22,13 +22,15 @@ function setupUploadButtons() {
 
         const section = card.closest('.section-right');
         const icon = section?.querySelector('.plus');
-        if (icon) {
+        if (icon && !icon.dataset.listenerAttached) {
             icon.addEventListener('click', (e) => {
                 console.log(`Clicked upload for ${type}`);
-                e.stopPropagation(); // prevent bubbling
+                e.stopPropagation();
                 input.click();
             });
+            icon.dataset.listenerAttached = 'true'; //  Prevent future double bindings
         }
+
 
         input.addEventListener('change', async () => {
             const file = input.files[0];
@@ -56,7 +58,13 @@ function setupUploadButtons() {
     });
 }
 
-function displayInCard(container, name, url) {
+function displayInCard(container, name, url, uploadedBy = null) {
+    const fileContainer = container.querySelector('.file-container');
+    const exists = Array.from(fileContainer.children).some(child =>
+        child.dataset.url === url || child.dataset.name === name
+    );
+    if (exists) return;
+
     const ext = name.split('.').pop().toLowerCase();
     const isVideo = /(mp4|webm|avi|mov)/.test(ext);
     const isAudio = /(mp3|wav|ogg)/.test(ext);
@@ -64,6 +72,8 @@ function displayInCard(container, name, url) {
 
     const media = document.createElement('div');
     media.classList.add('uploaded-media');
+    media.dataset.url = url;
+    media.dataset.name = name;
 
     const preview = document.createElement('img');
     preview.width = 40;
@@ -71,27 +81,36 @@ function displayInCard(container, name, url) {
 
     if (isVideo) {
         generateVideoThumbnail(url, preview);
-    } else if (isAudio) { //Set the thumbnail for audio
+    } else if (isAudio) {
         preview.src = 'https://via.placeholder.com/40x40?text=MP3';
-    } else if (isImage) { //Set the thumbnail for images
+    } else if (isImage) {
         preview.src = url;
     } else {
         preview.src = 'https://via.placeholder.com/40x40?text=?';
     }
+
     const label = document.createElement('div');
     label.textContent = name.length > 20 ? name.slice(0, 17) + '...' : name;
     label.classList.add('uploaded-label');
 
+    const uploader = document.createElement('div');
+    uploader.classList.add('uploader-label');
+    uploader.textContent = uploadedBy ? `Uploaded by: ${uploadedBy}` : '';
+    uploader.style.fontSize = '0.75em';
+    uploader.style.color = '#888';
+    uploader.style.marginTop = '2px';
+
+
     media.appendChild(preview);
     media.appendChild(label);
+    media.appendChild(uploader);
+
 
     const delBtn = document.createElement('button');
     delBtn.className = 'delete-btn';
     delBtn.innerHTML = `<img src="${window.STATIC_ICON_PATH}close.png" alt="Delete" style="width:10px;height:10px;vertical-align:middle;">`;
     delBtn.onclick = (e) => {
         e.stopPropagation();
-        // Call your delete function here
-        const ext = name.split('.').pop().toLowerCase();
         deleteUploadedFile(ext, name, media);
     };
     media.appendChild(delBtn);
@@ -104,11 +123,10 @@ function displayInCard(container, name, url) {
             queueAudio(name, url);
         }
     });
-    const fileContainer = container.querySelector('.file-container');
-    if (fileContainer) {
-        fileContainer.appendChild(media);
-    }
+
+    fileContainer.appendChild(media);
 }
+
 
 
 async function loadExistingUploads() {
@@ -125,7 +143,8 @@ async function loadExistingUploads() {
 
             const targetCard = document.querySelector(`.file-card[data-type="${type}"]`);
             if (targetCard) {
-                displayInCard(targetCard, f.filename, f.path);
+                const uploadedBy = f.uploaded_by?.name || "Unknown";
+                displayInCard(targetCard, f.filename, f.path, uploadedBy);
             }
         });
     } catch (err) {
@@ -203,7 +222,7 @@ async function deleteUploadedFile(ext, filename, blockElement) {
             const fileUrl = `/uploads/${ext}/${filename}`;
             removeFromPlaylistByUrl(fileUrl);
 
-            // 🔥 NEW: Remove from all playlists in DB
+            // Remove from all playlists in DB
             await fetch('/playlists/remove_file', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

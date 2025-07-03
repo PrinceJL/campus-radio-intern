@@ -19,7 +19,7 @@ function updateModeButtons() {
   btnShuffle?.classList.toggle('active', shuffleMode);
 }
 
-export function updatePlayPauseIcon() {
+function updatePlayPauseIcon() {
   const icon = document.getElementById('playPauseIcon');
   if (!icon) return;
   if (videoPreview.paused) {
@@ -52,15 +52,40 @@ updatePlayPauseIcon();
  */
 export function queueVideo(name, url) {
   const normUrl = new URL(url, window.location.origin).pathname;
-  playlistItems.push({ id: crypto.randomUUID(), name, url: normUrl });
+  const item = {
+    id: crypto.randomUUID(),
+    name,
+    url: normUrl,
+    duration: 0 // will be updated asynchronously
+  };
+
+  playlistItems.push(item);
+
+  getVideoDuration(normUrl, (formatted) => {
+    const [min, sec] = formatted.split(':').map(Number);
+    item.duration = min * 60 + sec;
+    updateTotalDuration(); // update summary once duration is known
+  });
+
   renderPlaylist();
 }
 
-export function queueAudio(name, url) {
-  const normUrl = new URL(url, window.location.origin).pathname;
-  audioQueue.push({ id: crypto.randomUUID(), name, url: normUrl });
-  renderAudioPlaylist();
-  console.log(audioQueue.map(item => item.name));}
+function updateTotalDuration() {
+  const totalSeconds = playlistItems.reduce((sum, item) => sum + (item.duration || 0), 0);
+
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  const formatted = hours > 0
+    ? `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+    : `${minutes}:${String(seconds).padStart(2, '0')}`;
+
+  const display = document.getElementById('playlistTotalDuration');
+  if (display) {
+    display.textContent = `🕒 Total Duration: ${formatted}`;
+  }
+}
 
 
 /**
@@ -102,7 +127,7 @@ function renderPlaylist() {
 /**
  * Create a playlist item block
  */
- function createMediaBlock(name, url, index) {
+function createMediaBlock(name, url, index) {
   const block = document.createElement('div');
   block.className = 'media-block';
   block.dataset.index = index;

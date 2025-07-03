@@ -24,9 +24,12 @@ let audioPlaylistItems = [];
 //
 export function queueAudio(name, url) {
   const normUrl = new URL(url, window.location.origin).pathname;
-  audioQueue.push({ id: crypto.randomUUID(), name, url: normUrl });
+  const item = { id: crypto.randomUUID(), name, url: normUrl };
+  audioQueue.push(item);
+  audioPlaylistItems.push(item);
   renderAudioPlaylist();
-  console.log(audioQueue.map(item => item.name));}
+  console.log(audioQueue.map(item => item.name));
+}
 
 function renderAudioPlaylist() {
      const container = document.querySelector('.audio-playlist-group');

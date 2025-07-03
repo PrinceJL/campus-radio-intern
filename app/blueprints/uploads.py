@@ -1,6 +1,8 @@
 import os
-from flask import Blueprint, request, jsonify, send_from_directory, make_response
+from flask import Blueprint, request, jsonify, send_from_directory, make_response, session
+from datetime import datetime
 from db import db
+from blueprints.authentication import login_required
 
 uploads_bp = Blueprint('uploads', __name__)
 
@@ -22,6 +24,7 @@ def get_unique_filename(subdir, filename):
     return unique_filename
 
 @uploads_bp.route('/upload', methods=['POST'])
+@login_required
 def upload_file():
     if 'file' not in request.files:
         return jsonify({"error": "No file part"}), 400
@@ -39,8 +42,23 @@ def upload_file():
     print("Saving file to:", save_path)
 
     file.save(save_path)
-    db.files.insert_one({"filename": unique_filename, "path": f"/uploads/{ext}/{unique_filename}"})
-    return jsonify({"message": "File uploaded", "url": f"/uploads/{ext}/{unique_filename}"}), 201
+
+    db.files.insert_one({
+        "filename": unique_filename,
+        "path": f"/uploads/{ext}/{unique_filename}",
+        "uploaded_by": {
+            "id": session.get("user"),
+            "email": session.get("email"),
+            "name": session.get("name", "Unknown")
+        },
+        "upload_time": datetime.utcnow()
+    })
+
+    return jsonify({
+        "message": "File uploaded",
+        "url": f"/uploads/{ext}/{unique_filename}"
+    }), 201
+
 
 
 @uploads_bp.route('/uploads/<ext>/<filename>', methods=['GET'])
@@ -51,6 +69,7 @@ def serve_file(ext, filename):
     return response
 
 @uploads_bp.route('/uploads/<ext>/<filename>', methods=['DELETE'])
+@login_required
 def delete_file(ext, filename):
     subdir = os.path.join(UPLOAD_FOLDER, ext)
     file_path = os.path.join(subdir, filename)
@@ -98,6 +117,7 @@ def list_files():
     return jsonify(files)
 
 @uploads_bp.route('/uploads/clean', methods=['POST'])
+@login_required
 def clean_uploads():
     db.files.delete_many({})
     db.scenes.delete_many({})

@@ -1,6 +1,7 @@
 import datetime
 from flask import Blueprint, request, jsonify
 from db import db
+from blueprints.authentication import login_required  # import it
 
 playlist_bp = Blueprint("playlist", __name__)
 
@@ -20,6 +21,7 @@ def get_playlist(name):
     return jsonify(playlist)
 
 @playlist_bp.route("/playlists", methods=["POST"])
+@login_required
 def save_playlist():
     data = request.get_json()
     name = data.get("name")
@@ -46,6 +48,7 @@ def save_playlist():
     return jsonify({"message": "Playlist saved", "updated": result.modified_count > 0}), 200
 
 @playlist_bp.route('/playlists/remove_file', methods=['POST'])
+@login_required
 def remove_file_from_all_playlists():
     data = request.json
     file_url = data.get('url')
@@ -64,6 +67,7 @@ def remove_file_from_all_playlists():
 
 
 @playlist_bp.route("/playlists/<name>", methods=["DELETE"])
+@login_required
 def delete_playlist(name):
     result = db.playlists.delete_one({"name": name})
     if result.deleted_count == 0:
@@ -71,6 +75,7 @@ def delete_playlist(name):
     return jsonify({"message": f"Playlist '{name}' deleted"}), 200
 
 @playlist_bp.route("/playlists", methods=["DELETE"])
+@login_required
 def delete_all_playlists():
     result = db.playlists.delete_many({})
     return jsonify({
