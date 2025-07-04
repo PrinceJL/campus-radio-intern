@@ -1,33 +1,92 @@
 import { setupUploadManager } from "./file-handler.js";
 import { audioA } from "./broadcaster.js";
 import { videoPreview, switchToStream } from './broadcaster.js';
+import { updatePlayPauseIcon } from "./playlist-manager.js";
+import { setActiveMedia } from './mediaManager.js';
 setupUploadManager();
+
+
 
 //Audio player
 const audioCtx = new (window.AudioContext ||window.webkitURL);
 const player = audioCtx.createMediaElementSource(audioA);
 player.connect(audioCtx.destination);
 
+audioA.addEventListener('play', () => {
+  console.log('[AUDIO] Audio started playing.');
+  setActiveMedia(audioA); 
+});
 //Music queue
 let currentIndex = 0;
 let audioQueue = [];
-let audioPlaylistItems = [];
+
+//controls
+let activeMedia = null;
+
+export function setupNowPlayingControlsAudio() {
+  document.querySelector('.ctrl-btn-msc.prev')?.addEventListener('click', () => {
+    if (currentIndex > 0) {
+      console.log("Press Previous");
+      currentIndex--;
+      playCurrentAudio();
+    }
+  });
+
+  document.querySelector('.ctrl-btn-msc.next')?.addEventListener('click', () => {
+    if (currentIndex < audioQueue.length - 1) {
+      console.log("Press Next");
+      currentIndex++;
+      playCurrentAudio();
+    }
+  });
+
+  document.querySelector('.ctrl-btn-msc.pause')?.addEventListener('click', () => {
+    if (!audioA) return;
+    console.log("Pause/Play Video");
+    audioA.paused ? audioA.play() : audioA.pause();
+  });
 
 
-//get audio from uploaded files and play on click
-//all clicked audio files will be pushed to audio queue
-//all items in the audio queue can be saved to a playlist
-//render audio queue
-//access audio player 
+  // btnLoop?.addEventListener('click', () => {
+  //   console.log("Toggle Loop Mode");
+  //   loopMode = !loopMode;
+  //   shuffleMode = false;
+  //   updateModeButtons();
+  // });
+
+  // btnShuffle?.addEventListener('click', () => {
+  //   console.log("Toggle Shuffle Mode");
+  //   shuffleMode = !shuffleMode;
+  //   loopMode = false;
+  //   updateModeButtons();
+  // });
+}
+
+//play and pause for audio
+updatePlayPauseIcon();
+audioA.addEventListener('play', () => {
+  activeMedia = audioA;
+  updatePlayPauseIcon(audioA);
+});
+audioA.addEventListener('pause', () => {
+  activeMedia = audioA;
+  updatePlayPauseIcon(audioA);
+});
+
+document.getElementById('btnPlayPause')?.addEventListener('click', () => {
+  if (audioA.paused) {
+    audioA.play();
+  } else {
+    audioA.pause();
+  }
+});
 //there are two audio players: deck a and deck b.
   //under these audio players are audio functions such as panning, volume control, crossfade etc.
 
-//
 export function queueAudio(name, url) {
   const normUrl = new URL(url, window.location.origin).pathname;
   const item = { id: crypto.randomUUID(), name, url: normUrl };
   audioQueue.push(item);
-  audioPlaylistItems.push(item);
   renderAudioPlaylist();
   console.log(audioQueue.map(item => item.name));
 }
@@ -37,7 +96,7 @@ function renderAudioPlaylist() {
      if (!container) return;
    
      container.innerHTML = '';
-     audioPlaylistItems.forEach((item, index) => {
+     audioQueue.forEach((item, index) => {
        const block = createAudioMediaBlock(item.name, item.url, index);
        container.appendChild(block);
      });
@@ -51,12 +110,12 @@ function renderAudioPlaylist() {
          if (oldIndex === newIndex) return;
    
          const movedItem = playlistItems.splice(oldIndex, 1)[0];
-         audioPlaylistItems.splice(newIndex, 0, movedItem);
+         audioQueue.splice(newIndex, 0, movedItem);
    
          // Recalculate currentIndex based on the video URL
          if (currentIndex !== -1) {
            const currentUrl = audioA.src;
-           const match = audioPlaylistItems.findIndex(item => currentUrl.includes(item.url));
+           const match = audioQueue.findIndex(item => currentUrl.includes(item.url));
            if (match !== -1) currentIndex = match;
          }
    
@@ -68,9 +127,9 @@ function renderAudioPlaylist() {
  
  
 function playCurrentAudio() {
-  if (currentIndex < 0 || currentIndex >= audioPlaylistItems.length) return;
+  if (currentIndex < 0 || currentIndex >= audioQueue.length) return;
 
-  const { name, url } = audioPlaylistItems[currentIndex];
+  const { name, url } = audioQueue[currentIndex];
   console.log('Playing: ' + name, url);
 
   // Reset audioA
@@ -117,6 +176,8 @@ function playCurrentAudio() {
   nowPlayingContent.appendChild(createAudioMediaBlock(name, url, currentIndex));
   nowPlayingBlock?.classList.add('playing');
 
+  
+
   audioA.play().catch(err => console.warn('[play()] error:', err));
 }
 
@@ -160,9 +221,9 @@ function createAudioMediaBlock (name, url, index) {
   delBtn.innerHTML = `<img src="${window.STATIC_ICON_PATH}close.png" alt="Delete" style="width:11px;height:11px;vertical-align:middle;">`;
   delBtn.onclick = (e) => {
     e.stopPropagation();
-    playlistItems.splice(index, 1);
-    if (currentIndex >= playlistItems.length) currentIndex = playlistItems.length - 1;
-    renderPlaylist();
+    audioQueue.splice(index, 1);
+    if (currentIndex >= audioQueue.length) currentIndex = audioQueue.length - 1;
+    renderAudioPlaylist();
   };
   rightSide.appendChild(delBtn);
 
@@ -175,6 +236,29 @@ function createAudioMediaBlock (name, url, index) {
   return block;
 }
 
+function clearQueue() {
+  audioQueue = [];
+  currentIndex = -1;
+  document.querySelector('.now-playing-block')?.classList.remove('playing');
+  document.querySelector('.playlist-items').innerHTML = '';
+  document.querySelector('.now-playing-content').innerHTML = '';
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
  //Functions to be added:
  //play current function
@@ -185,12 +269,11 @@ function createAudioMediaBlock (name, url, index) {
  //DJ deck elements-need to be added first 
 // const audioA = document.getElementById('audioA');
 // const audioB = document.getElementById('audioB');
-const playPauseA = document.getElementById('playPauseA');
-const playPauseB = document.getElementById('playPauseB');
-const volumeA = document.getElementById('volumeA');
-const volumeB = document.getElementById('volumeB');
-const crossfader = document.getElementById('crossfader');
-let audioPlayList = document.getElementById('playlist')
+// const playPauseA = document.getElementById('playPauseA');
+// const playPauseB = document.getElementById('playPauseB');
+// const volumeA = document.getElementById('volumeA');
+// const volumeB = document.getElementById('volumeB');
+// const crossfader = document.getElementById('crossfader');
 
 // Play/Pause
 // playPauseA.addEventListener('click', () => {

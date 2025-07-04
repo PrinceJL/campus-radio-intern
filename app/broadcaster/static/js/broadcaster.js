@@ -1,5 +1,6 @@
 import { setupUploadManager } from './file-handler.js';
 import { setupNowPlayingControls, listAllPlaylists } from './playlist-manager.js';
+import { setupNowPlayingControlsAudio } from './audio-functions.js';
 import { startSessionTimer, stopSessionTimer, incrementViewerCount, decrementViewerCount } from './stream-utils.js';
 
 let currentStream = null;
@@ -194,6 +195,7 @@ document.getElementById('microphonePlusBtn')?.addEventListener('click', async ()
 
 document.addEventListener('DOMContentLoaded', async () => {
     setupNowPlayingControls();
+    setupNowPlayingControlsAudio();
     listAllPlaylists();
     setupUploadManager();
     setupThemeToggle();
