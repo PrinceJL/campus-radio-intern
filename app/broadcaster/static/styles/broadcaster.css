@@ -1077,6 +1077,33 @@ button.icon-btn-plus img {
   background-color: #666;
 }
 
+#audio-preview-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  margin-top: auto;
+  margin-bottom: 24px;
+}
+#audio-preview-container audio {
+  width: 100%;
+  min-width: 350px;
+  max-width: 800px;
+  height: 48px;
+  margin-top: 20px;
+  margin-bottom: 12px;
+  margin-left: 28px;
+}
+
+#audio-visualizer {
+  width: 100% !important;
+  height: 380px !important; /* Match the canvas height */
+  display: block;
+  margin-bottom: 8px;
+  margin-left: 120px;
+}
+
 /* Responsive adjustments */
 @media (max-width: 1600px) {
   .app-grid {

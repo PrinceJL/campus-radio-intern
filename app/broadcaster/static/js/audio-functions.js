@@ -5,6 +5,8 @@ import { updatePlayPauseIcon } from "./playlist-manager.js";
 import { setActiveMedia } from './mediaManager.js';
 setupUploadManager();
 
+let analyser, dataArray, visualizerId; //audio visualizer variables
+let animationId;
 
 
 //Audio player
@@ -132,6 +134,17 @@ function playCurrentAudio() {
   const { name, url } = audioQueue[currentIndex];
   console.log('Playing: ' + name, url);
 
+  const audioPreview = document.getElementById('audio-preview-container');
+  const videoPreview = document.getElementById('video-preview-container');
+  if (audioPreview) {
+    audioPreview.style.display = 'block';
+    // DO NOT clear innerHTML, just remove any previous audio element
+    const oldAudio = audioPreview.querySelector('audio');
+    if (oldAudio) oldAudio.remove();
+    audioPreview.appendChild(audioA);
+  }
+  if (videoPreview) videoPreview.style.display = 'none';
+
   // Reset audioA
   audioA.pause();
   audioA.srcObject = null;
@@ -159,15 +172,11 @@ function playCurrentAudio() {
   audioA.onloadedmetadata = () => console.log('[Metadata] Duration:', audioA.duration);
   audioA.onended = () => handleVideoEnd();
 
-  // Show audio preview container, hide camera (optional)
+  // Show audio preview container, hide camera
   document.getElementById('audio-preview-container')?.style.setProperty('display', 'block');
   document.getElementById('camera-preview-container')?.style.setProperty('display', 'none');
 
-  const audioMount = document.getElementById('audio-preview-container');
-  if (audioMount) {
-    audioMount.innerHTML = '';
-    audioMount.appendChild(audioA);
-  }
+  // No need to clear and recreate the canvas here!
 
   // Update now-playing UI
   const nowPlayingContent = document.querySelector('.now-playing-content');
@@ -175,8 +184,6 @@ function playCurrentAudio() {
   nowPlayingContent.innerHTML = '';
   nowPlayingContent.appendChild(createAudioMediaBlock(name, url, currentIndex));
   nowPlayingBlock?.classList.add('playing');
-
-  
 
   audioA.play().catch(err => console.warn('[play()] error:', err));
 }
@@ -195,9 +202,9 @@ function createAudioMediaBlock (name, url, index) {
 
   const ext = name.split('.').pop().toLowerCase();
   if (/(mp3|wav|ogg)/.test(ext)) {
-    // (url, preview);
+    preview.src = '/broadcaster/static/icon/mp3-icon.png';
   } else {
-    preview.src = '/broadcaster/static/icon/CheersLogo.png';
+    preview.src = '/broadcaster/static/icon/mp3-icon.png';
   }
 
   const label = document.createElement('span');
@@ -236,15 +243,71 @@ function createAudioMediaBlock (name, url, index) {
   return block;
 }
 
-function clearQueue() {
+export function clearQueue() {
   audioQueue = [];
   currentIndex = -1;
   document.querySelector('.now-playing-block')?.classList.remove('playing');
   document.querySelector('.playlist-items').innerHTML = '';
   document.querySelector('.now-playing-content').innerHTML = '';
+  // Hide audio preview container
+  const audioPreview = document.getElementById('audio-preview-container');
+  if (audioPreview) audioPreview.style.display = 'none';
 }
 
+function setupAudioVisualizer() {
+  const canvas = document.getElementById('audio-visualizer');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
 
+  // Match canvas size to its actual display size
+  canvas.width = canvas.clientWidth;
+  canvas.height = canvas.clientHeight;
+
+  if (!analyser) {
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 128;
+    player.connect(analyser);
+    analyser.connect(audioCtx.destination);
+    dataArray = new Uint8Array(analyser.frequencyBinCount);
+  }
+
+  function draw() {
+    animationId = requestAnimationFrame(draw);
+    analyser.getByteFrequencyData(dataArray);
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const spacing = 2;
+    const totalSpacing = spacing * (dataArray.length - 1);
+    const barWidth = (canvas.width - totalSpacing) / dataArray.length;
+
+    for (let i = 0; i < dataArray.length; i++) {
+      const barHeight = (dataArray[i] / 255) * (canvas.height * 0.8);
+      const x = i * (barWidth + spacing);
+
+      ctx.fillStyle = "#d1d5db"; // light gray
+      ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+
+      if (i < Math.floor(dataArray.length * 1)) {
+        ctx.fillStyle = "#073066"; // highlight leftmost
+        ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+      }
+    }
+  }
+
+  draw();
+}
+
+function stopAudioVisualizer() {
+  if (animationId) cancelAnimationFrame(animationId);
+  const canvas = document.getElementById('audio-visualizer');
+  if (canvas) canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+}
+
+// Start/stop visualizer on play/pause/ended
+audioA.addEventListener('play', setupAudioVisualizer);
+audioA.addEventListener('pause', stopAudioVisualizer);
+audioA.addEventListener('ended', stopAudioVisualizer);
 
 
 

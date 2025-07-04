@@ -230,6 +230,7 @@ function playCurrent() {
   // Show video preview container, hide camera
   document.getElementById('video-preview-container')?.style.setProperty('display', 'block');
   document.getElementById('camera-preview-container')?.style.setProperty('display', 'none');
+  document.getElementById('audio-preview-container')?.style.setProperty('display', 'none');
 
   const videoMount = document.getElementById('video-preview-container');
   if (videoMount) {
