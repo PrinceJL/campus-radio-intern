@@ -16,7 +16,6 @@ body {
   font-family: 'Roobert', sans-serif;
   background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
   color: #e2e8f0;
-  min-height: 100vh;
   overflow-x: hidden;
 }
 
@@ -502,8 +501,8 @@ button.icon-btn-plus img {
 }
 
 .section-right {
-  margin-left: 12px;
-  margin-bottom: 20px;
+  margin-left: 6px;
+  margin-bottom: 10px;
   padding: 12px 12px;
   width: 290px;
   height: 270px;
@@ -946,10 +945,10 @@ button.icon-btn-plus img {
 }
 
 .media-files {
-  margin: 18px 24px 0 24px;
+  margin: 6px 12px 0 0;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 6px;
 }
 
 .uploaded-media {
@@ -1103,6 +1102,7 @@ button.icon-btn-plus img {
   display: block;
   margin-bottom: 8px;
   margin-left: 120px;
+  margin-right: 40px;
 }
 
 /* Responsive adjustments */
