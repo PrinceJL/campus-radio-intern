@@ -941,8 +941,9 @@ button.icon-btn-plus img {
   flex-direction: column;
   gap: 6px;
   padding-right: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: #052044 #093b7c;
 }
-
 
 .media-files {
   margin: 18px 24px 0 24px;
