@@ -646,6 +646,28 @@ button.icon-btn-plus img {
   margin: 18px 24px 0 24px;
 }
 
+.player-card {
+  background: #f8fafc;                /* Light card background */
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(7, 48, 102, 0.10);
+  padding: 3px 3px 6px 3px;
+  margin: 3px 6px 0 6px;
+  /* Make the card go up to the next-up section */
+  margin-bottom: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.playlist-duration-summary {
+  background: #073066;                /* Light card background */
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(7, 48, 102, 0.10);
+  padding: 3px 3px 6px 3px;
+  margin: 3px 6px 0 6px;
+  /* Make the card go up to the next-up section */
+  margin-bottom: 6px;
+  border: 1px solid #e2e8f0;
+}
+
 .audio-your-playlist {
   margin: 18px 24px 0 24px;
 }
@@ -796,7 +818,6 @@ button.icon-btn-plus img {
 }
 
 .section-label-playlist {
-  margin-top: 15px;
   width: 320px;
   height: 57px;
   background: #073066;

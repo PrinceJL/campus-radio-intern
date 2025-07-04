@@ -1,5 +1,6 @@
 import { setupUploadManager } from "./file-handler.js";
-import { audioA, switchToStream} from "./broadcaster.js";
+import { audioA } from "./broadcaster.js";
+import { videoPreview, switchToStream } from './broadcaster.js';
 setupUploadManager();
 
 //Audio player
@@ -32,7 +33,7 @@ export function queueAudio(name, url) {
 }
 
 function renderAudioPlaylist() {
-     const container = document.querySelector('.audio-playlist-group');
+     const container = document.querySelector('.playlist-items');
      if (!container) return;
    
      container.innerHTML = '';
@@ -66,54 +67,58 @@ function renderAudioPlaylist() {
    
  
  
- function playCurrentAudio() {
-   if (currentIndex < 0 || currentIndex >= audioPlaylistItems.length) return;
- 
+function playCurrentAudio() {
+  if (currentIndex < 0 || currentIndex >= audioPlaylistItems.length) return;
+
   const { name, url } = audioPlaylistItems[currentIndex];
   console.log('Playing: ' + name, url);
 
-  //Add functions for multiple audio decks
+  // Reset audioA
+  audioA.pause();
+  audioA.srcObject = null;
+  audioA.removeAttribute('src');
+  audioA.load();
+  audioA.src = url;
+  audioA.controls = true;
+  audioA.autoplay = true;
+  audioA.muted = false;
 
-      audioA.pause();
-      audioA.srcObject = null;
-      audioA.removeAttribute('src');
-      audioA.load();
-      audioA.src = url;
-      audioA.controls = true;
-      audioA.autoplay = true;
-      audioA.muted = false; 
-   
-     // Bind capture logic
-     audioA.onplaying = () => {
-       const stream = audioA.captureStream?.();
-       if (stream) switchToStream(stream);
-       else console.warn('[WARN] captureStream failed');
-     };
-   
-     // Error/Metadata/End handlers
-     audioA.onerror = e => console.error('[Video Error]', e);
-     audioA.onloadedmetadata = () => console.log('[Metadata] Duration:', audioA.duration);
-     audioA.onended = () => handleVideoEnd();
-   
-     // Show video preview container, hide camera
-     document.getElementById('video-preview-container')?.style.setProperty('display', 'block');
-     document.getElementById('camera-preview-container')?.style.setProperty('display', 'none');
-   
-     const videoMount = document.getElementById('video-preview-container');
-     if (videoMount) {
-       videoMount.innerHTML = '';
-       videoMount.appendChild(audioA);
-     }
-   
-     // Update now-playing UI
-     const nowPlayingContent = document.querySelector('.now-playing-content');
-     const nowPlayingBlock = document.querySelector('.now-playing-block');
-     nowPlayingContent.innerHTML = '';
-     nowPlayingContent.appendChild(createAudioMediaBlock(name, url, currentIndex));
-     nowPlayingBlock?.classList.add('playing');
-   
-     audioA.play().catch(err => console.warn('[play()] error:', err));
- }
+  // Resume AudioContext if needed
+  if (audioCtx.state === "suspended") {
+    audioCtx.resume();
+  }
+  // Bind capture logic
+  audioA.onplaying = () => {
+    console.log('[DBG] Audio started. Capturing stream...');
+    const stream = audioA.captureStream?.();
+    if (stream) switchToStream(stream);
+    else console.warn('[WARN] captureStream failed');
+  };
+
+  // Error/Metadata/End handlers
+  audioA.onerror = e => console.error('[Audio Error]', e);
+  audioA.onloadedmetadata = () => console.log('[Metadata] Duration:', audioA.duration);
+  audioA.onended = () => handleVideoEnd();
+
+  // Show audio preview container, hide camera (optional)
+  document.getElementById('audio-preview-container')?.style.setProperty('display', 'block');
+  document.getElementById('camera-preview-container')?.style.setProperty('display', 'none');
+
+  const audioMount = document.getElementById('audio-preview-container');
+  if (audioMount) {
+    audioMount.innerHTML = '';
+    audioMount.appendChild(audioA);
+  }
+
+  // Update now-playing UI
+  const nowPlayingContent = document.querySelector('.now-playing-content');
+  const nowPlayingBlock = document.querySelector('.now-playing-block');
+  nowPlayingContent.innerHTML = '';
+  nowPlayingContent.appendChild(createAudioMediaBlock(name, url, currentIndex));
+  nowPlayingBlock?.classList.add('playing');
+
+  audioA.play().catch(err => console.warn('[play()] error:', err));
+}
 
 function createAudioMediaBlock (name, url, index) {
   const block = document.createElement('div');
@@ -131,7 +136,7 @@ function createAudioMediaBlock (name, url, index) {
   if (/(mp3|wav|ogg)/.test(ext)) {
     // (url, preview);
   } else {
-    preview.src = 'https://via.placeholder.com/40x40?text=NA';
+    preview.src = '/broadcaster/static/icon/CheersLogo.png';
   }
 
   const label = document.createElement('span');
