@@ -149,76 +149,77 @@
             </div>
           </div>
           <div class="right-side-border">
-            <div class="now-playing-block">
-              <strong>Now Playing</strong>
-              <div class="now-playing-content">
-                <button class="delete-btn" title="Remove"></button>
-              </div>
-              <!-- injected media block -->
-              <div class="now-playing-controls">
-                <button id="btnLoop" class="ctrl-btn-msc mode-btn">
-                  <img
-                    src="{{ url_for('broadcaster.static', filename='icon/shuffle.png') }}"
-                    alt="Shuffle"
-                    style="height: 20px; width: 20px; vertical-align: middle"
-                  />
-                </button>
-                <button class="ctrl-btn-msc prev">
-                  <img
-                    src="{{ url_for('broadcaster.static', filename='icon/previous.png') }}"
-                    alt="Previous"
-                    style="height: 15px; width: 15px; vertical-align: middle"
-                  />
-                </button>
-                <button class="ctrl-btn-msc playpause" id="btnPlayPause">
-                  <img
-                    id="playPauseIcon"
-                    src="{{ url_for('broadcaster.static', filename='icon/pause-button.png') }}"
-                    alt="Pause"
-                    style="height: 20px; width: 20px; vertical-align: middle"
-                  />
-                </button>
-                <button class="ctrl-btn-msc next">
-                  <img
-                    src="{{ url_for('broadcaster.static', filename='icon/next-button.png') }}"
-                    alt="Next"
-                    style="height: 18px; width: 18px; vertical-align: middle"
-                  />
-                </button>
-                <button id="btnShuffle" class="ctrl-btn-msc mode-btn">
-                  <img
-                    src="{{ url_for('broadcaster.static', filename='icon/loop.png') }}"
-                    alt="Loop"
-                    style="height: 20px; width: 20px; vertical-align: middle"
-                  />
-                </button>
-              </div>
-            </div>
-
-            <div class="next-up">
-              <div class="playlist-header">
-                <strong>Next from: (Playlist)</strong>
-                <div class="playlist-actions">
-                  <button id="savePlaylistBtn" title="Save Playlist">
+            <div class="player-card">
+              <div class="now-playing-block">
+                <strong>Now Playing</strong>
+                <div class="now-playing-content">
+                  <button class="delete-btn" title="Remove"></button>
+                </div>
+                <!-- injected media block -->
+                <div class="now-playing-controls">
+                  <button id="btnLoop" class="ctrl-btn-msc mode-btn">
                     <img
-                      src="{{ url_for('broadcaster.static', filename='icon/plus (2).png') }}"
-                      alt="Add"
-                      class="icon-btn-plus"
+                      src="{{ url_for('broadcaster.static', filename='icon/shuffle.png') }}"
+                      alt="Shuffle"
+                      style="height: 20px; width: 20px; vertical-align: middle"
                     />
                   </button>
-                  <button id="saveOrderBtn" title="Save Current Order">
+                  <button class="ctrl-btn-msc prev">
                     <img
-                      src="{{ url_for('broadcaster.static', filename='icon/diskette.png') }}"
-                      alt="Save"
-                      class="icon-btn-save"
+                      src="{{ url_for('broadcaster.static', filename='icon/previous.png') }}"
+                      alt="Previous"
+                      style="height: 15px; width: 15px; vertical-align: middle"
+                    />
+                  </button>
+                  <button class="ctrl-btn-msc playpause" id="btnPlayPause">
+                    <img
+                      id="playPauseIcon"
+                      src="{{ url_for('broadcaster.static', filename='icon/pause-button.png') }}"
+                      alt="Pause"
+                      style="height: 20px; width: 20px; vertical-align: middle"
+                    />
+                  </button>
+                  <button class="ctrl-btn-msc next">
+                    <img
+                      src="{{ url_for('broadcaster.static', filename='icon/next-button.png') }}"
+                      alt="Next"
+                      style="height: 18px; width: 18px; vertical-align: middle"
+                    />
+                  </button>
+                  <button id="btnShuffle" class="ctrl-btn-msc mode-btn">
+                    <img
+                      src="{{ url_for('broadcaster.static', filename='icon/loop.png') }}"
+                      alt="Loop"
+                      style="height: 20px; width: 20px; vertical-align: middle"
                     />
                   </button>
                 </div>
               </div>
-              <div class="playlist-items"></div>
-            </div>
-            <div id="playlistTotalDuration" class="playlist-duration-summary">🕒 Total Duration: 0:00</div>
 
+              <div class="next-up">
+                <div class="playlist-header">
+                  <strong>Next from: (Playlist)</strong>
+                  <div class="playlist-actions">
+                    <button id="savePlaylistBtn" title="Save Playlist">
+                      <img
+                        src="{{ url_for('broadcaster.static', filename='icon/plus (2).png') }}"
+                        alt="Add"
+                        class="icon-btn-plus"
+                      />
+                    </button>
+                    <button id="saveOrderBtn" title="Save Current Order">
+                      <img
+                        src="{{ url_for('broadcaster.static', filename='icon/diskette.png') }}"
+                        alt="Save"
+                        class="icon-btn-save"
+                      />
+                    </button>
+                  </div>
+                </div>
+                <div class="playlist-items"></div>
+              </div>
+              <div id="playlistTotalDuration" class="playlist-duration-summary">🕒 Total Duration: 0:00</div>
+            </div>
             <!-- Video Playlist -->
             <div class="section-label-playlist">
               Video Playlist

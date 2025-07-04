@@ -14,8 +14,14 @@
       <div class="login-wrapper">
         <div class="image-section">
           <img
-            src="{{ url_for('broadcaster.static', filename='icon/CheersLogo.png') }}"
+            src="{{ url_for('broadcaster.static', filename='icon/cheer-login.jpg') }}"
             alt="SLU/CHEERS Logo"
+            class="background-img"
+          />
+          <img
+            src="{{ url_for('broadcaster.static', filename='icon/cheer-logo.png') }}"
+            alt="SLU/CHEER Logo"
+            class="logo-overlay"
           />
         </div>
         <div class="form-section">
@@ -46,7 +52,9 @@
               >
               <a href="#">Forgot Password?</a>
             </div>
-            <button class="login-button" type="submit">Login</button>
+            <a href="/">
+              <button class="login-button" type="submit">Login</button>
+            </a>
           </form>
         </div>
       </div>

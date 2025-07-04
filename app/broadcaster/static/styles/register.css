@@ -9,11 +9,11 @@ body {
 }
 
 .register-container {
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
-  width: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+    padding: 40px 48px;
 }
 
 h2 {
@@ -46,4 +46,16 @@ form button:hover {
 p {
   text-align: center;
   margin-top: 1rem;
+}
+
+form input[type="text"],
+form input[type="email"],
+form input[type="password"] {
+  width: 100%;
+  padding: 0.7rem;
+  margin: 0.5rem 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: #fff;
+  box-sizing: border-box;
 }
