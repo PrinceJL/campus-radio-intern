@@ -27,7 +27,7 @@ def login():
             flash('Invalid email or password', 'danger')
             return redirect(url_for('auth.login'))
 
-    return render_template('register.html')
+    return render_template('login.html')
 
 
 # ------------------------
@@ -91,6 +91,5 @@ def register():
 
         return {"success": True, "message": "Account created. You can now log in."}, 201
 
-    return {
-        "message": "Register via POST to this endpoint with fields: email, password, [name]"
-    }, 200
+    return render_template('register.html')
+
