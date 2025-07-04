@@ -27,7 +27,7 @@ def login():
             flash('Invalid email or password', 'danger')
             return redirect(url_for('auth.login'))
 
-    return render_template('login.html')
+    return render_template('register.html')
 
 
 # ------------------------
