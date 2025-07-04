@@ -2,6 +2,7 @@ import { generateVideoThumbnail, getVideoDuration } from './file-handler.js';
 import { videoPreview, switchToStream } from './broadcaster.js';
 import { setActiveMedia } from './mediaManager.js';
 
+
 let playlistItems = [];
 let currentIndex = -1;
 let loopMode = false;

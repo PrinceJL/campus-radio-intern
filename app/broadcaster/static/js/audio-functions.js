@@ -204,7 +204,6 @@ function createAudioMediaBlock (name, url, index) {
   if (/(mp3|wav|ogg)/.test(ext)) {
     preview.src = '/broadcaster/static/icon/mp3-icon.png';
   } else {
-    preview.src = '/broadcaster/static/icon/mp3-icon.png';
   }
 
   const label = document.createElement('span');
@@ -243,7 +242,7 @@ function createAudioMediaBlock (name, url, index) {
   return block;
 }
 
-export function clearQueue() {
+function clearQueue() {
   audioQueue = [];
   currentIndex = -1;
   document.querySelector('.now-playing-block')?.classList.remove('playing');
