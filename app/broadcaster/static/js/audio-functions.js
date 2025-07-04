@@ -1,5 +1,5 @@
 import { setupUploadManager } from "./file-handler.js";
-import { audioA } from "./broadcaster.js";
+import { audioA, switchToStream} from "./broadcaster.js";
 setupUploadManager();
 
 //Audio player
@@ -74,7 +74,6 @@ function renderAudioPlaylist() {
 
   //Add functions for multiple audio decks
 
-   // Reset videoPreview
       audioA.pause();
       audioA.srcObject = null;
       audioA.removeAttribute('src');
@@ -86,7 +85,6 @@ function renderAudioPlaylist() {
    
      // Bind capture logic
      audioA.onplaying = () => {
-       console.log('[DBG] Video started. Capturing stream...');
        const stream = audioA.captureStream?.();
        if (stream) switchToStream(stream);
        else console.warn('[WARN] captureStream failed');
@@ -104,17 +102,17 @@ function renderAudioPlaylist() {
      const videoMount = document.getElementById('video-preview-container');
      if (videoMount) {
        videoMount.innerHTML = '';
-       videoMount.appendChild(videoPreview);
+       videoMount.appendChild(audioA);
      }
    
      // Update now-playing UI
      const nowPlayingContent = document.querySelector('.now-playing-content');
      const nowPlayingBlock = document.querySelector('.now-playing-block');
      nowPlayingContent.innerHTML = '';
-     nowPlayingContent.appendChild(createMediaBlock(name, url, currentIndex));
+     nowPlayingContent.appendChild(createAudioMediaBlock(name, url, currentIndex));
      nowPlayingBlock?.classList.add('playing');
    
-     videoPreview.play().catch(err => console.warn('[play()] error:', err));
+     audioA.play().catch(err => console.warn('[play()] error:', err));
  }
 
 function createAudioMediaBlock (name, url, index) {
