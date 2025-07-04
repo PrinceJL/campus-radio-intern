@@ -13,8 +13,3 @@ broadcaster_bp = Blueprint(
 @login_required
 def broadcaster_home():
     return render_template('broadcaster.html')
-
-@broadcaster_bp.route('/login')
-def broadcaster_render():
-    return render_template('login.html')
-
