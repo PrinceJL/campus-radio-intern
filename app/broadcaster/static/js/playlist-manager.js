@@ -17,7 +17,7 @@ const btnShuffle = document.querySelector('.ctrl-btn-msc.shuffle');
 /**
  * Toggle UI button states based on loop/shuffle modes
  */
-function updateModeButtons() {
+export function updateModeButtons() {
   btnLoop?.classList.toggle('active', loopMode);
   btnShuffle?.classList.toggle('active', shuffleMode);
 }
@@ -450,3 +450,10 @@ async function deletePlaylist(name) {
   }
 }
 
+export default {
+  queueVideo,
+  setupNowPlayingControls,
+  listAllPlaylists,
+  removeFromPlaylistByUrl,
+  updateModeButtons
+};
