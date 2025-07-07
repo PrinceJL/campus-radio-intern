@@ -16,7 +16,6 @@ body {
   font-family: 'Roobert', sans-serif;
   background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
   color: #e2e8f0;
-  min-height: 100vh;
   overflow-x: hidden;
 }
 
@@ -502,8 +501,8 @@ button.icon-btn-plus img {
 }
 
 .section-right {
-  margin-left: 12px;
-  margin-bottom: 20px;
+  margin-left: 6px;
+  margin-bottom: 10px;
   padding: 12px 12px;
   width: 290px;
   height: 270px;
@@ -644,6 +643,28 @@ button.icon-btn-plus img {
 .next-up,
 .your-playlist {
   margin: 18px 24px 0 24px;
+}
+
+.player-card {
+  background: #f8fafc;                /* Light card background */
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(7, 48, 102, 0.10);
+  padding: 3px 3px 6px 3px;
+  margin: 3px 6px 0 6px;
+  /* Make the card go up to the next-up section */
+  margin-bottom: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.playlist-duration-summary {
+  background: #073066;                /* Light card background */
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(7, 48, 102, 0.10);
+  padding: 3px 3px 6px 3px;
+  margin: 3px 6px 0 6px;
+  /* Make the card go up to the next-up section */
+  margin-bottom: 6px;
+  border: 1px solid #e2e8f0;
 }
 
 .audio-your-playlist {
@@ -796,7 +817,6 @@ button.icon-btn-plus img {
 }
 
 .section-label-playlist {
-  margin-top: 15px;
   width: 320px;
   height: 57px;
   background: #073066;
@@ -920,14 +940,15 @@ button.icon-btn-plus img {
   flex-direction: column;
   gap: 6px;
   padding-right: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: #052044 #093b7c;
 }
 
-
 .media-files {
-  margin: 18px 24px 0 24px;
+  margin: 6px 12px 0 0;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 6px;
 }
 
 .uploaded-media {
@@ -1054,6 +1075,34 @@ button.icon-btn-plus img {
 }
 .upload-btn:hover {
   background-color: #666;
+}
+
+#audio-preview-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  margin-top: auto;
+  margin-bottom: 24px;
+}
+#audio-preview-container audio {
+  width: 100%;
+  min-width: 350px;
+  max-width: 800px;
+  height: 48px;
+  margin-top: 20px;
+  margin-bottom: 12px;
+  margin-left: 28px;
+}
+
+#audio-visualizer {
+  width: 100% !important;
+  height: 380px !important; /* Match the canvas height */
+  display: block;
+  margin-bottom: 8px;
+  margin-left: 120px;
+  margin-right: 40px;
 }
 
 /* Responsive adjustments */
