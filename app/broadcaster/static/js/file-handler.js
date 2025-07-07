@@ -115,7 +115,6 @@ function displayInCard(container, name, url, uploadedBy = null) {
     };
     media.appendChild(delBtn);
 
-    //make queueVideo 
     media.addEventListener('click', () => {
         console.log(`Clicked on ${name}`);
         if (isVideo) {

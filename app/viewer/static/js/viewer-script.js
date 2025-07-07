@@ -1,6 +1,5 @@
 // viewer.js
 const video = document.getElementById('radio-stream');
-const canvas = document.getElementById('audio-visualizer');
 const brb = document.getElementById('brb-standby');
 const socket = io();
 let peerConnection = null;
@@ -8,69 +7,9 @@ let peerConnection = null;
 function showBRB(show) {
   brb.style.display = show ? 'block' : 'none';
   video.style.display = show ? 'none' : 'block';
-  if (canvas) canvas.style.display = 'none';
 }
 
 showBRB(true);
-
-
-function setupAudioVisualizer(stream) {
-  console.log('setupAudioVisualizer called');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  const source = audioCtx.createMediaStreamSource(stream);
-  const analyser = audioCtx.createAnalyser();
-  analyser.fftSize = 256;
-  source.connect(analyser);
-
-  function draw() {
-    requestAnimationFrame(draw);
-    const dataArray = new Uint8Array(analyser.frequencyBinCount);
-    analyser.getByteFrequencyData(dataArray);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const barWidth = (canvas.width / dataArray.length) * 1.5;
-    let x = 0;
-    for (let i = 0; i < dataArray.length; i++) {
-      const barHeight = dataArray[i] / 2;
-      ctx.fillStyle = 'limegreen';
-      ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-      x += barWidth + 1;
-    }
-  }
-  draw();
-}
-
-const c = document.getElementById('audio-visualizer');
-c.style.display = 'block';
-c.style.zIndex = 1000;
-c.style.border = '5px solid red';
-c.width = 800;
-c.height = 180;
-
-const ctx = canvas.getContext('2d');
-ctx.fillStyle = 'red';
-ctx.fillRect(10, 10, 100, 100);
-
-// Call this when you receive a stream:
-function handleIncomingStream(stream) {
-  const hasVideo = stream.getVideoTracks().length > 0;
-  video.srcObject = stream; // Always set this
-
-  if (hasVideo) {
-    video.style.display = 'block';
-    video.style.opacity = 1;
-    canvas.style.display = 'none';
-    video.play().catch(e => {});
-    audioVisualizerActive = false;
-  } else {
-    video.style.display = 'none';
-    video.style.opacity = 100; // Hide visually, but keep playing audio
-    canvas.style.display = 'block';
-    setupAudioVisualizer(stream);
-    video.play().catch(e => {});
-  }
-}
 
 socket.on('connect', () => {
   console.log('[Viewer] Connected to signaling server');
@@ -89,10 +28,26 @@ socket.on('offer', async (id, description) => {
   peerConnection.ontrack = event => {
     if (!receivedStream.getTracks().includes(event.track)) {
       receivedStream.addTrack(event.track);
+      video.srcObject = receivedStream;
     }
-    handleIncomingStream(receivedStream);
+
     showBRB(false);
     video.muted = false;
+
+    video.play().catch(e => console.warn('[Viewer] Autoplay blocked:', e));
+
+    // Optional: Debug actual resolution
+    const receiver = peerConnection.getReceivers().find(r => r.track.kind === 'video');
+    if (receiver) {
+      setInterval(async () => {
+        const stats = await receiver.getStats();
+        stats.forEach(report => {
+          if (report.type === 'inbound-rtp' && report.kind === 'video') {
+            console.log(`[Viewer] Resolution: ${report.frameWidth}x${report.frameHeight}, FPS: ${report.framesPerSecond}`);
+          }
+        });
+      }, 3000);
+    }
   };
 
   peerConnection.onicecandidate = event => {
@@ -179,47 +134,3 @@ socket.on('stop-ticker', () => {
   tickerTimeouts.forEach(clearTimeout);
   tickerTimeouts = [];
 });
-
-socket.on('audio-waveform', ({ image, duration }) => {
-  console.log('audio-waveform event received', image, duration);
-  const waveformImg = document.getElementById('waveform-img');
-  const playhead = document.getElementById('waveform-playhead');
-  waveformImg.src = image;
-  waveformImg.style.display = 'block';
-  waveformImg.onerror = () => console.error('Waveform image failed to load');
-  waveformImg.onload = () => console.log('Waveform image loaded', waveformImg.width, waveformImg.height);
-  playhead.style.display = 'block';
-  playhead.style.left = '0px'; // Reset playhead
-  playhead.dataset.duration = duration || 0; // Store duration for later
-});
-
-
-function animatePlayhead() {
-  const waveformImg = document.getElementById('waveform-img');
-  const playhead = document.getElementById('waveform-playhead');
-  if (waveformImg.style.display === 'none' || playhead.style.display === 'none') return;
-
-  const duration = parseFloat(playhead.dataset.duration || video.duration || 0);
-  if (!duration || video.paused) {
-    requestAnimationFrame(animatePlayhead);
-    return;
-  }
-
-  const percent = video.currentTime / duration;
-  const containerWidth = waveformImg.offsetWidth;
-  playhead.style.left = `${percent * containerWidth}px`;
-
-  requestAnimationFrame(animatePlayhead);
-}
-
-// Start animation when audio is playing
-video.addEventListener('play', animatePlayhead);
-video.addEventListener('seeked', animatePlayhead);
-video.addEventListener('timeupdate', animatePlayhead);
-
-// Hide waveform and playhead when not needed (e.g., when video is playing)
-function hideWaveform() {
-  document.getElementById('waveform-img').style.display = 'none';
-  document.getElementById('waveform-playhead').style.display = 'none';
-}
-

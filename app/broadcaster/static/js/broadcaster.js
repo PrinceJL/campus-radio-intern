@@ -635,7 +635,6 @@ window.currentStream = currentStream;
 window.peerConnections = peerConnections;
 window.socket = socket;
 
-// ---------------- UPLOADED MEDIA HIGHLIGHTING ----------------
 // Highlight for uploaded-media
 document.addEventListener('click', function (e) {
     // Uploaded media
