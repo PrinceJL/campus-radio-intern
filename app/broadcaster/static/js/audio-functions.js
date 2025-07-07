@@ -332,6 +332,8 @@ audioA.addEventListener('ended', () => {
 
 
 
+
+
  //Functions to be added:
  //play current function
  //automatically load next song to deck b
