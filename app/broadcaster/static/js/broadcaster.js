@@ -635,6 +635,7 @@ window.currentStream = currentStream;
 window.peerConnections = peerConnections;
 window.socket = socket;
 
+// ---------------- UPLOADED MEDIA HIGHLIGHTING ----------------
 // Highlight for uploaded-media
 document.addEventListener('click', function (e) {
     // Uploaded media
@@ -648,3 +649,44 @@ document.addEventListener('click', function (e) {
         e.target.closest('.camera-card').classList.add('selected');
     }
 });
+
+function drawWaveform(canvas, audio, callback) {
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Use Web Audio API to decode and get waveform data
+    const audioCtx = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(1, 44100 * audio.duration, 44100);
+    fetch(audio.src)
+        .then(response => response.arrayBuffer())
+        .then(arrayBuffer => audioCtx.decodeAudioData(arrayBuffer))
+        .then(audioBuffer => {
+            const data = audioBuffer.getChannelData(0);
+            const step = Math.ceil(data.length / canvas.width);
+            const amp = canvas.height / 2;
+            ctx.strokeStyle = 'limegreen';
+            ctx.beginPath();
+            for (let i = 0; i < canvas.width; i++) {
+                let min = 1.0;
+                let max = -1.0;
+                for (let j = 0; j < step; j++) {
+                    const datum = data[(i * step) + j];
+                    if (datum < min) min = datum;
+                    if (datum > max) max = datum;
+                }
+                ctx.moveTo(i, (1 + min) * amp);
+                ctx.lineTo(i, (1 + max) * amp);
+            }
+            ctx.stroke();
+            // Call the callback after drawing is done
+            if (callback) callback();
+        });
+}
+
+audioA.onloadedmetadata = () => {
+    const waveformCanvas = document.getElementById('audio-visualizer');
+    drawWaveform(waveformCanvas, audioA, () => {
+        const waveformDataUrl = waveformCanvas.toDataURL();
+        console.log('Sending waveform image:', waveformDataUrl);
+        socket.emit('audio-waveform', { image: waveformDataUrl, duration: audioA.duration });
+    });
+};

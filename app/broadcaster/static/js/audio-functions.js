@@ -308,7 +308,17 @@ audioA.addEventListener('play', setupAudioVisualizer);
 audioA.addEventListener('pause', stopAudioVisualizer);
 audioA.addEventListener('ended', stopAudioVisualizer);
 
-
+audioA.addEventListener('ended', () => {
+  // Move to next in queue if available
+  if (currentIndex < audioQueue.length - 1) {
+    currentIndex++;
+    playCurrentAudio();
+  } else {
+    // Optionally reset or stop at end of queue
+    currentIndex = 0; // or -1 to stop
+    // audioA.pause(); // optional: stop playback
+  }
+});
 
 
 

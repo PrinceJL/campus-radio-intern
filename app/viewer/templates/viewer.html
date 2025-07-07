@@ -11,8 +11,11 @@
   </head>
   <body>
     <div id="video-container">
-      <video id="radio-stream" autoplay playsinline muted controls></video>
-      <div id="brb-standby"></div>
+        <video id="radio-stream" autoplay playsinline muted controls></video>
+        <canvas id="audio-visualizer" width="800" height="180" style="display:none;"></canvas>
+        <img id="waveform-img" style="display:none; position:absolute; left:0; bottom:60px; width:100vw; height:180px; z-index:20;" />
+        <div id="waveform-playhead" style="display:none; position:absolute; bottom:60px; width:2px; height:180px; background:red; z-index:21;"></div>
+        <div id="brb-standby"></div>
       <h1>Live Broadcast</h1>
       <button id="fullscreen-btn" class="viewer-icon-btn">
         <img src="{{ url_for('viewer.static', filename='asset/fullscreen.svg') }}" alt="Fullscreen" />
