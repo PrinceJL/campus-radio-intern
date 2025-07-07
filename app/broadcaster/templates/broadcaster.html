@@ -355,6 +355,10 @@
       type="module"
       src="{{ url_for('broadcaster.static', filename='js/broadcaster.js') }}"
     ></script>
+    <script
+      type="module"
+      src="{{ url_for('broadcaster.static', filename='js/schedule-function.js') }}"
+    ></script>
     <script>
       window.STATIC_ICON_PATH =
         "{{ url_for('broadcaster.static', filename='icon/') }}";
