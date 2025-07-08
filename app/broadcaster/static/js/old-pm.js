@@ -1,6 +1,8 @@
 import { generateVideoThumbnail, getVideoDuration } from './file-handler.js';
-import { videoPreview, switchToStream } from './broadcaster.js';
+import { videoPreview } from './media-elements.js';
+import { switchToStream } from './broadcaster.js';
 import { setActiveMedia } from './mediaManager.js';
+import { generateUUID } from './gen-ID.js';
 
 
 let playlistItems = [];
@@ -11,8 +13,6 @@ let currentPlaylistName = null;
 let activeMedia = null;  // this will be either audioA or videoPreview
 
 // UI buttons
-const btnLoop = document.querySelector('.ctrl-btn-msc.loop');
-const btnShuffle = document.querySelector('.ctrl-btn-msc.shuffle');
 
 /**
  * Toggle UI button states based on loop/shuffle modes
@@ -56,7 +56,7 @@ document.getElementById('btnPlayPause')?.addEventListener('click', () => {
   } else {
     videoPreview.pause();
   }
-}); 
+});
 
 // Set initial icon state on page load
 updatePlayPauseIcon();
@@ -67,7 +67,7 @@ updatePlayPauseIcon();
 export function queueVideo(name, url) {
   const normUrl = new URL(url, window.location.origin).pathname;
   const item = {
-    id: crypto.randomUUID(),
+    id: generateUUID,
     name,
     url: normUrl,
     duration: 0 // will be updated asynchronously
@@ -199,7 +199,7 @@ function createMediaBlock(name, url, index) {
 /**
  * Play the currently selected video
  */
-function playCurrent() {
+export function playCurrent() {
   if (currentIndex < 0 || currentIndex >= playlistItems.length) return;
 
   const { name, url } = playlistItems[currentIndex];
@@ -287,6 +287,9 @@ function clearPlaylist() {
  * Setup all playback control buttons
  */
 export function setupNowPlayingControls() {
+  const btnLoop = document.querySelector('.ctrl-btn-msc.loop');
+  const btnShuffle = document.querySelector('.ctrl-btn-msc.shuffle');
+
   document.querySelector('.ctrl-btn-msc.prev')?.addEventListener('click', () => {
     if (currentIndex > 0) {
       console.log("Press Previous");
@@ -397,7 +400,7 @@ export async function listAllPlaylists() {
 /**
  * Load a playlist and queue all items
  */
-async function loadPlaylist(name) {
+export async function loadPlaylist(name) {
   try {
     const res = await fetch(`/playlists/${name}`);
     const data = await res.json();
@@ -450,10 +453,15 @@ async function deletePlaylist(name) {
   }
 }
 
-export default {
-  queueVideo,
-  setupNowPlayingControls,
-  listAllPlaylists,
-  removeFromPlaylistByUrl,
-  updateModeButtons
-};
+function getAudioDuration(url, cb) {
+  const audio = document.createElement('audio');
+  audio.src = url;
+  audio.preload = 'metadata';
+  audio.onloadedmetadata = () => {
+    const duration = audio.duration;
+    const min = Math.floor(duration / 60);
+    const sec = Math.floor(duration % 60);
+    cb(`${min}:${String(sec).padStart(2, '0')}`);
+  };
+  audio.onerror = () => cb('0:00');
+}

@@ -1,7 +1,8 @@
-import { setupUploadManager } from './file-handler.js';
-import { setupNowPlayingControls, listAllPlaylists } from './playlist-manager.js';
+import { fileManager } from './file/file-manager.js';
+import { playlistManager } from './playlist-manager.js';
 import { setupNowPlayingControlsAudio } from './audio-functions.js';
 import { startSessionTimer, stopSessionTimer, incrementViewerCount, decrementViewerCount } from './stream-utils.js';
+import { audioPreview, videoPreview, cameraPreview } from './media-elements.js';
 
 let currentStream = null;
 let peerConnections = {};
@@ -22,23 +23,6 @@ const muteBtn = document.getElementById('muteStream');
 const startBtn = document.getElementById('startStream');
 const stopBtn = document.getElementById('stopStream');
 const statusDiv = document.getElementById('broadcast-status');
-
-export const cameraPreview = document.createElement('video');
-cameraPreview.autoplay = true;
-cameraPreview.muted = true;
-cameraPreview.playsInline = true;
-cameraPreview.style.width = "100%";
-cameraPreview.style.height = "100%";
-
-export const videoPreview = document.createElement('video');
-videoPreview.controls = true;
-videoPreview.autoplay = true;
-videoPreview.playsInline = true;
-videoPreview.style.width = "100%";
-videoPreview.style.height = "100%";
-
-export const audioA = document.createElement('audio');
-audioA.autoplay = true;
 
 const socket = io();
 
@@ -116,6 +100,7 @@ document.getElementById('cameraPlusBtn')?.addEventListener('click', async () => 
         });
     }
 });
+
 document.getElementById('microphonePlusBtn')?.addEventListener('click', async () => {
     console.log("[Broadcaster] Microphone plus button clicked");
 
@@ -191,14 +176,11 @@ document.getElementById('microphonePlusBtn')?.addEventListener('click', async ()
     }
 });
 
-
-
 document.addEventListener('DOMContentLoaded', async () => {
     setupNowPlayingControls();
     setupNowPlayingControlsAudio();
     listAllPlaylists();
     setupUploadManager();
-    setupThemeToggle();
 
     // Mount the video element in both containers
     const videoDiv = document.getElementById('video-preview-container');
@@ -367,6 +349,7 @@ function toggleVisibility(source) {
         cameraDiv.style.display = 'none';
     }
 }
+
 function addMicToSidebar(mic) {
     const container = document.querySelector('.microphone-list');
     if (!container) return;
@@ -412,7 +395,8 @@ function addMicToSidebar(mic) {
 
 
     updateCombinedMicStream(); // Combine stacked audio
-}async function updateCombinedMicStream() {
+}
+async function updateCombinedMicStream() {
     if (!audioContext || audioContext.state === 'closed') {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
     }
@@ -534,20 +518,6 @@ export function rebroadcastStreamFrom(videoEl) {
         videoPreview.play();
         switchToStream(stream);
     }
-}
-
-
-// ---------------- THEME TOGGLE ----------------
-function setupThemeToggle() {
-    const toggle = document.getElementById('themeToggle');
-    if (!toggle) return;
-    const saved = localStorage.getItem('theme');
-    if (saved === 'light') document.body.classList.add('light-mode');
-    toggle.onclick = () => {
-        const isLight = document.body.classList.toggle('light-mode');
-        localStorage.setItem('theme', isLight ? 'light' : 'dark');
-        toggle.textContent = isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode';
-    };
 }
 
 // ---------------- WEBRTC SIGNALING ----------------
@@ -682,11 +652,11 @@ function drawWaveform(canvas, audio, callback) {
         });
 }
 
-audioA.onloadedmetadata = () => {
+audioPreview.onloadedmetadata = () => {
     const waveformCanvas = document.getElementById('audio-visualizer');
-    drawWaveform(waveformCanvas, audioA, () => {
+    drawWaveform(waveformCanvas, audioPreview, () => {
         const waveformDataUrl = waveformCanvas.toDataURL();
         console.log('Sending waveform image:', waveformDataUrl);
-        socket.emit('audio-waveform', { image: waveformDataUrl, duration: audioA.duration });
+        socket.emit('audio-waveform', { image: waveformDataUrl, duration: audioPreview.duration });
     });
 };
