@@ -1,9 +1,7 @@
-import { setupUploadManager } from "./file-handler.js";
-import { audioA } from "./broadcaster.js";
-import { videoPreview, switchToStream } from './broadcaster.js';
-import { updatePlayPauseIcon } from "./playlist-manager.js";
+import { audioPreview, videoPreview, cameraPreview } from "./media-elements.js";
+import { switchToStream } from './broadcaster/stream-manager.js';
 import { setActiveMedia } from './mediaManager.js';
-setupUploadManager();
+import { generateUUID } from "./gen-ID.js";
 
 let analyser, dataArray, visualizerId; //audio visualizer variables
 let animationId;
@@ -11,12 +9,12 @@ let animationId;
 
 //Audio player
 const audioCtx = new (window.AudioContext ||window.webkitURL);
-const player = audioCtx.createMediaElementSource(audioA);
+const player = audioCtx.createMediaElementSource(audioPreview);
 player.connect(audioCtx.destination);
 
-audioA.addEventListener('play', () => {
+audioPreview.addEventListener('play', () => {
   console.log('[AUDIO] Audio started playing.');
-  setActiveMedia(audioA); 
+  setActiveMedia(audioPreview); 
 });
 //Music queue
 let currentIndex = 0;
@@ -43,9 +41,9 @@ export function setupNowPlayingControlsAudio() {
   });
 
   document.querySelector('.ctrl-btn-msc.pause')?.addEventListener('click', () => {
-    if (!audioA) return;
+    if (!audioPreview) return;
     console.log("Pause/Play Video");
-    audioA.paused ? audioA.play() : audioA.pause();
+    audioPreview.paused ? audioPreview.play() : audioPreview.pause();
   });
 
 
@@ -65,21 +63,18 @@ export function setupNowPlayingControlsAudio() {
 }
 
 //play and pause for audio
-updatePlayPauseIcon();
-audioA.addEventListener('play', () => {
-  activeMedia = audioA;
-  updatePlayPauseIcon(audioA);
+audioPreview.addEventListener('play', () => {
+  activeMedia = audioPreview;
 });
-audioA.addEventListener('pause', () => {
-  activeMedia = audioA;
-  updatePlayPauseIcon(audioA);
+audioPreview.addEventListener('pause', () => {
+  activeMedia = audioPreview;
 });
 
 document.getElementById('btnPlayPause')?.addEventListener('click', () => {
-  if (audioA.paused) {
-    audioA.play();
+  if (audioPreview.paused) {
+    audioPreview.play();
   } else {
-    audioA.pause();
+    audioPreview.pause();
   }
 });
 //there are two audio players: deck a and deck b.
@@ -87,7 +82,7 @@ document.getElementById('btnPlayPause')?.addEventListener('click', () => {
 
 export function queueAudio(name, url) {
   const normUrl = new URL(url, window.location.origin).pathname;
-  const item = { id: crypto.randomUUID(), name, url: normUrl };
+  const item = { id: generateUUID, name, url: normUrl };
   audioQueue.push(item);
   renderAudioPlaylist();
   console.log(audioQueue.map(item => item.name));
@@ -116,7 +111,7 @@ function renderAudioPlaylist() {
    
          // Recalculate currentIndex based on the video URL
          if (currentIndex !== -1) {
-           const currentUrl = audioA.src;
+           const currentUrl = audioPreview.src;
            const match = audioQueue.findIndex(item => currentUrl.includes(item.url));
            if (match !== -1) currentIndex = match;
          }
@@ -141,36 +136,36 @@ function playCurrentAudio() {
     // DO NOT clear innerHTML, just remove any previous audio element
     const oldAudio = audioPreview.querySelector('audio');
     if (oldAudio) oldAudio.remove();
-    audioPreview.appendChild(audioA);
+    audioPreview.appendChild(audioPreview);
   }
   if (videoPreview) videoPreview.style.display = 'none';
 
-  // Reset audioA
-  audioA.pause();
-  audioA.srcObject = null;
-  audioA.removeAttribute('src');
-  audioA.load();
-  audioA.src = url;
-  audioA.controls = true;
-  audioA.autoplay = true;
-  audioA.muted = false;
+  // Reset audioPreview
+  audioPreview.pause();
+  audioPreview.srcObject = null;
+  audioPreview.removeAttribute('src');
+  audioPreview.load();
+  audioPreview.src = url;
+  audioPreview.controls = true;
+  audioPreview.autoplay = true;
+  audioPreview.muted = false;
 
   // Resume AudioContext if needed
   if (audioCtx.state === "suspended") {
     audioCtx.resume();
   }
   // Bind capture logic
-  audioA.onplaying = () => {
+  audioPreview.onplaying = () => {
     console.log('[DBG] Audio started. Capturing stream...');
-    const stream = audioA.captureStream?.();
+    const stream = audioPreview.captureStream?.();
     if (stream) switchToStream(stream);
     else console.warn('[WARN] captureStream failed');
   };
 
   // Error/Metadata/End handlers
-  audioA.onerror = e => console.error('[Audio Error]', e);
-  audioA.onloadedmetadata = () => console.log('[Metadata] Duration:', audioA.duration);
-  audioA.onended = () => handleVideoEnd();
+  audioPreview.onerror = e => console.error('[Audio Error]', e);
+  audioPreview.onloadedmetadata = () => console.log('[Metadata] Duration:', audioPreview.duration);
+  audioPreview.onended = () => handleVideoEnd();
 
   // Show audio preview container, hide camera
   document.getElementById('audio-preview-container')?.style.setProperty('display', 'block');
@@ -185,7 +180,7 @@ function playCurrentAudio() {
   nowPlayingContent.appendChild(createAudioMediaBlock(name, url, currentIndex));
   nowPlayingBlock?.classList.add('playing');
 
-  audioA.play().catch(err => console.warn('[play()] error:', err));
+  audioPreview.play().catch(err => console.warn('[play()] error:', err));
 }
 
 function createAudioMediaBlock (name, url, index) {
@@ -304,9 +299,9 @@ function stopAudioVisualizer() {
 }
 
 // Start/stop visualizer on play/pause/ended
-audioA.addEventListener('play', setupAudioVisualizer);
-audioA.addEventListener('pause', stopAudioVisualizer);
-audioA.addEventListener('ended', stopAudioVisualizer);
+audioPreview.addEventListener('play', setupAudioVisualizer);
+audioPreview.addEventListener('pause', stopAudioVisualizer);
+audioPreview.addEventListener('ended', stopAudioVisualizer);
 
 
 
@@ -331,7 +326,7 @@ audioA.addEventListener('ended', stopAudioVisualizer);
 
 
  //DJ deck elements-need to be added first 
-// const audioA = document.getElementById('audioA');
+// const audioPreview = document.getElementById('audioPreview');
 // const audioB = document.getElementById('audioB');
 // const playPauseA = document.getElementById('playPauseA');
 // const playPauseB = document.getElementById('playPauseB');
@@ -349,11 +344,11 @@ audioA.addEventListener('ended', stopAudioVisualizer);
 //     if (playPauseButton.dataset.playing === "false") {
 //       playPauseButton.dataset.playing = "true";
 //       playPauseButton.innerHTML = 'Pause';
-//       audioA.play();
+//       audioPreview.play();
 //     } else if (playPauseButton.dataset.playing === "true") {
 //       playPauseButton.dataset.playing = "false";
 //       playPauseButton.innerHTML = 'Play';
-//       audioA.pause();
+//       audioPreview.pause();
 //     }
 //       console.log(musicQueueIndex);
 //     let state = 
@@ -388,7 +383,7 @@ audioA.addEventListener('ended', stopAudioVisualizer);
 
 // // Volume Control
 // volumeA.addEventListener('input', () => {
-//   audioA.volume = volumeA.value;
+//   audioPreview.volume = volumeA.value;
 // });
 
 // volumeB.addEventListener('input', () => {
@@ -397,7 +392,7 @@ audioA.addEventListener('ended', stopAudioVisualizer);
 
 // // Crossfade Control- change implementation
 // crossfader.addEventListener('input', () => {
-//   audioA.volume = 1 - crossfader.value;
+//   audioPreview.volume = 1 - crossfader.value;
 //   audioB.volume = crossfader.value;
 // });
 
