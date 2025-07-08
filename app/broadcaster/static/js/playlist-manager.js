@@ -1,11 +1,14 @@
 import { generateVideoThumbnail, getVideoDuration } from './file-handler.js';
 import { videoPreview, switchToStream } from './broadcaster.js';
+import { setActiveMedia } from './mediaManager.js';
+
 
 let playlistItems = [];
 let currentIndex = -1;
 let loopMode = false;
 let shuffleMode = false;
 let currentPlaylistName = null;
+let activeMedia = null;  // this will be either audioA or videoPreview
 
 // UI buttons
 const btnLoop = document.querySelector('.ctrl-btn-msc.loop');
@@ -14,15 +17,20 @@ const btnShuffle = document.querySelector('.ctrl-btn-msc.shuffle');
 /**
  * Toggle UI button states based on loop/shuffle modes
  */
-function updateModeButtons() {
+export function updateModeButtons() {
   btnLoop?.classList.toggle('active', loopMode);
   btnShuffle?.classList.toggle('active', shuffleMode);
 }
 
-function updatePlayPauseIcon() {
+videoPreview.addEventListener('play', () => {
+  console.log('[VIDEO] Video started playing.');
+  setActiveMedia(videoPreview);
+});
+
+export function updatePlayPauseIcon(mediaElement) {
   const icon = document.getElementById('playPauseIcon');
-  if (!icon) return;
-  if (videoPreview.paused) {
+  if (!icon || !mediaElement) return;
+  if (mediaElement.paused) {
     icon.src = '/broadcaster/static/icon/play.png';
     icon.alt = 'Play';
   } else {
@@ -32,8 +40,14 @@ function updatePlayPauseIcon() {
 }
 
 // Attach event listeners to update icon on play/pause
-videoPreview.addEventListener('play', updatePlayPauseIcon);
-videoPreview.addEventListener('pause', updatePlayPauseIcon);
+videoPreview.addEventListener('play', () => {
+  activeMedia = videoPreview;
+  updatePlayPauseIcon(videoPreview);
+});
+videoPreview.addEventListener('pause', () => {
+  activeMedia = videoPreview;
+  updatePlayPauseIcon(videoPreview);
+});
 
 // Play/pause toggle on button click
 document.getElementById('btnPlayPause')?.addEventListener('click', () => {
@@ -42,7 +56,7 @@ document.getElementById('btnPlayPause')?.addEventListener('click', () => {
   } else {
     videoPreview.pause();
   }
-});
+}); 
 
 // Set initial icon state on page load
 updatePlayPauseIcon();
@@ -217,6 +231,7 @@ function playCurrent() {
   // Show video preview container, hide camera
   document.getElementById('video-preview-container')?.style.setProperty('display', 'block');
   document.getElementById('camera-preview-container')?.style.setProperty('display', 'none');
+  document.getElementById('audio-preview-container')?.style.setProperty('display', 'none');
 
   const videoMount = document.getElementById('video-preview-container');
   if (videoMount) {
@@ -259,7 +274,7 @@ function handleVideoEnd() {
 /**
  * Clear playlist and reset UI
  */
-export function clearPlaylist() {
+function clearPlaylist() {
   playlistItems = [];
   currentIndex = -1;
   currentPlaylistName = null;
@@ -435,3 +450,10 @@ async function deletePlaylist(name) {
   }
 }
 
+export default {
+  queueVideo,
+  setupNowPlayingControls,
+  listAllPlaylists,
+  removeFromPlaylistByUrl,
+  updateModeButtons
+};

@@ -11,6 +11,8 @@ services:
       - MONGO_URI=mongodb://mongo:27017/campus_radio
     depends_on:
       - mongo
+    env_file:
+      - .env
 
   mongo:
     image: mongo:latest
