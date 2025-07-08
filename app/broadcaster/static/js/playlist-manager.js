@@ -199,7 +199,7 @@ function createMediaBlock(name, url, index) {
 /**
  * Play the currently selected video
  */
-function playCurrent() {
+export function playCurrent() {
   if (currentIndex < 0 || currentIndex >= playlistItems.length) return;
 
   const { name, url } = playlistItems[currentIndex];
@@ -397,7 +397,7 @@ export async function listAllPlaylists() {
 /**
  * Load a playlist and queue all items
  */
-async function loadPlaylist(name) {
+export async function loadPlaylist(name) {
   try {
     const res = await fetch(`/playlists/${name}`);
     const data = await res.json();
@@ -455,5 +455,7 @@ export default {
   setupNowPlayingControls,
   listAllPlaylists,
   removeFromPlaylistByUrl,
-  updateModeButtons
+  updateModeButtons,
+  loadPlaylist,
+  playCurrent
 };
