@@ -8,6 +8,9 @@ setupUploadManager();
 let analyser, dataArray, visualizerId; //audio visualizer variables
 let animationId;
 
+//UI elements
+const nowPlayingContent = document.querySelector('.now-playing-content');
+const nowPlayingBlock = document.querySelector('.now-playing-block');
 
 //Audio player
 const audioCtx = new (window.AudioContext ||window.webkitURL);
@@ -18,6 +21,7 @@ audioA.addEventListener('play', () => {
   console.log('[AUDIO] Audio started playing.');
   setActiveMedia(audioA); 
 });
+
 //Music queue
 let currentIndex = 0;
 let audioQueue = [];
@@ -48,20 +52,19 @@ export function setupNowPlayingControlsAudio() {
     audioA.paused ? audioA.play() : audioA.pause();
   });
 
+  btnLoop?.addEventListener('click', () => {
+    console.log("Toggle Loop Mode");
+    loopMode = !loopMode;
+    shuffleMode = false;
+    updateModeButtons();
+  });
 
-  // btnLoop?.addEventListener('click', () => {
-  //   console.log("Toggle Loop Mode");
-  //   loopMode = !loopMode;
-  //   shuffleMode = false;
-  //   updateModeButtons();
-  // });
-
-  // btnShuffle?.addEventListener('click', () => {
-  //   console.log("Toggle Shuffle Mode");
-  //   shuffleMode = !shuffleMode;
-  //   loopMode = false;
-  //   updateModeButtons();
-  // });
+  btnShuffle?.addEventListener('click', () => {
+    console.log("Toggle Shuffle Mode");
+    shuffleMode = !shuffleMode;
+    loopMode = false;
+    updateModeButtons();
+  });
 }
 
 //play and pause for audio
@@ -170,7 +173,7 @@ function playCurrentAudio() {
   // Error/Metadata/End handlers
   audioA.onerror = e => console.error('[Audio Error]', e);
   audioA.onloadedmetadata = () => console.log('[Metadata] Duration:', audioA.duration);
-  audioA.onended = () => handleVideoEnd();
+  audioA.onended = () => handleAudioEnd();
 
   // Show audio preview container, hide camera
   document.getElementById('audio-preview-container')?.style.setProperty('display', 'block');
@@ -179,8 +182,6 @@ function playCurrentAudio() {
   // No need to clear and recreate the canvas here!
 
   // Update now-playing UI
-  const nowPlayingContent = document.querySelector('.now-playing-content');
-  const nowPlayingBlock = document.querySelector('.now-playing-block');
   nowPlayingContent.innerHTML = '';
   nowPlayingContent.appendChild(createAudioMediaBlock(name, url, currentIndex));
   nowPlayingBlock?.classList.add('playing');
@@ -227,16 +228,27 @@ function createAudioMediaBlock (name, url, index) {
   delBtn.innerHTML = `<img src="${window.STATIC_ICON_PATH}close.png" alt="Delete" style="width:11px;height:11px;vertical-align:middle;">`;
   delBtn.onclick = (e) => {
     e.stopPropagation();
+    nowPlayingContent.innerHTML = '';
     audioQueue.splice(index, 1);
     if (currentIndex >= audioQueue.length) currentIndex = audioQueue.length - 1;
     renderAudioPlaylist();
   };
-  rightSide.appendChild(delBtn);
 
+  rightSide.appendChild(delBtn);
   block.append(mediaInfo, rightSide);
   block.onclick = () => {
     currentIndex = index;
     playCurrentAudio();
+    const isAlreadyInNowPlaying = Array.from(nowPlayingContent.children).some(child => {
+    return child.dataset.url === url; 
+  });
+  console.log(isAlreadyInNowPlaying);
+  // Only remove from queue if it's not already in nowPlayingContent
+  if (!isAlreadyInNowPlaying) {
+    audioQueue.splice(index, 1);
+    if (currentIndex >= audioQueue.length) currentIndex = audioQueue.length - 1;
+    renderAudioPlaylist();
+  }
   };
 
   return block;
@@ -296,6 +308,24 @@ function setupAudioVisualizer() {
 
   draw();
 }
+
+function handleAudioEnd() {
+  if (loopMode) return videoPreview.play();
+
+  if (shuffleMode) {
+    let next;
+    do next = Math.floor(Math.random() * playlistItems.length);
+    while (next === currentIndex);
+    currentIndex = next;
+    playCurrent();
+  } else if (currentIndex < playlistItems.length - 1) {
+    currentIndex++;
+    playCurrent();
+  } else {
+    currentIndex = -1;
+  }
+}
+
 
 function stopAudioVisualizer() {
   if (animationId) cancelAnimationFrame(animationId);
