@@ -64,10 +64,22 @@ updatePlayPauseIcon();
 /**
  * Add a new video to the queue and update playlist view
  */
+export function generateUUID() {
+  if (window.crypto?.randomUUID) {
+    return crypto.randomUUID();
+  }
+  // Fallback if crypto.randomUUID() is not available
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
 export function queueVideo(name, url) {
   const normUrl = new URL(url, window.location.origin).pathname;
   const item = {
-    id: crypto.randomUUID(),
+    id: generateUUID,
     name,
     url: normUrl,
     duration: 0 // will be updated asynchronously
