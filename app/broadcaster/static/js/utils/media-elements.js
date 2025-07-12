@@ -1,6 +1,12 @@
 export const audioPreview = document.createElement('audio');
 audioPreview.autoplay = true;
 
+export const audioA = document.createElement('audio');
+audioPreview.autoplay = true;
+
+export const audioB = document.createElement('audio');
+audioPreview.autoplay = true;
+
 export const videoPreview = document.createElement('video');
 videoPreview.controls = true;
 videoPreview.autoplay = true;

@@ -166,15 +166,9 @@ function playCurrentAudio() {
   };
 
   // Error/Metadata/End handlers
-<<<<<<< HEAD:app/broadcaster/static/js/audio-functions.js
   audioA.onerror = e => console.error('[Audio Error]', e);
   audioA.onloadedmetadata = () => console.log('[Metadata] Duration:', audioA.duration);
   audioA.onended = () => handleAudioEnd();
-=======
-  audioPreview.onerror = e => console.error('[Audio Error]', e);
-  audioPreview.onloadedmetadata = () => console.log('[Metadata] Duration:', audioPreview.duration);
-  audioPreview.onended = () => handleVideoEnd();
->>>>>>> cd8ee911b2207e429558d2734597bb0b64dbe769:app/broadcaster/static/js/old-af.js
 
   // Show audio preview container, hide camera
   document.getElementById('audio-preview-container')?.style.setProperty('display', 'block');
