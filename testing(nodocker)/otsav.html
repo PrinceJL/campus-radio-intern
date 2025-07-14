@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CheerSL</title>
+  <link rel="stylesheet" href="ots-style.css" />
+</head>
+<body>
+  <!-- top bar -->
+  <div class="top-bar">
+    <div class="logo">CheerSL</div>
+    <div class="playing">Now Playing: </div>
+    <div class="time" id="clock">12:00:00</div>
+  </div>
+
+  <!-- mixer section -->
+  <section class="mixer">
+    <!-- Deck A -->
+    <div class="deck" id="deckA">
+      <div class="deck-header"><span>Deck A</span><span id="aTime">00:00</span></div>
+      <div class="track-info" id="aTrack">No track loaded</div>
+      <div class="vu"></div>
+      <audio id="audioA" preload="none"></audio>
+      <button onclick="loadTrack('A')">Load Track</button>
+      <button onclick="playPause('A')">Play/Pause</button>
+    </div>
+
+    <!-- Crossfader -->
+    <div class="xfader-wrapper">
+      <input type="range" min="0" max="100" value="50" class="xfader" id="xfader" />
+    </div>
+
+    <!-- Deck B -->
+    <div class="deck" id="deckB">
+      <div class="deck-header"><span>Deck B</span><span id="bTime">00:00</span></div>
+      <div class="track-info" id="bTrack">No track loaded</div>
+      <div class="vu"></div>
+      <audio id="audioB" preload="none"></audio>
+      <button onclick="loadTrack('B')">Load Track</button>
+      <button onclick="playPause('B')">Play/Pause</button>
+    </div>
+  </section>
+
+  <!-- Moving waveform visualization -->
+  <div class="wave"></div>
+
+  <!-- playlist/library -->
+  <div class="bottom">
+    <div class="playlist">
+      <h3>Playlist</h3>
+      <table>
+        <thead>
+          <tr><th>#</th><th>Title</th><th>Artist</th><th>Length</th></tr>
+        </thead>
+        <tbody id="playlistBody"></tbody>
+      </table>
+    </div>
+  </div>
+    <script src="ots-script.js"></script>
+</body>
+</html>
