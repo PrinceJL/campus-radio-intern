@@ -1,11 +1,4 @@
 Revamp Campus Radio
 
-GAWIN MO TO BRENT       
-//TODO
-// MAKE THE MICROPHONE DETECT THE MICROPHONE ON DEVICE
-// EDIT SOME UI TO MAKE IT BETTER
-// LIVE INDICATION
-// STRREAM MANAGER FUNCTIONALITY
-// FOOTER API
-// STREAM SCHEDULING
-// Add play button
+CREATE .env file in the root before running docker-compose
+Docker will automatically generate the secret key.

@@ -1,6 +1,7 @@
-app/uploads/
-app/__pycache__/
-app/broadcaster/__pycache__/
-app/views/__pycache__/
-app/broadcaster/static/js/__pycache__/
+src/uploads/
+src/__pycache__/
+src/broadcaster/__pycache__/
+src/viewer/__pycache__/
+src/broadcaster/static/js/__pycache__/
+src/blueprints/__pycache__/
 .env

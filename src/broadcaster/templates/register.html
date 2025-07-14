@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register | Campus Radio</title>
+  <link rel="stylesheet" href="{{ url_for('broadcaster.static', filename='styles/login-styles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('broadcaster.static', filename='styles/register.css') }}">
+</head>
+<body>
+  <div class="container">
+    <div class="login-wrapper">
+      <div class="image-section">
+        <img
+          src="{{ url_for('broadcaster.static', filename='icon/cheer-login.jpg') }}"
+          alt="SLU/CHEERS Logo"
+          class="background-img"
+        />
+        <img
+          src="{{ url_for('broadcaster.static', filename='icon/cheer-logo.png') }}"
+          alt="SLU/CHEER Logo"
+          class="logo-overlay"
+        />
+      </div>
+      <div class="register-container">
+        <h2>Create an Account</h2>
+        <form method="POST" action="{{ url_for('auth.register') }}">
+          <input type="text" name="username" placeholder="Username" required />
+          <input type="email" name="email" placeholder="Email" required />
+          <input type="password" name="password" placeholder="Password" required />
+          <button type="submit">Register</button>
+        </form>
+        <p>Already have an account? <a href="{{ url_for('auth.login') }}">Login here</a>.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

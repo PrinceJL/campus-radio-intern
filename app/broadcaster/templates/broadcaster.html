@@ -4,12 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CheerSL</title>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('broadcaster.static', filename='styles/broadcaster.css') }}"
-    />
+    <link rel="stylesheet" href="{{ url_for('broadcaster.static', filename='styles/broadcaster.css') }}"/>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-    <!-- DEBUG: {{ url_for('broadcaster.static', filename='js/playlist-manager.js') }} -->
   </head>
   <body>
     <div class="main-header">
@@ -160,7 +156,7 @@
                 </div>
                 <!-- injected media block -->
                 <div class="now-playing-controls">
-                  <button id="btnShuffle" class="ctrl-btn-msc mode-btn">
+                  <button class="ctrl-btn-msc shuffle" id="btnShuffle">
                     <img
                       src="{{ url_for('broadcaster.static', filename='icon/shuffle.png') }}"
                       alt="Shuffle"
@@ -189,7 +185,7 @@
                       style="height: 18px; width: 18px; vertical-align: middle"
                     />
                   </button>
-                  <button id="btnLoop" class="ctrl-btn-msc mode-btn">
+                  <button id="btnLoop" class="ctrl-btn-msc loop">
                     <img
                       src="{{ url_for('broadcaster.static', filename='icon/loop.png') }}"
                       alt="Loop"
@@ -343,18 +339,16 @@
     </div>
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    
     <script
       type="module"
-      src="{{ url_for('broadcaster.static', filename='js/playlist-manager.js') }}"
+      src="{{ url_for('broadcaster.static', filename='js/broadcaster/broadcaster.js') }}"
     ></script>
     <script
       type="module"
-      src="{{ url_for('broadcaster.static', filename='js/file-handler.js') }}"
+      src="{{ url_for('broadcaster.static', filename='js/broadcaster/camera-manager.js') }}"
     ></script>
-    <script
-      type="module"
-      src="{{ url_for('broadcaster.static', filename='js/broadcaster.js') }}"
-    ></script>
+  
     <script
       type="module"
       src="{{ url_for('broadcaster.static', filename='js/schedule-function.js') }}"
