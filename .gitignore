@@ -5,3 +5,4 @@ src/viewer/__pycache__/
 src/broadcaster/static/js/__pycache__/
 src/blueprints/__pycache__/
 .env
+cheersslkey.pem
