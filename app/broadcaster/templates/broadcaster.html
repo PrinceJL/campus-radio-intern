@@ -4,8 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CheerSL</title>
-    <link rel="stylesheet" href="{{ url_for('broadcaster.static', filename='styles/broadcaster.css') }}"/>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('broadcaster.static', filename='styles/broadcaster.css') }}"
+    />
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <!-- DEBUG: {{ url_for('broadcaster.static', filename='js/playlist-manager.js') }} -->
   </head>
   <body>
     <div class="main-header">
@@ -14,7 +18,7 @@
         alt="CheerSL Logo"
         class="header-logo"
       />
-      <span>Welcome, {{ session.name }}</span>
+      <span class="main-header-text">Welcome, {{ session.name }}</span>
       <a href="{{ url_for('auth.logout') }}" class="btn-logout">Logout</a>
     </div>
     <div class="app-grid">
@@ -156,7 +160,7 @@
                 </div>
                 <!-- injected media block -->
                 <div class="now-playing-controls">
-                  <button class="ctrl-btn-msc shuffle" id="btnShuffle">
+                  <button id="btnLoop" class="ctrl-btn-msc mode-btn">
                     <img
                       src="{{ url_for('broadcaster.static', filename='icon/shuffle.png') }}"
                       alt="Shuffle"
@@ -185,7 +189,7 @@
                       style="height: 18px; width: 18px; vertical-align: middle"
                     />
                   </button>
-                  <button id="btnLoop" class="ctrl-btn-msc loop">
+                  <button id="btnShuffle" class="ctrl-btn-msc mode-btn">
                     <img
                       src="{{ url_for('broadcaster.static', filename='icon/loop.png') }}"
                       alt="Loop"
@@ -220,53 +224,47 @@
               <div id="playlistTotalDuration" class="playlist-duration-summary">🕒 Total Duration: 0:00</div>
             </div>
             <!-- Video Playlist -->
-            <div class="section-label-playlist">
-              Video Playlist
-              <span class="section-icons">
-                <button
-                  id="savePlaylistBtn-video"
-                  class="icon-btn-plus"
-                  title="Save Playlist"
-                >
-                  <img
-                    src="{{ url_for('broadcaster.static', filename='icon/plus.png') }}"
-                    alt="Add"
-                  />
-                </button>
-                <img
-                  src="{{ url_for('broadcaster.static', filename='icon/drop-down.png') }}"
-                  alt="Dropdown"
-                  class="icon-btn"
-                />
-              </span>
-            </div>
-            <div class="your-playlist">
-              <div class="playlist-group"></div>
-            </div>
+            <div class="player-card">
+              <div class="section-label-playlist">
+                Video Playlist
+                <span class="section-icons">
+                  <button
+                    id="savePlaylistBtn-video"
+                    class="icon-btn-plus-blue"
+                    title="Save Playlist"
+                  >
+                    <img
+                      src="{{ url_for('broadcaster.static', filename='icon/plus-blue.png') }}"
+                      alt="Add"
+                    />
+                  </button>
+                </span>
+              </div>
+              <div class="your-playlist">
+                <div class="playlist-group"></div>
+              </div>
+            </div>  
 
             <!-- Audio Playlist -->
-            <div class="section-label-playlist">
-              Audio Playlist
-              <span class="section-icons">
-                <button
-                  id="savePlaylistBtn-audio"
-                  class="icon-btn-plus"
-                  title="Save Playlist"
-                >
-                  <img
-                    src="{{ url_for('broadcaster.static', filename='icon/plus.png') }}"
-                    alt="Add"
-                  />
-                </button>
-                <img
-                  src="{{ url_for('broadcaster.static', filename='icon/drop-down.png') }}"
-                  alt="Dropdown"
-                  class="icon-btn"
-                />
-              </span>
-            </div>
-            <div class="audio-your-playlist">
-              <div class="audio-playlist-group"></div>
+            <div class="player-card">
+              <div class="section-label-playlist">
+                Audio Playlist
+                <span class="section-icons">
+                  <button
+                    id="savePlaylistBtn-audio"
+                    class="icon-btn-plus-blue"
+                    title="Save Playlist"
+                  >
+                    <img
+                      src="{{ url_for('broadcaster.static', filename='icon/plus-blue.png') }}"
+                      alt="Add"
+                    />
+                  </button>
+                </span>
+              </div>
+              <div class="audio-your-playlist">
+                <div class="audio-playlist-group"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -339,19 +337,17 @@
     </div>
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-    
     <script
       type="module"
-      src="{{ url_for('broadcaster.static', filename='js/broadcaster/broadcaster.js') }}"
+      src="{{ url_for('broadcaster.static', filename='js/playlist-manager.js') }}"
     ></script>
     <script
       type="module"
-      src="{{ url_for('broadcaster.static', filename='js/broadcaster/camera-manager.js') }}"
+      src="{{ url_for('broadcaster.static', filename='js/file-handler.js') }}"
     ></script>
-  
     <script
       type="module"
-      src="{{ url_for('broadcaster.static', filename='js/schedule-function.js') }}"
+      src="{{ url_for('broadcaster.static', filename='js/broadcaster.js') }}"
     ></script>
     <script>
       window.STATIC_ICON_PATH =
