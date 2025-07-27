@@ -6,7 +6,12 @@ let sourceNode = null;
 let dataArray = null;
 let animationId = null;
 
-export function setupAudioVisualizer() {
+export function setupAudioVisualizer(audioElement = audioPreview) {
+    if (!audioElement) {
+        console.warn('[Visualizer] No audio element provided.');
+        return;
+    }
+
     let canvas = document.getElementById('audio-visualizer');
     if (!canvas) {
         const container = document.getElementById('audio-preview-container');
@@ -30,24 +35,26 @@ export function setupAudioVisualizer() {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     }
 
-    if (!sourceNode) {
-        try {
-            sourceNode = audioCtx.createMediaElementSource(audioPreview);
-        } catch (e) {
-            console.warn("[Visualizer] SourceNode already exists. Skipping re-creation.");
-            return;
+    // Always create a new source node to match the current deck
+    try {
+        if (sourceNode) {
+            sourceNode.disconnect();
         }
+        sourceNode = audioCtx.createMediaElementSource(audioElement);
+    } catch (e) {
+        console.warn("[Visualizer] Failed to create sourceNode:", e);
+        return;
     }
 
     if (!analyser) {
         analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 128;
-        dataArray = new Uint8Array(analyser.frequencyBinCount);
-
-        // Connect only once
-        sourceNode.connect(analyser);
-        analyser.connect(audioCtx.destination);
     }
+
+    analyser.fftSize = 128;
+    dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+    sourceNode.connect(analyser);
+    analyser.connect(audioCtx.destination); // Optional: skip if you don’t want sound from analyzer path
 
     function draw() {
         animationId = requestAnimationFrame(draw);
@@ -74,6 +81,21 @@ export function stopAudioVisualizer() {
     if (animationId) {
         cancelAnimationFrame(animationId);
         animationId = null;
+    }
+
+    if (sourceNode) {
+        sourceNode.disconnect();
+        sourceNode = null;
+    }
+
+    if (analyser) {
+        analyser.disconnect();
+        analyser = null;
+    }
+
+    if (audioCtx) {
+        audioCtx.close();
+        audioCtx = null;
     }
 
     const canvas = document.getElementById('audio-visualizer');

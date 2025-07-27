@@ -1,4 +1,4 @@
-import { cameraPreview,audioPreview, videoPreview } from '../utils/media-elements.js';
+import { cameraPreview, audioPreview, videoPreview } from '../utils/media-elements.js';
 import { notifyBroadcaster, stopWebRTC } from './webrtc-handler.js';
 
 let currentStream = null;
@@ -33,6 +33,7 @@ export function setMicStream(micStream) {
 
 
 export function startStream(socket, startSessionTimer) {
+    console.log("Audio Track: ", currentStream.getAudioTracks());
     if (!currentStream || currentStream.getTracks().length === 0) {
         return alert("Nothing to stream.");
     }
@@ -72,7 +73,10 @@ export async function switchToStream(stream) {
         currentStream.getTracks().forEach(track => track.stop());
     }
 
-    currentStream = new MediaStream(stream.getVideoTracks()); // Only take video initially
+    currentStream = new MediaStream([
+        ...stream.getVideoTracks(),
+        ...stream.getAudioTracks()
+    ]);
 
     // Reattach mic audio tracks (if any)
     if (currentMicStream) {

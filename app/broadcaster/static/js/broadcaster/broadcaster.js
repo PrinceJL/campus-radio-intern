@@ -2,7 +2,6 @@ import { fileManager } from '../file/file-manager.js';
 import { playlistManager } from '../playlist/playlist-manager.js';
 import { audioPreview, videoPreview, cameraPreview } from '../utils/media-elements.js';
 import { setupAudioVisualizer, stopAudioVisualizer } from './waveform-visualizer.js';
-import { AudioVisualizer } from '../utils/audio-visualizer.js';
 
 import { showMicSelectionPanel } from './mic-manager.js';
 import { showCameraSelectionPanel } from './camera-manager.js';
@@ -29,8 +28,6 @@ const createPlaylist = document.getElementById('savePlaylistBtn');
 const socket = io();
 
 document.addEventListener('DOMContentLoaded', async () => {
-
-
     // --- Initialize modules ---
     fileManager.setup();
     playlistManager.render();
@@ -148,8 +145,6 @@ window.onbeforeunload = () => {
 
 // --- Audio Preview ---
 audioPreview.addEventListener('play', () => {
-    console.log("[Visualizer] Starting live waveform");
-    setupAudioVisualizer();
     // const vuContainer = document.getElementById("vu-meter-container");
     // const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     // try {

@@ -1,7 +1,7 @@
 import { switchToStream } from '../broadcaster/stream-manager.js';
 import { updateNowPlaying } from './playlist-ui.js';
 import { videoPreview, audioPreview, audioA, audioB } from '../utils/media-elements.js';
-import { stopAudioVisualizer } from '../broadcaster/waveform-visualizer.js';
+import { stopAudioVisualizer, setupAudioVisualizer } from '../broadcaster/waveform-visualizer.js';
 
 let currentDeck = audioA;
 let lastDeck = null;
@@ -44,9 +44,11 @@ export function playMediaItem(item, onEnd) {
     audioPreview.pause();
     audioPreview.src = '';
     audioPreview.load();
+
   }
 
   if (/(mp4|webm|avi|mov)/.test(ext) && videoPreview) {
+    audioA.pause();
     videoPreview.src = item.url;
     videoPreview.controls = true;
     videoPreview.autoplay = true;
@@ -73,74 +75,77 @@ export function playMediaItem(item, onEnd) {
   }
 
   if (/(mp3|wav|ogg|aac|flac|m4a)/.test(ext)) {
-    console.log('[playMediaItem] Detected audio file');
+    stopAudioVisualizer();
 
     const nextDeck = currentDeck === audioA ? audioB : audioA;
     const prevDeck = currentDeck;
 
     console.log('[Crossfade] Switching to:', nextDeck === audioA ? 'audioA' : 'audioB');
 
-    // Set up next deck
+    // Prep nextDeck before mounting
+    nextDeck.pause();
     nextDeck.src = item.url;
     nextDeck.volume = 0;
     nextDeck.muted = false;
-    nextDeck.autoplay = true;
 
     nextDeck.onplaying = () => {
       console.log('[Crossfade] Next deck is playing');
 
       const stream = nextDeck.captureStream?.();
-      if (stream) switchToStream(stream);
-      else console.warn('[Crossfade] captureStream failed');
+      if (stream) {
+        audioPreview.srcObject = stream;
+        audioPreview.muted = true;
+        audioPreview.play().catch(err => console.warn('[audioPreview.play()] error:', err));
+        switchToStream(stream);
+        setupAudioVisualizer(nextDeck);
+      } else {
+        console.warn('[Crossfade] captureStream failed');
+      }
 
-      // Fade volumes
       fadeVolume(nextDeck, 0, 1, crossfadeDuration);
       if (prevDeck) {
         fadeVolume(prevDeck, 1, 0, crossfadeDuration, () => {
           prevDeck.pause();
           prevDeck.currentTime = 0;
+          prevDeck.src = '';
         });
       }
-      
     };
 
     nextDeck.onended = () => onEnd?.();
-    nextDeck.onerror = (e) => console.error('[Audio Error]', e);
 
-    // Mount both decks if not already mounted
+    // Mount required elements BEFORE playing
     const container = document.getElementById('audio-preview-container');
-    if (!audioA.parentNode) container.appendChild(audioA);
-    if (!audioB.parentNode) container.appendChild(audioB);
+    const visualizer = document.getElementById('audio-visualizer');
 
-    document.getElementById('audio-preview-container').style.display = 'block';
+    container.style.display = 'block';
     document.getElementById('video-preview-container').style.display = 'none';
     document.getElementById('camera-preview-container').style.display = 'none';
 
-    // Play new deck
+    // Clear and re-mount
+    container.innerHTML = '';
+    if (visualizer) container.appendChild(visualizer);
+    container.appendChild(audioPreview);
+    container.appendChild(audioA);
+    container.appendChild(audioB);
+
+    // Set deck visibility
+    audioA.style.display = (nextDeck === audioA) ? 'block' : 'none';
+    audioB.style.display = (nextDeck === audioB) ? 'block' : 'none';
+    audioPreview.style.display = 'block';
+
+    // Only now, call play
     nextDeck.play()
       .then(() => console.log('[Crossfade] nextDeck.play() success'))
       .catch(err => console.warn('[Crossfade play()] error:', err));
 
     updateNowPlaying(item);
 
-    // Track deck state
     lastDeck = prevDeck;
     currentDeck = nextDeck;
-
-    // Debug info
-    console.log('[DEBUG] audioA:', {
-      volume: audioA.volume,
-      paused: audioA.paused,
-      src: audioA.src
-    });
-    console.log('[DEBUG] audioB:', {
-      volume: audioB.volume,
-      paused: audioB.paused,
-      src: audioB.src
-    });
-
     return;
   }
 
-  console.warn('[playMediaItem] Not a supported media type');
+
+  console.warn('[playMediaItem] Unsupported media type');
 }
