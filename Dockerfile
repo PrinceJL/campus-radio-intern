@@ -13,5 +13,5 @@ COPY app/ ./
 
 EXPOSE 8080
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["./entrypoint.sh"]
 CMD ["python", "app/main.py"]

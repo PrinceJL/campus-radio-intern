@@ -1,4 +1,4 @@
-import { cameraPreview } from '../utils/media-elements.js';
+import { cameraPreview,audioPreview, videoPreview } from '../utils/media-elements.js';
 import { notifyBroadcaster, stopWebRTC } from './webrtc-handler.js';
 
 let currentStream = null;
@@ -17,15 +17,31 @@ export function getCurrentStream() {
 
 export function setMicStream(micStream) {
     currentMicStream = micStream;
+
     if (currentStream) {
-        currentStream.getAudioTracks().forEach(t => currentStream.removeTrack(t));
-        const micTrack = micStream.getAudioTracks()[0];
-        if (micTrack) currentStream.addTrack(micTrack);
+        // Remove all existing audio tracks
+        currentStream.getAudioTracks().forEach(track => {
+            currentStream.removeTrack(track);
+        });
+
+        // Add all audio tracks from micStream
+        micStream.getAudioTracks().forEach(track => {
+            currentStream.addTrack(track);
+        });
     }
 }
 
+
 export function startStream(socket, startSessionTimer) {
-    if (!currentStream) return alert("Nothing to stream.");
+    if (!currentStream || currentStream.getTracks().length === 0) {
+        return alert("Nothing to stream.");
+    }
+    // Debug: confirm mic presence
+    const audioTracks = currentStream.getAudioTracks();
+    if (audioTracks.length === 0) {
+        console.warn("[WARN] Starting stream with no audio tracks.");
+    }
+
     socket.emit('broadcaster');
     isStreaming = true;
     startSessionTimer?.();
@@ -52,16 +68,20 @@ export function muteStream(applyToCurrent = true) {
 }
 
 export async function switchToStream(stream) {
-    if (currentStream) currentStream.getTracks().forEach(track => track.stop());
-    currentStream = stream;
-
-    if (currentMicStream) {
-        const micTrack = currentMicStream.getAudioTracks()[0];
-        if (micTrack) currentStream.addTrack(micTrack);
+    if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
     }
 
-    cameraPreview.srcObject = null;
-    cameraPreview.srcObject = stream;
+    currentStream = new MediaStream(stream.getVideoTracks()); // Only take video initially
+
+    // Reattach mic audio tracks (if any)
+    if (currentMicStream) {
+        currentMicStream.getAudioTracks().forEach(track => {
+            currentStream.addTrack(track);
+        });
+    }
+
+    cameraPreview.srcObject = currentStream;
 
     try {
         await cameraPreview.play();
@@ -75,6 +95,7 @@ export async function switchToStream(stream) {
         updateStatus("Broadcasting new stream.");
     }
 }
+
 
 function updateStatus(text) {
     if (statusDiv) statusDiv.textContent = text;

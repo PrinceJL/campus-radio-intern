@@ -1,9 +1,7 @@
 import { switchToStream } from './stream-manager.js';
-import { cameraPreview, videoPreview } from '../utils/media-elements.js';
+import { audioPreview, cameraPreview, videoPreview } from '../utils/media-elements.js';
 
 const statusDiv = document.getElementById('broadcast-status');
-
-
 
 export async function showCameraSelectionPanel() {
     console.log("[CameraManager] Camera selection panel opened");
@@ -36,7 +34,7 @@ export async function showCameraSelectionPanel() {
 
         try {
             const thumbStream = await navigator.mediaDevices.getUserMedia({
-                video: { deviceId: { exact: cam.deviceId } },
+                video: { deviceId: { ideal: cam.deviceId } },
                 audio: false
             });
             preview.srcObject = thumbStream;
@@ -86,7 +84,7 @@ export function addCameraToSidebar(cam) {
     container.style.display = 'block';
 
     navigator.mediaDevices.getUserMedia({
-        video: { deviceId: { exact: cam.deviceId } },
+        video: { deviceId: { ideal  : cam.deviceId } },
         audio: false
     }).then(stream => {
         video.srcObject = stream;
@@ -103,9 +101,8 @@ export function addCameraToSidebar(cam) {
             const stream = await navigator.mediaDevices.getUserMedia({
                 video: { deviceId: { exact: cam.deviceId } },
                 audio: false
-            });
-
-            pauseVideoIfPlaying();
+            }); 
+            pauseIfPlaying();
             toggleVisibility('camera');
             await switchToStream(stream);
         } catch (err) {
@@ -120,7 +117,7 @@ export function addCameraToSidebar(cam) {
         }
 
         if (cameraPreview.srcObject) {
-            const previewTrack = cameraPreview.srcObject.getVideoTracks()[0];
+            const previewTrack = cameraPreview.srcObject.getTracks()[0];
             const activeId = previewTrack?.getSettings()?.deviceId;
 
             if (activeId === cam.deviceId) {
@@ -131,7 +128,7 @@ export function addCameraToSidebar(cam) {
                 // Also stop current broadcast stream if this camera is being streamed
                 import('./stream-manager.js').then(({ getCurrentStream, switchToStream }) => {
                     const currentStream = getCurrentStream();
-                    const currentTrack = currentStream?.getVideoTracks()[0];
+                    const currentTrack = currentStream?.getTracks()[0];
                     const currentId = currentTrack?.getSettings()?.deviceId;
                     if (currentId === cam.deviceId) {
                         currentStream?.getTracks().forEach(t => t.stop());
@@ -174,7 +171,7 @@ export async function populateCameraPreviews() {
                     },
                     audio: false
                 });
-                pauseVideoIfPlaying();
+                pauseIfPlaying();
                 toggleVisibility('camera');
                 await switchToStream(stream);
             } catch (err) {
@@ -187,20 +184,32 @@ export async function populateCameraPreviews() {
     }
 }
 
-function pauseVideoIfPlaying() {
+function pauseIfPlaying() {
     if (!videoPreview.paused && !videoPreview.srcObject) {
         videoPreview.pause();
+    }
+    if (!audioPreview.paused && !audioPreview.srcObject) {
+        audioPreview.pause();
     }
 }
 
 function toggleVisibility(source) {
     const cameraDiv = document.getElementById('camera-preview-container');
     const videoDiv = document.getElementById('video-preview-container');
+    const audioDiv = document.getElementById('audio-preview-container');
     if (source === 'camera') {
         cameraDiv.style.display = 'block';
         videoDiv.style.display = 'none';
+        audioDiv.style.display = 'none';
+        if (!audioPreview.paused) audioPreview.pause();
     } else if (source === 'video') {
         videoDiv.style.display = 'block';
         cameraDiv.style.display = 'none';
+        audioDiv.style.display = 'none';
+        if (!audioPreview.paused) audioPreview.pause();
+    } else if (source === 'audio') {
+        audioDiv.style.display = 'block';
+        cameraDiv.style.display = 'none';
+        videoDiv.style.display = 'none';
     }
 }

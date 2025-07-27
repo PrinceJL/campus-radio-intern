@@ -1,3 +1,4 @@
+import { setMicStream } from "./stream-manager.js";
 let audioContext = null;
 let micStreams = [];
 let micSources = [];
@@ -16,6 +17,7 @@ export function getCurrentMicStream() {
 }
 
 export async function showMicSelectionPanel() {
+    console.log("[Mic Manager] Showing Microphone Selection");
     const selectionPanel = document.getElementById('microphone-selection-panel');
     selectionPanel.innerHTML = '';
     selectionPanel.style.display = 'block';
@@ -44,7 +46,7 @@ export async function showMicSelectionPanel() {
         let stream = null;
         let ctx = null;
         try {
-            stream = await navigator.mediaDevices.getUserMedia({ audio: { deviceId: { exact: mic.deviceId } } });
+            stream = await navigator.mediaDevices.getUserMedia({ audio: { deviceId: { ideal: mic.deviceId } } });
 
             ctx = new (window.AudioContext || window.webkitAudioContext)();
             const source = ctx.createMediaStreamSource(stream);
@@ -143,7 +145,7 @@ async function updateCombinedMicStream() {
 
     for (const deviceId of selectedMicIds) {
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: { deviceId: { exact: deviceId } } });
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: { deviceId: { ideal: deviceId } } });
             micStreams.push(stream);
 
             const source = audioContext.createMediaStreamSource(stream);
@@ -153,8 +155,11 @@ async function updateCombinedMicStream() {
             console.warn(`Failed to get mic stream for ${deviceId}:`, err);
         }
     }
-
-    muteCombinedStream(); // reapply mute
+    if (combinedDestination) {
+        currentMicStream = combinedDestination.stream;
+        setMicStream(currentMicStream); // 👈 This is what was missing
+        console.log('[Mic Manager] Updated combined mic stream:', currentMicStream.getAudioTracks());
+    }
 }
 
 function muteCombinedStream() {

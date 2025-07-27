@@ -1,8 +1,8 @@
-src/uploads/
-src/__pycache__/
-src/broadcaster/__pycache__/
-src/viewer/__pycache__/
-src/broadcaster/static/js/__pycache__/
-src/blueprints/__pycache__/
+app/uploads/
+app/__pycache__/
+app/broadcaster/__pycache__/
+app/viewer/__pycache__/
+app/broadcaster/static/js/__pycache__/
+app/blueprints/__pycache__/
 .env
 cheersslkey.pem

@@ -223,13 +223,13 @@
               </div>
               <div id="playlistTotalDuration" class="playlist-duration-summary">🕒 Total Duration: 0:00</div>
             </div>
-            <!-- Video Playlist -->
+            <!-- Playlist -->
             <div class="player-card">
               <div class="section-label-playlist">
-                Video Playlist
+                Playlist
                 <span class="section-icons">
                   <button
-                    id="savePlaylistBtn-video"
+                    id="savePlaylistBtn"
                     class="icon-btn-plus-blue"
                     title="Save Playlist"
                   >
@@ -241,31 +241,9 @@
                 </span>
               </div>
               <div class="your-playlist">
-                <div class="playlist-group"></div>
+                <div id="playlist-group" class="playlist-group"></div>
               </div>
             </div>  
-
-            <!-- Audio Playlist -->
-            <div class="player-card">
-              <div class="section-label-playlist">
-                Audio Playlist
-                <span class="section-icons">
-                  <button
-                    id="savePlaylistBtn-audio"
-                    class="icon-btn-plus-blue"
-                    title="Save Playlist"
-                  >
-                    <img
-                      src="{{ url_for('broadcaster.static', filename='icon/plus-blue.png') }}"
-                      alt="Add"
-                    />
-                  </button>
-                </span>
-              </div>
-              <div class="audio-your-playlist">
-                <div class="audio-playlist-group"></div>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -335,19 +313,14 @@
         </div>
       </div>
     </div>
+    <!-- Work Area Container (Fixed Bottom) -->
+  
+
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script
       type="module"
-      src="{{ url_for('broadcaster.static', filename='js/playlist-manager.js') }}"
-    ></script>
-    <script
-      type="module"
-      src="{{ url_for('broadcaster.static', filename='js/file-handler.js') }}"
-    ></script>
-    <script
-      type="module"
-      src="{{ url_for('broadcaster.static', filename='js/broadcaster.js') }}"
+      src="{{ url_for('broadcaster.static', filename='js/broadcaster/broadcaster.js') }}"
     ></script>
     <script>
       window.STATIC_ICON_PATH =
