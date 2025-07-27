@@ -27,7 +27,6 @@ const stopBtn = document.getElementById('stopStream');
 const statusDiv = document.getElementById('broadcast-status');
 const createPlaylist = document.getElementById('savePlaylistBtn');
 const socket = io();
-const container = document.getElementById("vu-meter-container");
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -40,18 +39,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     highlightSelectedElements();
     setupWebRTCHandlers(socket, getCurrentStream);
     initStreamManager(statusDiv);
-
+    setUpPlaylist();
     // Mount media preview elements
     document.getElementById('camera-preview-container')?.appendChild(cameraPreview);
     document.getElementById('video-preview-container')?.appendChild(videoPreview);
 
     statusDiv.textContent = "Select a camera or video to stream.";
 });
+let currentPlaylist = null;
 
 // -- Playlist Management ---
 createPlaylist?.addEventListener('click', async () => {
-    console.log("[Broadcaster] Save Playlist button clicked");
-
+    console.log("[Broadcaster] Add Playlist button clicked");
     // Prompt user for playlist name
     const playlistName = prompt("Enter a name for your new playlist:");
 
@@ -76,6 +75,47 @@ createPlaylist?.addEventListener('click', async () => {
     }
 });
 
+document.getElementById("saveOrderBtn")?.addEventListener("click", async () => {
+    const orderedFileIds = playlistManager.core.items.map(item => item.fileId);
+    const orderedNames = playlistManager.core.items.map(item => item.name);
+
+    console.log("[Save Order] Playlist fileId order:", orderedFileIds);
+    console.log("[Save Order] Playlist item names:", orderedNames);
+
+    if (currentPlaylist != null) {
+        console.log("Saving it to", currentPlaylist);
+        const result = await playlistManager.savePlaylist(currentPlaylist.trim());
+        if (result?.success) {
+            alert("Playlist order saved successfully.");
+        } else {
+            console.warn("Failed to save playlist:", result?.message);
+            alert("Failed to save playlist.");
+        }
+    } else {
+        alert("No playlist is currently selected.");
+    }
+});
+async function setUpPlaylist() {
+    try {
+        const playlists = await playlistManager.listAllPlaylists();
+        const container = document.getElementById('playlist-group');
+        if (container && playlists.length > 0) {
+            container.innerHTML = '';
+            playlists.forEach(playlist => {
+                const btn = document.createElement('button');
+                btn.textContent = playlist.name;
+                btn.classList.add('playlist-btn');
+                btn.addEventListener('click', () => {
+                    playlistManager.loadPlaylist(playlist.name);
+                    currentPlaylist = playlist.name;
+                });
+                container.appendChild(btn);
+            });
+        }
+    } catch (err) {
+        console.error("[Broadcaster] Error listing playlists:", err);
+    }
+}
 // --- Stream Control Buttons ---
 muteBtn?.addEventListener('click', () => {
     const nowMuted = muteStream();

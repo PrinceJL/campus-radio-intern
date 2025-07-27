@@ -1052,7 +1052,8 @@ button.icon-btn-plus-blue img {
 
 
 .playlist-items {
-  display: flex;
+  cursor: grab;
+  display: block;
   flex-direction: column;
   gap: 10px;
   margin-top: 10px;

@@ -1,6 +1,6 @@
 import { playlistCore } from './playlist-core.js';
 import { setMediaDuration, updateTotalDuration } from './playlist-duration.js';
-import { renderPlaylist, clearPlaylistUI, updateNowPlaying } from './playlist-ui.js';
+import { renderPlaylist, clearPlaylistUI, updateNowPlaying, setUpPlaylist } from './playlist-ui.js';
 import { PlaylistControls } from './playlist-controls.js';
 import { savePlaylist, listAllPlaylists, loadPlaylist, deletePlaylist } from './playlist-storage.js';
 import { playMediaItem } from './playlist-media.js';
@@ -15,6 +15,7 @@ class PlaylistManager {
   // --- UI Integration ---
   initUI() {
     // Render playlist on load or change
+    setUpPlaylist();
     this.render();
   }
 
@@ -28,6 +29,18 @@ class PlaylistManager {
       this.render();
     });
     return item;
+  }
+  reorderByFileIdOrder(fileIdOrder) {
+    const reordered = fileIdOrder
+      .map(fileId => this.core.items.find(item => item.fileId === fileId))
+      .filter(Boolean); // Remove any unmatched
+
+    if (reordered.length !== this.core.items.length) {
+      console.warn('[PlaylistManager] Reorder mismatch: some items may be missing');
+    }
+
+    this.core.items = reordered;
+    this.render();
   }
 
   removeItemByIndex(index) {
@@ -49,8 +62,13 @@ class PlaylistManager {
   }
 
   moveItem(oldIndex, newIndex) {
-    this.core.moveItem(oldIndex, newIndex);
-    this.render();
+    const items = this.core.items;
+    const moved = items.splice(oldIndex, 1)[0];
+    items.splice(newIndex, 0, moved);
+
+    // Reset indexes if needed
+    this.core.items = items;
+    this.render(); // this re-renders with updated data
   }
 
   setCurrentIndex(index) {

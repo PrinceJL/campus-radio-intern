@@ -1,12 +1,45 @@
 import { getVideoDuration, getAudioDuration } from './playlist-duration.js';
 import { generateVideoThumbnail } from '../file/video-thumbnail.js';
+import { playlistManager } from './playlist-manager.js';
+import { generateUUID } from '../utils/gen-ID.js';
 
+export function setUpPlaylist() {
+    const container = document.querySelector('.playlist-items');
+    Sortable.create(container, {
+        animation: 150,
+        draggable: '.media-block',
+        handle: '.media-block',
+        onStart(evt) {
+            console.log('[Sortable] Drag started');
+            console.log('  Dragging index:', evt.oldIndex);
+        },
+        onEnd(evt) {
+            console.log('[Sortable] Drag ended');
+            console.log('  Moved from:', evt.oldIndex, 'to:', evt.newIndex);
+
+            if (evt.oldIndex === evt.newIndex) {
+                console.log('  ⚠️ No change in position');
+                return;
+            }
+
+            // Get new order from DOM
+            const newOrder = Array.from(container.children).map(
+                el => el.dataset.fileId
+            );
+
+            playlistManager.reorderByFileIdOrder(newOrder);
+        }
+    });
+    console.log('[Playlist] Items initialized:', container.children.length);
+
+}
 /**
  * Render all playlist items in the UI.
  * @param {Array} playlistItems
  * @param {function} onPlayItem - Called with index when an item is clicked
  * @param {function} onDeleteItem - Called with index when delete is clicked
  */
+
 export function renderPlaylist(playlistItems, onPlayItem, onDeleteItem) {
     const container = document.querySelector('.playlist-items');
     if (!container) return;
@@ -14,21 +47,12 @@ export function renderPlaylist(playlistItems, onPlayItem, onDeleteItem) {
     container.innerHTML = '';
     playlistItems.forEach((item, index) => {
         const block = createMediaBlock(item, index, onPlayItem, onDeleteItem);
+        block.dataset.index = index; // ensure correct index after sort
         container.appendChild(block);
     });
 
-    // Make it sortable (requires SortableJS)
-    if (window.Sortable) {
-        Sortable.create(container, {
-            animation: 150,
-            onEnd: function (evt) {
-                if (typeof window.onPlaylistSort === 'function') {
-                    window.onPlaylistSort(evt.oldIndex, evt.newIndex);
-                }
-            }
-        });
-    }
 }
+
 
 /**
  * Create a playlist item block for the UI.
@@ -39,11 +63,22 @@ export function renderPlaylist(playlistItems, onPlayItem, onDeleteItem) {
  * @returns {HTMLElement}
  */
 export function createMediaBlock(item, index, onPlayItem, onDeleteItem) {
+    // Assign a persistent unique ID if not already present
+    if (!item.fileId) {
+        item.fileId = generateUUID();
+    }
+
     const block = document.createElement('div');
     block.className = 'media-block';
     block.dataset.index = index;
+    block.dataset.fileId = item.fileId;
+
     const mediaInfo = document.createElement('div');
     mediaInfo.className = 'media-info';
+    const dragHandle = document.createElement('span');
+    dragHandle.className = 'drag-handle';
+    dragHandle.textContent = '☰';
+    block.prepend(dragHandle);
 
     const preview = document.createElement('img');
     preview.width = 40;
