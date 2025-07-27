@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 from db import users_collection
@@ -28,6 +28,13 @@ def login():
             return redirect(url_for('auth.login'))
 
     return render_template('login.html')
+
+@auth_bp.route('/users')
+def view_all_users():
+    users = list(users_collection.find({}))
+    users = [{**u, '_id': str(u['_id'])} for u in users]
+    return jsonify(users)
+
 
 
 # ------------------------
