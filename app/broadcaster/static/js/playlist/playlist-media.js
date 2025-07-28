@@ -19,32 +19,36 @@ function stopCurrentAudioDeck(callback) {
   if (!fadeOutTarget || fadeOutTarget.paused) return callback?.();
 
   console.log('[Deck] Fading out audio for video switch');
-  fadeGain(fadeOutTarget, 1, 0, crossfadeDuration, () => {
+  const fadeOutGain = setupDeckAudio(fadeOutTarget);
+  if (fadeOutGain) {
+    fadeGain(fadeOutGain, 1, 0, crossfadeDuration, () => {
+      fadeOutTarget.pause();
+      fadeOutTarget.currentTime = 0;
+      fadeOutTarget.src = '';
+      callback?.();
+    });
+  } else {
     fadeOutTarget.pause();
     fadeOutTarget.currentTime = 0;
     fadeOutTarget.src = '';
-    if (callback) callback();
-  });
+    callback?.();
+  }
 }
 
 export function playMediaItem(item, onEnd) {
   const ext = item.name.split('.').pop().toLowerCase();
   console.log('[playMediaItem] Playing item:', item.name, '| Extension:', ext);
 
-  if (videoPreview) {
-    videoPreview.pause();
-    videoPreview.srcObject = null;
-    videoPreview.removeAttribute('src');
-    videoPreview.load();
-  }
+  videoPreview?.pause();
+  videoPreview.srcObject = null;
+  videoPreview.removeAttribute('src');
+  videoPreview.load();
 
-  if (audioPreview) {
-    audioPreview.pause();
-    audioPreview.src = '';
-    audioPreview.load();
-  }
+  audioPreview?.pause();
+  audioPreview.src = '';
+  audioPreview.load();
 
-  if (/(mp4|webm|avi|mov)/.test(ext) && videoPreview) {
+  if (/(mp4|webm|avi|mov)/.test(ext)) {
     stopCurrentAudioDeck(() => {
       videoPreview.src = item.url;
       videoPreview.controls = true;
@@ -86,6 +90,9 @@ export function playMediaItem(item, onEnd) {
       nextDeck.currentTime = 0;
 
       nextDeck.onplaying = () => {
+        const gain = setupDeckAudio(nextDeck);
+        if (!gain) return;
+
         const stream = nextDeck.captureStream?.();
         if (stream) {
           audioPreview.srcObject = stream;
@@ -94,11 +101,10 @@ export function playMediaItem(item, onEnd) {
           switchToStream(stream);
           setupAudioVisualizer(nextDeck);
         }
-        fadeGain(nextDeck, 0, 1, crossfadeDuration);
+
+        fadeGain(gain, 0, 1, crossfadeDuration);
       };
 
-      setupDeckAudio(nextDeck);
-      fadeGain(nextDeck, 0, 1, crossfadeDuration);
       nextDeck.play().catch(err => console.warn('[Replay] play() error', err));
       updateNowPlaying(item);
       return;
@@ -112,6 +118,9 @@ export function playMediaItem(item, onEnd) {
     nextDeck.onplaying = () => {
       console.log('[Crossfade] Next deck is playing');
 
+      const gainNext = setupDeckAudio(nextDeck);
+      const gainPrev = setupDeckAudio(prevDeck);
+
       const stream = nextDeck.captureStream?.();
       if (stream) {
         audioPreview.srcObject = stream;
@@ -123,12 +132,9 @@ export function playMediaItem(item, onEnd) {
         console.warn('[Crossfade] captureStream failed');
       }
 
-      setupDeckAudio(nextDeck);
-      setupDeckAudio(prevDeck);
-
-      fadeGain(nextDeck, 0, 1, crossfadeDuration);
-      if (prevDeck) {
-        fadeGain(prevDeck, 1, 0, crossfadeDuration, () => {
+      if (gainNext) fadeGain(gainNext, 0, 1, crossfadeDuration);
+      if (prevDeck && gainPrev) {
+        fadeGain(gainPrev, 1, 0, crossfadeDuration, () => {
           prevDeck.pause();
           prevDeck.currentTime = 0;
           prevDeck.src = '';
@@ -149,15 +155,13 @@ export function playMediaItem(item, onEnd) {
     container.appendChild(audioA);
     container.appendChild(audioB);
 
-    audioA.style.display = (nextDeck === audioA) ? 'block' : 'none';
-    audioB.style.display = (nextDeck === audioB) ? 'block' : 'none';
+    audioA.style.display = nextDeck === audioA ? 'block' : 'none';
+    audioB.style.display = nextDeck === audioB ? 'block' : 'none';
     audioPreview.style.display = 'block';
 
     nextDeck.play()
       .then(() => console.log('[Crossfade] nextDeck.play() success'))
       .catch(err => console.warn('[Crossfade play()] error:', err));
-
-    console.log('[Crossfade] deckA.volume:', audioA.volume, 'deckB.volume:', audioB.volume);
 
     updateNowPlaying(item);
     lastDeck = prevDeck;

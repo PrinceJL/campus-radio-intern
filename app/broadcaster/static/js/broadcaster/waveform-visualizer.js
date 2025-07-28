@@ -136,3 +136,40 @@ export function fadeGain(gainNode, from, to, duration = 3, callback) {
         setTimeout(callback, duration * 1000);
     }
 }
+export function setupDeckAudio(audioElement) {
+    if (!audioElement) {
+        console.warn('[setupDeckAudio] No audio element provided.');
+        return null;
+    }
+
+    if (!audioCtx || audioCtx.state === 'closed') {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+
+    if (sourceMap.has(audioElement)) {
+        return gainMap.get(audioElement);
+    }
+
+    try {
+        const sourceNode = audioCtx.createMediaElementSource(audioElement);
+
+        const gainNode = audioCtx.createGain();
+        gainNode.gain.value = 1;
+
+        const analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 128;
+
+        sourceNode.connect(gainNode);
+        gainNode.connect(analyser);
+        gainNode.connect(audioCtx.destination);
+
+        sourceMap.set(audioElement, sourceNode);
+        gainMap.set(audioElement, gainNode);
+        analyserMap.set(audioElement, analyser);
+
+        return gainNode;
+    } catch (e) {
+        console.warn('[setupDeckAudio] Failed to set up audio graph:', e);
+        return null;
+    }
+}

@@ -5,8 +5,7 @@ from db import db
 from blueprints.authentication import login_required
 
 uploads_bp = Blueprint('uploads', __name__)
-
-UPLOAD_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'uploads'))
+UPLOAD_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'app/uploads'))
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 def get_unique_filename(subdir, filename):
