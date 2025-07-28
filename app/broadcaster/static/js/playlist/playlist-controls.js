@@ -21,7 +21,7 @@ export class PlaylistControls {
       this.playNext();
     });
 
-    document.querySelector('.ctrl-btn-msc.pause')?.addEventListener('click', () => {
+    document.querySelector('.ctrl-btn-msc.playpause')?.addEventListener('click', () => {
       this.togglePause();
     });
 
@@ -58,7 +58,7 @@ export class PlaylistControls {
   }
 
   togglePause() {
-    const media = window.videoPreview || window.audioA;
+    const media = window.videoPreview || window.audioPreview;
     if (!media) return;
     media.paused ? media.play() : media.pause();
   }

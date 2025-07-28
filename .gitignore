@@ -5,7 +5,5 @@ app/viewer/__pycache__/
 app/broadcaster/static/js/__pycache__/
 app/blueprints/__pycache__/
 .env
-app/cheersslcert.pem
-app/cheersslkey.pem
-cheersslkey.pem
-cheersslcert.pem
+nginx/ssl/
+san.cnf

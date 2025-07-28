@@ -10,6 +10,9 @@ from flask_socketio import SocketIO
 from dotenv import load_dotenv
 import os
 
+# Moved SocketIO initialization to global scope
+socketio = SocketIO(async_mode="eventlet", cors_allowed_origins="*")  # Moved to global
+
 def create_app():
     load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env'))
     app = Flask(__name__)
@@ -29,10 +32,12 @@ def create_app():
  
     return app
 
-if __name__ == "__main__":
-    app = create_app()
-    socketio = SocketIO(app, async_mode="threading", cors_allowed_origins="*")    
-    register_webrtc_events(socketio)
-    socketio.run(app, host="0.0.0.0",ssl_context=("cheersslcert.pem", "cheersslkey.pem"), port=8080, allow_unsafe_werkzeug=True)
-    #enter this into socketio.run parameters if final
-    #ssl_context=("cheerslcert.pem", "cheerslkey.pem")
+app = create_app()
+register_webrtc_events(socketio)
+socketio.init_app(app)
+    # app = create_app()
+    # socketio = SocketIO(app, async_mode="threading", cors_allowed_origins="*")    
+    # register_webrtc_events(socketio)
+    # socketio.run(app, host="0.0.0.0", port=8080)
+    # #enter this into socketio.run parameters if final
+    # #ssl_context=("cheerslcert.pem", "cheerslkey.pem")

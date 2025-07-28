@@ -1,12 +1,18 @@
 import { audioPreview } from '../utils/media-elements.js';
 
 let audioCtx = null;
-let analyser = null;
-let sourceNode = null;
-let dataArray = null;
+const analyserMap = new WeakMap();     // maps audioA/audioB -> analyser
+const gainMap = new WeakMap();         // maps audioA/audioB -> gainNode
+const sourceMap = new WeakMap();       // maps audioA/audioB -> sourceNode
+
 let animationId = null;
+let dataArray = null;
+let currentAnalyser = null;
+let currentAudioElement = null;
 
 export function setupAudioVisualizer(audioElement = audioPreview) {
+    stopAudioVisualizer();
+
     if (!audioElement) {
         console.warn('[Visualizer] No audio element provided.');
         return;
@@ -22,7 +28,7 @@ export function setupAudioVisualizer(audioElement = audioPreview) {
         canvas.width = 800;
         canvas.height = 180;
         canvas.style.cssText = 'width:100%; height:180px; display:block; margin-bottom:8px;';
-        container.insertBefore(canvas, container.firstChild); 
+        container.insertBefore(canvas, container.firstChild);
     }
 
     const ctx = canvas.getContext('2d');
@@ -35,26 +41,38 @@ export function setupAudioVisualizer(audioElement = audioPreview) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     }
 
-    // Always create a new source node to match the current deck
+    let sourceNode, analyser, gainNode;
+
     try {
-        if (sourceNode) {
-            sourceNode.disconnect();
+        if (sourceMap.has(audioElement)) {
+            sourceNode = sourceMap.get(audioElement);
+            analyser = analyserMap.get(audioElement);
+            gainNode = gainMap.get(audioElement);
+        } else {
+            sourceNode = audioCtx.createMediaElementSource(audioElement);
+
+            gainNode = audioCtx.createGain();
+            gainNode.gain.value = 1;
+
+            analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 128;
+
+            sourceNode.connect(gainNode);
+            gainNode.connect(analyser);
+            gainNode.connect(audioCtx.destination);
+
+            sourceMap.set(audioElement, sourceNode);
+            gainMap.set(audioElement, gainNode);
+            analyserMap.set(audioElement, analyser);
         }
-        sourceNode = audioCtx.createMediaElementSource(audioElement);
     } catch (e) {
-        console.warn("[Visualizer] Failed to create sourceNode:", e);
+        console.warn("[Visualizer] Failed to create audio graph:", e);
         return;
     }
 
-    if (!analyser) {
-        analyser = audioCtx.createAnalyser();
-    }
-
-    analyser.fftSize = 128;
+    currentAnalyser = analyser;
+    currentAudioElement = audioElement;
     dataArray = new Uint8Array(analyser.frequencyBinCount);
-
-    sourceNode.connect(analyser);
-    analyser.connect(audioCtx.destination); // Optional: skip if you don’t want sound from analyzer path
 
     function draw() {
         animationId = requestAnimationFrame(draw);
@@ -83,24 +101,38 @@ export function stopAudioVisualizer() {
         animationId = null;
     }
 
-    if (sourceNode) {
-        sourceNode.disconnect();
-        sourceNode = null;
-    }
-
-    if (analyser) {
-        analyser.disconnect();
-        analyser = null;
-    }
-
-    if (audioCtx) {
-        audioCtx.close();
-        audioCtx = null;
+    if (currentAnalyser) {
+        try {
+            currentAnalyser.disconnect();
+        } catch (e) {
+            console.warn('[Visualizer] Error disconnecting analyser:', e);
+        }
+        currentAnalyser = null;
     }
 
     const canvas = document.getElementById('audio-visualizer');
     if (canvas) {
         const ctx = canvas.getContext('2d');
         if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    currentAudioElement = null;
+}
+
+export function getDeckGainNode(audioElement) {
+    return gainMap.get(audioElement) || null;
+}
+export function fadeGain(gainNode, from, to, duration = 3, callback) {
+    if (!gainNode || typeof gainNode.gain.setValueAtTime !== 'function') {
+        console.warn('[fadeGain] Invalid gainNode');
+        return;
+    }
+
+    const now = audioCtx.currentTime;
+    gainNode.gain.setValueAtTime(from, now);
+    gainNode.gain.linearRampToValueAtTime(to, now + duration);
+
+    if (callback) {
+        setTimeout(callback, duration * 1000);
     }
 }
