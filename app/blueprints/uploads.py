@@ -61,6 +61,7 @@ def upload_file():
 
 
 @uploads_bp.route('/uploads/<ext>/<filename>', methods=['GET'])
+@login_required
 def serve_file(ext, filename):
     subdir = os.path.join(UPLOAD_FOLDER, ext)
     response = make_response(send_from_directory(subdir, filename))
@@ -109,6 +110,7 @@ def delete_file(ext, filename):
 
 
 @uploads_bp.route('/uploads/files', methods=['GET'])
+@login_required
 def list_files():   
     files = list(db.files.find())
     for f in files:

@@ -17,12 +17,9 @@
       </div>
     </div>
     <div id="video-container">
-      <canvas id="audio-visualizer" width="800" height="200" style="display:none; position:absolute; left:0; top:0; width:100%; height:100%; z-index:3;"></canvas>
-      <video id="radio-stream" autoplay playsinline muted></video>
+      <canvas id="audio-visualizer" width="800" height="200" style="display:none; position:absolute; left:0; top:0; width:100%; height:100%; z-index:3; pointer-events: none;"></canvas>
+      <video id="radio-stream" autoplay playsinline muted controls></video>
       <div id="brb-standby" style="background: url('{{ url_for('viewer.static', filename='asset/BRB.jpg') }}') center center no-repeat; background-size: contain;"></div>      
-      <button id="fullscreen-btn" class="viewer-icon-btn">
-        <img src="{{ url_for('viewer.static', filename='asset/fullscreen.svg') }}" alt="Fullscreen" />
-      </button>
     </div>
 
     <div id="ticker-container">

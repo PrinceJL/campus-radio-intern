@@ -143,26 +143,6 @@ window.onbeforeunload = () => {
     socket.close();
 };
 
-// --- Audio Preview ---
-audioPreview.addEventListener('play', () => {
-    // const vuContainer = document.getElementById("vu-meter-container");
-    // const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    // try {
-    //     const sourceNode = audioCtx.createMediaElementSource(audioPreview);
-    //     sourceNode.connect(audioCtx.destination); // 🔊 allow audio to play
-    //     console.log("SDOSDSd")
-    //     // 🟢 Initialize AudioVisualizer
-    //     new AudioVisualizer(vuContainer, sourceNode, {
-    //         barCount: 40,
-    //         barColor: '#4ade80',
-    //         backgroundColor: '#1e1e1e',
-    //         fftSize: 128
-    //     });
-    // } catch (e) {
-    //     console.warn("[VU Meter] AudioContext SourceNode already exists or failed to connect:", e);
-    // }
-});
-
 
 audioPreview.addEventListener('pause', stopAudioVisualizer);
 audioPreview.addEventListener('ended', stopAudioVisualizer);

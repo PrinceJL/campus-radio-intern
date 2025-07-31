@@ -13,25 +13,31 @@ export class PlaylistControls {
   }
 
   setupControlButtons() {
+    console.log("[PlaylistControls] Setting up control buttons");
     document.querySelector('.ctrl-btn-msc.prev')?.addEventListener('click', () => {
+      console.log("[PlaylistControls] Previous button clicked");
       this.playPrevious();
     });
 
     document.querySelector('.ctrl-btn-msc.next')?.addEventListener('click', () => {
+      console.log("[PlaylistControls] Next button clicked");
       this.playNext();
     });
 
     document.querySelector('.ctrl-btn-msc.playpause')?.addEventListener('click', () => {
+      console.log("[PlaylistControls] Toggling play/pause");
       this.togglePause();
     });
 
     document.querySelector('.ctrl-btn-msc.loop')?.addEventListener('click', () => {
+      console.log("[PlaylistControls] Loop mode toggled");
       this.loopMode = !this.loopMode;
       this.shuffleMode = false;
       this.updateModeButtons();
     });
 
     document.querySelector('.ctrl-btn-msc.shuffle')?.addEventListener('click', () => {
+      console.log("[PlaylistControls] Shuffle mode toggled");
       this.shuffleMode = !this.shuffleMode;
       this.loopMode = false;
       this.updateModeButtons();
@@ -58,10 +64,22 @@ export class PlaylistControls {
   }
 
   togglePause() {
-    const media = window.videoPreview || window.audioPreview;
-    if (!media) return;
-    media.paused ? media.play() : media.pause();
+    const media = window.currentActiveMedia;
+    if (!media) {
+      console.warn("[togglePause] No active media found.");
+      return;
+    }
+
+    if (media.paused) {
+      media.play()
+        .then(() => console.log("[togglePause] Resumed playback"))
+        .catch(err => console.warn("[togglePause] play() failed", err));
+    } else {
+      media.pause();
+      console.log("[togglePause] Paused playback");
+    }
   }
+
 
   handleMediaEnd() {
     if (this.loopMode) {

@@ -106,11 +106,10 @@ function startViewerConnection() {
       const hasAudio = receivedStream.getAudioTracks().length > 0;
       if (hasAudio && !hasVideo) {
         showAudioVisualizer(receivedStream);
-        video.style.display = 'none';
       } else {
         hideAudioVisualizer();
-        video.style.display = '';
       }
+      video.style.display = '';
 
       showBRB(false);
       video.muted = false;

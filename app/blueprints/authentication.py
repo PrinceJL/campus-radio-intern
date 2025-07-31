@@ -29,14 +29,6 @@ def login():
 
     return render_template('login.html')
 
-@auth_bp.route('/users')
-def view_all_users():
-    users = list(users_collection.find({}))
-    users = [{**u, '_id': str(u['_id'])} for u in users]
-    return jsonify(users)
-
-
-
 # ------------------------
 # LOGOUT ROUTE
 # ------------------------
@@ -68,35 +60,3 @@ def login_required(view_function):
             return redirect(url_for('auth.login'))
         return view_function(*args, **kwargs)
     return decorated_function
-
-
-# ------------------------
-# OPTIONAL: REGISTER ROUTE (Remove after seeding)
-# ------------------------
-@auth_bp.route('/register', methods=['GET', 'POST'])
-def register():
-    """
-    Temporary route to register new users. POST with email, password, and optional name.
-    """
-    if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
-        name = request.form.get('name', '')
-
-        if not email or not password:
-            return {"success": False, "message": "Email and password are required."}, 400
-
-        if users_collection.find_one({'email': email}):
-            return {"success": False, "message": "Email already registered."}, 409
-
-        hashed_pw = generate_password_hash(password)
-        users_collection.insert_one({
-            'email': email,
-            'password': hashed_pw,
-            'name': name,
-        })
-
-        return {"success": True, "message": "Account created. You can now log in."}, 201
-
-    return render_template('register.html')
-

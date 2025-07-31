@@ -1,5 +1,5 @@
 import { switchToStream } from './stream-manager.js';
-import { audioPreview, cameraPreview, videoPreview } from '../utils/media-elements.js';
+import { audioA, audioB, audioPreview, cameraPreview, videoPreview } from '../utils/media-elements.js';
 
 const statusDiv = document.getElementById('broadcast-status');
 
@@ -201,6 +201,8 @@ function toggleVisibility(source) {
         cameraDiv.style.display = 'block';
         videoDiv.style.display = 'none';
         audioDiv.style.display = 'none';
+        audioA.pause();
+        audioB.pause();
         if (!audioPreview.paused) audioPreview.pause();
     } else if (source === 'video') {
         videoDiv.style.display = 'block';

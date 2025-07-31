@@ -11,6 +11,7 @@ import {
 let currentDeck = audioA;
 let lastDeck = null;
 const crossfadeDuration = 3;
+window.currentActiveMedia = null;
 
 function stopCurrentAudioDeck(callback) {
   if (!lastDeck && !currentDeck) return callback?.();
@@ -50,6 +51,7 @@ export function playMediaItem(item, onEnd) {
 
   if (/(mp4|webm|avi|mov)/.test(ext)) {
     stopCurrentAudioDeck(() => {
+      window.currentActiveMedia = videoPreview;
       videoPreview.src = item.url;
       videoPreview.controls = true;
       videoPreview.autoplay = true;
@@ -166,6 +168,7 @@ export function playMediaItem(item, onEnd) {
     updateNowPlaying(item);
     lastDeck = prevDeck;
     currentDeck = nextDeck;
+    window.currentActiveMedia = nextDeck;
     return;
   }
 

@@ -4,8 +4,8 @@ from db import db
 from blueprints.authentication import login_required  # import it
 
 playlist_bp = Blueprint("playlist", __name__)
-
 @playlist_bp.route("/playlists", methods=["GET"])
+@login_required
 def list_playlists():
     playlists = list(db.playlists.find({}, {"_id": 0}))
     # Sort by last updated time descending
@@ -13,6 +13,7 @@ def list_playlists():
     return jsonify(playlists)
 
 @playlist_bp.route("/playlists/<name>", methods=["GET"])
+@login_required
 def get_playlist(name):
     playlist = db.playlists.find_one({"name": name})
     if not playlist:
