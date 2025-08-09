@@ -1,31 +1,33 @@
-# Revamp Campus Radio
+# 🎙️ Revamp Campus Radio
 
-Revamp Campus Radio is a **self-hosted campus broadcasting platform** designed for secure, internal streaming.
+A self-hosted campus radio streaming system designed for internal network broadcasting.  
+The project uses Docker for deployment, supports HTTPS with self-signed certificates, and includes both frontend and backend components.
 
 ---
 
-## 🚀 Quick Start
+## 📂 Environment Setup
 
-1. **Clone the repository**
+Before running the project, create a `.env` file in the project root with the following content:
 
-   ```bash
-   git clone https://github.com/your-username/revamp-campus-radio.git
-   cd revamp-campus-radio
-   ```
+```env
+ADMIN_EMAIL=example@example.com
+ADMIN_PASSWORD=examplePassword
+ADMIN_NAME=Example
+```
 
-2. **Create a `.env` file** in the project root:
+> **Note:**
+>
+> * The `.env` file in this repository is for **transfer purposes only**.
+> * You **must** replace these values with your own before deployment.
+> * Docker will automatically generate the secret key for the application.
 
-   ```env
-   ADMIN_EMAIL=example@example.com
-   ADMIN_PASSWORD=examplePassword
-   ADMIN_NAME=Example
-   ```
+---
 
-3. ## 🔒 Generate SSL Certificate (with SAN)
+## 🔒 Generate SSL Certificate (with SAN)
 
-A sample `san.cnf` file is provided in the project root for generating a self-signed SSL certificate with Subject Alternative Names (SAN):
+A sample `san.cnf` file is included in the project root for generating a self-signed SSL certificate with Subject Alternative Names (SAN):
 
-To generate the certificate using this config, run:
+To generate the certificate using this config:
 
 ```bash
 mkdir -p nginx/ssl
@@ -36,10 +38,17 @@ openssl req -x509 -nodes -days 365 \
   -config san.cnf
 ```
 
-4. **Run with Docker Compose**
-   ```bash
-   docker-compose up -d
-   ```
+Place the generated files inside `nginx/ssl/`.
+
+---
+
+## 🐳 Running with Docker
+
+```bash
+docker-compose up --build
+```
+
+This will start the backend, frontend, and NGINX reverse proxy with HTTPS enabled.
 
 ---
 
@@ -55,11 +64,17 @@ inside your Ubuntu terminal.
 
 ---
 
-## 📋 Prerequisites
+## 💻 Technologies Used
 
-- [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/) installed
-- Basic knowledge of Linux server administration
-- Access to a terminal with OpenSSL installed
+* **Frontend**: HTML5, JavaScript (Waveform Visualizer, Audio Controls)
+* **Backend**: Flask (Python)
+* **Database**: MongoDB
+* **Deployment**: Docker & Docker Compose
+* **Web Server**: NGINX (Reverse Proxy, SSL Termination)
+* **Audio Processing**: HTML5 Audio API, Web Audio API
+* **Other Tools**:
+  * Google Workspace (documentation, communication, file sharing)
+  * ChatGPT (software development assistance)
 
 ---
 
@@ -71,9 +86,16 @@ inside your Ubuntu terminal.
 ├── nginx/ssl/          # SSL certificate and key storage
 ├── docker-compose.yml  # Docker service definitions
 ├── .env                # Environment variables
+├── san.cnf             # SSL SAN configuration
 └── README.md           # Project documentation
 ```
 
 ---
 
-Docker will automatically generate the secret key.
+## ⚠️ Notes
+
+* The `.env` file and SSL certificates provided in this repository are **for testing only**.
+* Always generate your own secure credentials before deploying to a production environment.
+* This system is designed for **internal network streaming** — not intended for public internet broadcasting without proper licensing.
+
+---
