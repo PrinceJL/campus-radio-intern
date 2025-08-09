@@ -75,6 +75,7 @@ inside your Ubuntu terminal.
 * **Other Tools**:
   * Google Workspace (documentation, communication, file sharing)
   * ChatGPT (software development assistance)
+  * WebRTC
 
 ---
 
