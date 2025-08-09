@@ -20,7 +20,14 @@ export function setupWebRTCHandlers(io, streamGetter) {
         }
 
         const pc = new RTCPeerConnection({
-            iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+            iceServers: [{ urls: 'stun:stun.l.google.com:19302' },
+            {
+                urls: 'turn:10.13.139.23:3478',
+                username: 'user',
+                credential: 'password'
+            }
+        ],
+        iceTransportPolicy: 'all'
         });
 
         peerConnections[id] = pc;
